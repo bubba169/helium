@@ -1,0 +1,15 @@
+{
+    "name": "bubba169/cms",
+    "description": "An experimental CMS for Laravel",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Simon Morris",
+            "email": "simon@mrsimonmorris.co.uk"
+        }
+    ],
+    "require": {
+        "laravel/laravel": "~7.0"
+    }
+}
