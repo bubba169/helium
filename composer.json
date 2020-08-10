@@ -10,6 +10,6 @@
         }
     ],
     "require": {
-        "laravel/laravel": "~7.0"
+        "laravel/framework": "~7.0"
     }
 }
