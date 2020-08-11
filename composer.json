@@ -1,5 +1,5 @@
 {
-    "name": "bubba169/cms",
+    "name": "bubba169/helium",
     "description": "An experimental CMS for Laravel",
     "type": "library",
     "license": "MIT",
@@ -11,5 +11,10 @@
     ],
     "require": {
         "laravel/framework": "~7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Helium\\": "src/"
+        }
     }
 }
