@@ -16,5 +16,12 @@
         "psr-4": {
             "Helium\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Helium\\Providers\\HeliumServiceProvider"
+            ]
+        }
     }
 }
