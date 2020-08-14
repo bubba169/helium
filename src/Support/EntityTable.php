@@ -1,21 +1,21 @@
 <?php namespace Helium\Support;
 
-use Helium\Support\HeliumEntity;
+use Helium\Support\Entity;
 
 class EntityTable
 {
     /**
-     * @var HeliumEntity
+     * @var Entity
      */
     protected $entity = null;
 
     /**
      * Sets the entity
      *
-     * @param HeliumEntity $entity
+     * @param Entity $entity
      * @return this
      */
-    public function setEntity(HeliumEntity $entity) : self
+    public function setEntity(Entity $entity) : self
     {
         $this->entity = $entity;
         return $this;
@@ -24,9 +24,9 @@ class EntityTable
     /**
      * Gets the current entity
      *
-     * @return HeliumEntity
+     * @return Entity
      */
-    public function getEntity() : HeliumEntity
+    public function getEntity() : Entity
     {
         return $this->entity;
     }

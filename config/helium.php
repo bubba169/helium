@@ -2,6 +2,6 @@
 
 return [
     'entities' => [
-        'user' => Helium\Entities\User\User::class
+        'users' => Helium\Entities\User\User::class
     ]
 ];

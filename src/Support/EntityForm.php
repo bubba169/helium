@@ -1,22 +1,28 @@
 <?php namespace Helium\Support;
 
-use Helium\Support\HeliumEntity;
+use Helium\Support\Entity;
+use Helium\Database\TableReader;
 use Illuminate\Support\Collection;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Helium\Commands\GetFieldConfigForDatabaseField;
+use Helium\Commands\GetFieldConfigForDatabaseColumn;
 
 class EntityForm
 {
+    use DispatchesJobs;
+
     /**
-     * @var HeliumEntity
+     * @var Entity
      */
     protected $entity = null;
 
     /**
      * Sets the entity
      *
-     * @param HeliumEntity $entity
+     * @param Entity $entity
      * @return this
      */
-    public function setEntity(HeliumEntity $entity) : self
+    public function setEntity(Entity $entity) : self
     {
         $this->entity = $entity;
         return $this;
@@ -25,9 +31,9 @@ class EntityForm
     /**
      * Gets the current entity
      *
-     * @return HeliumEntity
+     * @return Entity
      */
-    public function getEntity() : HeliumEntity
+    public function getEntity() : Entity
     {
         return $this->entity;
     }
@@ -52,7 +58,14 @@ class EntityForm
      */
     protected function getFields() : Collection
     {
-        return collect([]);
+        $reader = new TableReader($this->entity->getTableName());
+        $columns = $reader->columns();
+
+        $fields = $columns->map(function ($column) {
+            return $this->dispatchNow(new GetFieldConfigForDatabaseColumn($column));
+        });
+
+        return $fields;
     }
 
     /**
@@ -62,6 +75,10 @@ class EntityForm
     {
         return $fields->mapWithKeys(function ($field, $name) use ($instance) {
             $type = app()->make($field['type']);
+
+            if (!empty($field['config'])) {
+                $type->setConfig($field['config']);
+            }
 
             if ($instance) {
                 $type->setValue($instance->{$name});

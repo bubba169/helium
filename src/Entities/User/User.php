@@ -1,16 +1,17 @@
 <?php namespace Helium\Entities\User;
 
-use App\User as UserModel;
-use Helium\Support\HeliumEntity;
+use Helium\Support\Entity;
 use Helium\Entities\User\UserForm;
 use Helium\Entities\User\UserTable;
+use Helium\Entities\User\UserRepository;
 
-class User extends HeliumEntity
+class User extends Entity
 {
     public function __construct(
+        UserRepository $repository,
         UserForm $form,
         UserTable $table
     ) {
-        parent::__construct(UserModel::class, $form, $table);
+        parent::__construct($repository, $form, $table);
     }
 }

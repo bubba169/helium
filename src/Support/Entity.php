@@ -2,8 +2,9 @@
 
 use Helium\Support\EntityForm;
 use Helium\Support\EntityTable;
+use Helium\Support\EntityRepository;
 
-class HeliumEntity
+class Entity
 {
     /**
      * @var EntityForm
@@ -16,23 +17,23 @@ class HeliumEntity
     protected $table = null;
 
     /**
-     * @var string
+     * @var EntityRepository
      */
-    protected $modelClass = null;
+    protected $repository = null;
 
     /**
-     * COnstructor
+     * Constructor
      *
-     * @param string $modelClass
+     * @param EntityRepository $repository
      * @param EntityForm $form
      * @param EntityTable $table
      */
     public function __construct(
-        string $modelClass,
+        EntityRepository $repository,
         EntityForm $form,
         EntityTable $table
     ) {
-        $this->modelClass = $modelClass;
+        $this->repository = $repository;
         $this->form = $form->setEntity($this);
         $this->table = $table->setEntity($this);
     }
@@ -60,10 +61,20 @@ class HeliumEntity
     /**
      * Gets the model class
      *
-     * @return void
+     * @return EntityRepository
      */
-    public function getModelClass() : string
+    public function getRepository() : EntityRepository
     {
-        return $this->modelClass;
+        return $this->repository;
+    }
+
+    /**
+     * Gets the table name
+     *
+     * @return string
+     */
+    public function getTableName() : string
+    {
+        return $this->repository->tableName();
     }
 }

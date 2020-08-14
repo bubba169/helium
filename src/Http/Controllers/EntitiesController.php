@@ -1,7 +1,7 @@
 <?php namespace Helium\Http\Controllers;
 
+use Helium\Commands\GetEntity;
 use App\Http\Controllers\Controller;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntitiesController extends Controller
 {
@@ -11,8 +11,9 @@ class EntitiesController extends Controller
  *
  * @return void
  */
-    public function index()
+    public function index(string $entityType)
     {
+        $entity = $this->dispatchNow(new GetEntity($entityType));
         dd('index');
     }
 
@@ -25,17 +26,13 @@ class EntitiesController extends Controller
  */
     public function edit(string $entityType, int $id)
     {
-        $entityClass = config('helium.entities.' . $entityType);
+        $entity = $this->dispatchNow(new GetEntity($entityType));
 
-        if (!$entityClass) {
-            throw new NotFoundHttpException();
-        }
-
-        $entity = app()->make($entityClass);
         $form = $entity->getForm()->build(
-            $entity->getModelClass()::find($id)
+            $entity->getRepository()->find($id)
         );
 
         dd($form);
     }
+
 }

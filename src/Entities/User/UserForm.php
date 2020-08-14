@@ -9,7 +9,7 @@ class UserForm extends EntityForm
     /**
      * {@inheritDoc}
      */
-    protected function getFields() : Collection
+    /*protected function getFields() : Collection
     {
         return collect([
             'name' => [
@@ -19,5 +19,5 @@ class UserForm extends EntityForm
                 'type' => StringFieldType::class
             ]
         ]);
-    }
+    }*/
 }

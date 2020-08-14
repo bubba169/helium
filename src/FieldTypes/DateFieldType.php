@@ -1,5 +1,6 @@
 <?php namespace Helium\FieldTypes;
 
-class StringFieldType extends FieldType
+class DateFieldType extends FieldType
 {
+
 }
