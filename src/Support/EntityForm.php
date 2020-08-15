@@ -1,20 +1,25 @@
 <?php namespace Helium\Support;
 
 use Helium\Support\Entity;
-use Helium\Database\TableReader;
 use Illuminate\Support\Collection;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Helium\Commands\GetFieldConfigForDatabaseField;
-use Helium\Commands\GetFieldConfigForDatabaseColumn;
+use Illuminate\Database\Eloquent\Model;
 
 class EntityForm
 {
-    use DispatchesJobs;
-
     /**
      * @var Entity
      */
     protected $entity = null;
+
+    /**
+     * @var Model
+     */
+    protected $instance = null;
+
+    /**
+     * @var Collection
+     */
+    protected $fields = [];
 
     /**
      * Sets the entity
@@ -39,49 +44,67 @@ class EntityForm
     }
 
     /**
-     * Builds a form descriptor for the view
+     * Sets the instance to populate the form
      *
-     * @param mixed $model
-     * @return void
+     * @param Model $instance
+     * @return self
      */
-    public function build($instance = null)
+    public function setInstance(?Model $instance) : self
     {
-        $fields = $this->getFields();
-        $fields = $this->buildFields($fields, $instance);
-        return $fields;
+        $this->instance = $instance;
+        return $this;
     }
 
     /**
-     * Gets the field configuration
+     * Gets the current instance
+     *
+     * @return Model
+     */
+    public function getInstance() : Model
+    {
+        return $this->instance;
+    }
+
+    /**
+     * Gets the fields
      *
      * @return Collection
      */
-    protected function getFields() : Collection
+    public function getFields() : Collection
     {
-        $reader = new TableReader($this->entity->getTableName());
-        $columns = $reader->columns();
-
-        $fields = $columns->map(function ($column) {
-            return $this->dispatchNow(new GetFieldConfigForDatabaseColumn($column));
-        });
-
-        return $fields;
+        return $this->fields;
     }
 
     /**
-     * Populates the fields
+     * Builds a form descriptor for the view
+     *
+     * @param Model|null $model
+     * @return this
      */
-    protected function buildFields(Collection $fields, $instance = null)
+    public function build(?Model $instance = null) : self
     {
-        return $fields->mapWithKeys(function ($field, $name) use ($instance) {
-            $type = app()->make($field['type']);
+        $this->fields = $this->buildFields($this->entity->getFields(), $instance);
+        return $this;
+    }
 
-            if (!empty($field['config'])) {
-                $type->setConfig($field['config']);
-            }
+    /**
+     * Builds and populates the fields
+     *
+     * @param Collection $fields
+     * @param Model $instance
+     * @return Collection
+     */
+    protected function buildFields(Collection $fields) : Collection
+    {
+        return $fields->mapWithKeys(function ($field, $name) {
+            $type = app()->make($field['type'])
+                ->setId($field['id'])
+                ->setName($field['name'])
+                ->setLabel($field['label'])
+                ->setAttributes($field['attributes']);
 
-            if ($instance) {
-                $type->setValue($instance->{$name});
+            if ($this->instance) {
+                $type->setValue($this->instance->{$name});
             }
 
             return [$name => $type];

@@ -28,11 +28,13 @@ class EntitiesController extends Controller
     {
         $entity = $this->dispatchNow(new GetEntity($entityType));
 
-        $form = $entity->getForm()->build(
-            $entity->getRepository()->find($id)
-        );
+        $form = $entity->getForm()
+            ->setInstance($entity->getRepository()->find($id))
+            ->build();
 
-        dd($form);
+        return view('helium::form', [
+            'form' => $form
+        ]);
     }
 
 }

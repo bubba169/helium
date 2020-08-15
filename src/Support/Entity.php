@@ -1,11 +1,18 @@
 <?php namespace Helium\Support;
 
+use Helium\Commands\ReadTable;
 use Helium\Support\EntityForm;
 use Helium\Support\EntityTable;
+use Helium\Database\TableReader;
+use Illuminate\Support\Collection;
 use Helium\Support\EntityRepository;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Helium\Commands\GetFieldConfigForDatabaseColumn;
 
 class Entity
 {
+    use DispatchesJobs;
+
     /**
      * @var EntityForm
      */
@@ -76,5 +83,21 @@ class Entity
     public function getTableName() : string
     {
         return $this->repository->tableName();
+    }
+
+    /**
+     * Gets the field configuration
+     *
+     * @return Collection
+     */
+    public function getFields() : Collection
+    {
+        if ($tableName = $this->getTableName()) {
+            return app()->make(TableReader::class)
+                ->setTable($tableName)
+                ->fields();
+        }
+
+        return collect([]);
     }
 }
