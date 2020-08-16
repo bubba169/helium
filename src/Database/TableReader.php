@@ -5,6 +5,7 @@ use Doctrine\DBAL\Schema\Column;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Helium\FieldTypes\StringFieldType;
+use Helium\FieldTypes\ReadOnlyTextFieldType;
 
 class TableReader
 {
@@ -39,12 +40,11 @@ class TableReader
             array_map(
                 function ($column) {
                     return [
-                        'id' => $column->getName(),
                         'name' => $column->getName(),
-                        'label' => Str::title(str_replace('_', ' ', $column->getName())),
                         'type' => $this->getFieldTypeForColumn($column),
                         'attributes' => $this->getFieldAttributesForColumn($column),
                         'rules' => $this->getRulesForColumn($column),
+                        'config' => [],
                     ];
                 },
                 $columns
@@ -61,6 +61,10 @@ class TableReader
      */
     protected function getFieldTypeForColumn(Column $column) : string
     {
+        if (in_array($column->getName(), ['updated_at', 'created_at', 'deleted_at'])) {
+            return ReadOnlyTextFieldType::class;
+        }
+
         return config(
             'helium.database.type_map.' . $column->getType()->getName(),
             StringFieldType::class
@@ -78,6 +82,11 @@ class TableReader
         $attributes = [];
         $columnName = $column->getName();
         $columnType = $column->getType()->getName();
+
+        // Return early - no attributes for these
+        if (in_array($columnName, ['created_at', 'updated_at', 'deleted_at'])) {
+            return $attributes;
+        }
 
         // If the field is a tring set its max length
         if (in_array($columnType, ['string', 'text'])) {

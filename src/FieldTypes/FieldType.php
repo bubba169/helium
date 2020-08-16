@@ -1,5 +1,8 @@
 <?php namespace Helium\FieldTypes;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+
 class FieldType
 {
     /**
@@ -23,19 +26,32 @@ class FieldType
     protected $value = null;
 
     /**
-     * @var array
+     * @var Collection
      */
-    protected $config = [];
+    protected $config;
 
     /**
-     * @var array
+     * @var Collection
      */
-    protected $attributes = [];
+    protected $attributes;
+
+    /**
+     * @var Collection
+     */
+    protected $classes;
 
     /**
      * @var string
      */
     protected $view = 'helium::input.string';
+
+    public function __construct()
+    {
+        // Create the empty collections
+        $this->classes = collect(['form-control']);
+        $this->attributes = collect([]);
+        $this->config = collect([]);
+    }
 
     /**
      * Gets the current value
@@ -60,11 +76,11 @@ class FieldType
     }
 
     /**
-     * Get the qhole config array
+     * Get the whole config collection
      *
-     * @return array
+     * @return Collection
      */
-    public function getConfig() : array
+    public function getConfig() : Collection
     {
         return $this->config;
     }
@@ -72,23 +88,35 @@ class FieldType
     /**
      * Get one item from the config array
      *
-     * @param string $key
+     * @param string $key The dot separated path to the attribute
      * @return mixed
      */
     public function getConfigAttribute(string $key)
     {
-        return $this->getConfig()[$key] ?? null;
+        return $this->getConfig()->get($key, null);
     }
 
     /**
-     * Undocumented function
+     * Sets the config array
      *
      * @param array $config
      * @return this
      */
     public function setConfig(array $config) : self
     {
-        $this->config = $config;
+        $this->config = collect($config);
+        return $this;
+    }
+
+    /**
+     * Sets the config array
+     *
+     * @param array $config
+     * @return this
+     */
+    public function mergeConfig(array $config) : self
+    {
+        $this->config = $this->config->mergeRecursive(collect($config));
         return $this;
     }
 
@@ -105,9 +133,9 @@ class FieldType
     /**
      * Gets the HTML attributes for the field type
      *
-     * @return array
+     * @return Collection
      */
-    public function getAttributes() : array
+    public function getAttributes() : Collection
     {
         return $this->attributes;
     }
@@ -115,12 +143,12 @@ class FieldType
     /**
      * Gets a single attribute
      *
-     * @param string $name
-     * @return string
+     * @param string $key The dot separated path to the attribute
+     * @return mixed
      */
-    public function getAttribute(string $name) : string
+    public function getAttribute(string $key)
     {
-        return $this->attributes[$name];
+        return $this->getAttributes()->get($key, null);
     }
 
     /**
@@ -131,7 +159,32 @@ class FieldType
      */
     public function setAttributes(array $attributes) : self
     {
-        $this->attributes = $attributes;
+        $this->attributes = collect($attributes);
+        return $this;
+    }
+
+    /**
+     * Sets a HTML attributes for the field type
+     *
+     * @param string $key
+     * @param string $value
+     * @return this
+     */
+    public function setAttribute(string $key, string $value) : self
+    {
+        $this->getAttributes()->put($key, $value);
+        return $this;
+    }
+
+    /**
+     * Merges  HTML attributes into the current collection
+     *
+     * @param array $attributes
+     * @return this
+     */
+    public function mergeAttributes(array $attributes) : self
+    {
+        $this->attributes = $this->getAttributes()->mergeRecursive(collect($attributes));
         return $this;
     }
 
@@ -142,16 +195,16 @@ class FieldType
      */
     public function getId() : string
     {
-        return $this->id;
+        return $this->id ?? $this->name;
     }
 
     /**
      * Gets the field ID
      *
-     * @param string $id
+     * @param string|null $id
      * @return this
      */
-    public function setId(string $id) : self
+    public function setId(?string $id) : self
     {
         $this->id = $id;
         return $this;
@@ -164,16 +217,16 @@ class FieldType
      */
     public function getName() : string
     {
-        return $this->name;
+        return $this->name ?? $this->id;
     }
 
     /**
      * Gets the field name
      *
-     * @param string $name
+     * @param string|null $name
      * @return this
      */
-    public function setName(string $name) : self
+    public function setName(?string $name) : self
     {
         $this->name = $name;
         return $this;
@@ -186,18 +239,56 @@ class FieldType
      */
     public function getLabel() : string
     {
-        return $this->label;
+        return $this->label ??
+            Str::title(str_replace('_', ' ', $this->name)) ??
+            Str::title(str_replace('_', ' ', $this->id));
     }
 
     /**
      * Gets the field label
      *
-     * @param string $id
+     * @param string|null $id
      * @return this
      */
-    public function setLabel(string $label) : self
+    public function setLabel(?string $label) : self
     {
         $this->label = $label;
+        return $this;
+    }
+
+    /**
+     * Gets the list of classes to apply to the control
+     *
+     * @return Collection
+     */
+    public function getClasses() : Collection
+    {
+        return $this->classes;
+    }
+
+    /**
+     * Adds a class to the list
+     *
+     * @param string $class
+     * @return self
+     */
+    public function addClass(string $class) : self
+    {
+        $this->classes->push($class);
+        return $this;
+    }
+
+    /**
+     * Adds a class to the list
+     *
+     * @param string $class
+     * @return self
+     */
+    public function removeClass(string $class) : self
+    {
+        $this->classes = $this->classes->filter(function ($existing) use ($class) {
+            return $existing != $class;
+        });
         return $this;
     }
 }

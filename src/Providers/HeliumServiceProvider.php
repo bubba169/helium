@@ -30,6 +30,7 @@ class HeliumServiceProvider extends ServiceProvider
             __DIR__.'/../../config/helium.php' => config_path('helium.php'),
             __DIR__.'/../../resources/lang' => resource_path('lang/vendor/helium'),
             __DIR__.'/../../resources/views' => resource_path('views/vendor/helium'),
+            __DIR__.'/../../public' => public_path('vendor/helium'),
         ]);
 
         $this->loadRoutesFrom(__DIR__.'/../../config/routes.php');

@@ -3,7 +3,7 @@
         <label for="{{ $field->getId() }}">{{ $field->getLabel() }}</label>
     @endif
 
-    <input
+    <select
         id="{{ $field->getId() }}"
         name="{{ $field->getName() }}"
         value="{{ old($field->getName(), $field->getAttribute('type') !== 'password' ? $field->getValue() : '') }}"
@@ -14,4 +14,13 @@
             {{ $attribute }}="{{ $value }}"
         @endforeach
     >
+        @foreach ($field->getOptions() as $value => $name)
+            <option
+                value="{{ $value }}"
+                {{ old($field->getName(), $field->getValue()) ? 'selected' : '' }}
+            >
+                {{ $name }}
+            </option>
+        @endforeach
+    </select>
 </div>

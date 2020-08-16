@@ -19,7 +19,7 @@ class EntityForm
     /**
      * @var Collection
      */
-    protected $fields = [];
+    protected $fields = null;
 
     /**
      * Sets the entity
@@ -98,10 +98,15 @@ class EntityForm
     {
         return $fields->mapWithKeys(function ($field, $name) {
             $type = app()->make($field['type'])
-                ->setId($field['id'])
-                ->setName($field['name'])
-                ->setLabel($field['label'])
-                ->setAttributes($field['attributes']);
+                ->setId($field['id'] ?? null)
+                ->setName($field['name'] ?? null)
+                ->setLabel($field['label'] ?? null)
+                ->mergeAttributes($field['attributes'] ?? [])
+                ->mergeConfig($field['config'] ?? []);
+
+            if (isset($field['options'])) {
+                $type->setOptions($field['options'] ?? []);
+            }
 
             if ($this->instance) {
                 $type->setValue($this->instance->{$name});

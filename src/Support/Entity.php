@@ -29,6 +29,11 @@ class Entity
     protected $repository = null;
 
     /**
+     * @var string
+     */
+    protected $displayField = 'id';
+
+    /**
      * Constructor
      *
      * @param EntityRepository $repository
