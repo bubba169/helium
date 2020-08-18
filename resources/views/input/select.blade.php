@@ -1,6 +1,6 @@
 <div class="form-group">
     @if ($field->getAttribute('type') !== 'hidden')
-        <label for="{{ $field->getId() }}" class="control-label">{{ $field->getLabel() }}</label>
+        <label for="{{ $field->getId() }}">{{ $field->getLabel() }}</label>
     @endif
 
     <select
