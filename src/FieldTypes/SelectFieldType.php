@@ -22,7 +22,7 @@ class SelectFieldType extends FieldType
     }
 
     /**
-     * Sets the options
+     * Sets the options. They should be in a [value => name] format
      *
      * @param array $options
      * @return self

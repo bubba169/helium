@@ -29,29 +29,25 @@ class TableReader
     /**
      * Gets fields from the database table
      *
-     * @return Collection
+     * @return array
      */
-    public function fields() : Collection
+    public function fields() : array
     {
         $schema = DB::getDoctrineSchemaManager();
         $columns = $schema->listTableColumns($this->table);
 
-        $fields = collect(
-            array_map(
-                function ($column) {
-                    return [
-                        'name' => $column->getName(),
-                        'type' => $this->getFieldTypeForColumn($column),
-                        'attributes' => $this->getFieldAttributesForColumn($column),
-                        'rules' => $this->getRulesForColumn($column),
-                        'config' => [],
-                    ];
-                },
-                $columns
-            )
+        return array_map(
+            function ($column) {
+                return [
+                    'name' => $column->getName(),
+                    'type' => $this->getFieldTypeForColumn($column),
+                    'attributes' => $this->getFieldAttributesForColumn($column),
+                    'rules' => $this->getRulesForColumn($column),
+                    'config' => [],
+                ];
+            },
+            $columns
         );
-
-        return $fields;
     }
 
     /**

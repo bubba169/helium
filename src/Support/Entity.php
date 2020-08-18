@@ -1,17 +1,27 @@
 <?php namespace Helium\Support;
 
-use Helium\Commands\ReadTable;
 use Helium\Support\EntityForm;
 use Helium\Support\EntityTable;
 use Helium\Database\TableReader;
 use Illuminate\Support\Collection;
 use Helium\Support\EntityRepository;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Helium\Commands\GetFieldConfigForDatabaseColumn;
 
 class Entity
 {
-    use DispatchesJobs;
+    /**
+     * @var string
+     */
+    protected $formClass = EntityForm::class;
+
+    /**
+     * @var string
+     */
+    protected $tableClass = EntityTable::class;
+
+    /**
+     * @var string
+     */
+    protected $repositoryClass = EntityRepository::class;
 
     /**
      * @var EntityForm
@@ -29,26 +39,9 @@ class Entity
     protected $repository = null;
 
     /**
-     * @var string
+     * @var Collection
      */
-    protected $displayField = 'id';
-
-    /**
-     * Constructor
-     *
-     * @param EntityRepository $repository
-     * @param EntityForm $form
-     * @param EntityTable $table
-     */
-    public function __construct(
-        EntityRepository $repository,
-        EntityForm $form,
-        EntityTable $table
-    ) {
-        $this->repository = $repository;
-        $this->form = $form->setEntity($this);
-        $this->table = $table->setEntity($this);
-    }
+    protected $fields = null;
 
     /**
      * Gets the form builder
@@ -57,7 +50,8 @@ class Entity
      */
     public function getForm() : EntityForm
     {
-        return $this->form;
+        return $this->form ??
+            ($this->form = app()->makeWith($this->formClass, ['entity' => $this]));
     }
 
     /**
@@ -67,7 +61,8 @@ class Entity
      */
     public function getTable() : EntityTable
     {
-        return $this->table;
+        return $this->table ??
+            ($this->table = app()->makeWith($this->tableClass, ['entity' => $this]));
     }
 
     /**
@@ -77,7 +72,8 @@ class Entity
      */
     public function getRepository() : EntityRepository
     {
-        return $this->repository;
+        return $this->repository ??
+            ($this->repository = app()->makeWith($this->repositoryClass, ['entity' => $this]));
     }
 
     /**
@@ -87,22 +83,28 @@ class Entity
      */
     public function getTableName() : string
     {
-        return $this->repository->tableName();
+        return $this->getRepository()->tableName();
     }
 
     /**
      * Gets the field configuration
      *
-     * @return Collection
+     * @return array
      */
-    public function getFields() : Collection
+    public function getFields() : array
     {
+        // If cached, use the cached version
+        if ($this->fields) {
+            return $this->fields;
+        }
+
+        // Otherwise read the fields from the table
         if ($tableName = $this->getTableName()) {
-            return app()->make(TableReader::class)
+            return $this->fields = app()->make(TableReader::class)
                 ->setTable($tableName)
                 ->fields();
         }
 
-        return collect([]);
+        return $this->fields = [];
     }
 }

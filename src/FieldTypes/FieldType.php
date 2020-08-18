@@ -88,7 +88,7 @@ class FieldType
     /**
      * Get one item from the config array
      *
-     * @param string $key The dot separated path to the attribute
+     * @param string $key The key to the config attribute
      * @return mixed
      */
     public function getConfigAttribute(string $key)
@@ -143,7 +143,7 @@ class FieldType
     /**
      * Gets a single attribute
      *
-     * @param string $key The dot separated path to the attribute
+     * @param string $key The key to the attribute
      * @return mixed
      */
     public function getAttribute(string $key)

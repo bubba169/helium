@@ -12,12 +12,23 @@ class EntityRepository
     protected $model;
 
     /**
+     * @var Entity
+     */
+    protected $entity;
+
+    /**
+     * @var string;
+     */
+    protected $displayField = null;
+
+    /**
      * Constructor
      *
      * @param Model $model
      */
-    public function __construct(Model $model)
+    public function __construct(Entity $entity, Model $model)
     {
+        $this->entity = $entity;
         $this->model = $model;
     }
 
@@ -60,5 +71,32 @@ class EntityRepository
     public function tableName() : string
     {
         return $this->model->getTable();
+    }
+
+    /**
+     * Gets the display field
+     *
+     * @return string
+     */
+    public function getDisplayField() : string
+    {
+        if ($this->displayField) {
+            return $this->displayField;
+        }
+
+        $fields = collect($this->entity->getFields());
+        return $fields->has('name') ? 'name' : (
+            $fields->has('title') ? 'title' : 'id'
+        );
+    }
+
+    /**
+     * Gets the dropdown options for the model
+     *
+     * @return array
+     */
+    public function dropdownOptions() : array
+    {
+        return $this->model->pluck($this->getDisplayField(), 'id')->toArray();
     }
 }

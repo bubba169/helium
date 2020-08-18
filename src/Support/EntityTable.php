@@ -10,24 +10,12 @@ class EntityTable
     protected $entity = null;
 
     /**
-     * Sets the entity
+     * Construct
      *
      * @param Entity $entity
-     * @return this
      */
-    public function setEntity(Entity $entity) : self
+    public function __construct(Entity $entity)
     {
         $this->entity = $entity;
-        return $this;
-    }
-
-    /**
-     * Gets the current entity
-     *
-     * @return Entity
-     */
-    public function getEntity() : Entity
-    {
-        return $this->entity;
     }
 }

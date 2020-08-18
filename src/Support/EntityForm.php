@@ -22,25 +22,13 @@ class EntityForm
     protected $fields = null;
 
     /**
-     * Sets the entity
+     * Construct
      *
      * @param Entity $entity
-     * @return this
      */
-    public function setEntity(Entity $entity) : self
+    public function __construct(Entity $entity)
     {
         $this->entity = $entity;
-        return $this;
-    }
-
-    /**
-     * Gets the current entity
-     *
-     * @return Entity
-     */
-    public function getEntity() : Entity
-    {
-        return $this->entity;
     }
 
     /**
@@ -94,9 +82,9 @@ class EntityForm
      * @param Model $instance
      * @return Collection
      */
-    protected function buildFields(Collection $fields) : Collection
+    protected function buildFields(array $fields) : Collection
     {
-        return $fields->mapWithKeys(function ($field, $name) {
+        return collect($fields)->mapWithKeys(function ($field, $name) {
             $type = app()->make($field['type'])
                 ->setId($field['id'] ?? null)
                 ->setName($field['name'] ?? null)

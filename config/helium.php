@@ -5,7 +5,7 @@ return [
      * Add any eitites here so they can be managed in the CMS
      */
     'entities' => [
-        'users' => \Helium\Entities\User\User::class,
+        'users' => \Helium\Entities\User\UserEntity::class,
     ],
 
     'database' => [
