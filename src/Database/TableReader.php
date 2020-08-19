@@ -84,25 +84,28 @@ class TableReader
             return $attributes;
         }
 
-        // If the field is a tring set its max length
+        // If the field is a string set its max length
         if (in_array($columnType, ['string', 'text'])) {
             $attributes['maxlength'] = $column->getLength();
         }
 
         // The id field should be hidden by default as this
         // shouldn't be changed on a form
-        if ($column->getName() == 'id') {
+        if ($columnName === 'id') {
             $attributes['type'] = 'hidden';
+        // Booleans will display as checkboxes by default
+        } elseif ($columnType === 'boolean') {
+            $attributes['type'] = 'checkbox';
         // If the field name contains "email" assume it's an email type
-        } elseif (strpos('email', $columnName) !== false) {
+        } elseif ($columnName === 'email') {
             $attributes['type'] = 'email';
             $attributes['inputmode'] = 'email';
         // If the field name contains "phone" assume it's a phone number
-        } elseif (strpos('phone', $columnName) !== false) {
+        } elseif ($columnName === 'phone') {
             $attributes['type'] = 'tel';
             $attributes['inputmode'] = 'tel';
         // If the field name contains "password" assume it's a password
-        } elseif (strpos('password', $columnName) !== false) {
+        } elseif ($columnName === 'password') {
             $attributes['type'] = 'password';
         // If the field name contains "password" assume it's a password
         } elseif (strpos('url', $columnName) !== false) {

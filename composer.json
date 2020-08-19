@@ -11,12 +11,16 @@
     ],
     "require": {
         "laravel/framework": "~7.0",
-        "doctrine/dbal": "~2.0"
+        "doctrine/dbal": "~2.0",
+        "dinhquochan/laravel-twig": "^1.2"
     },
     "autoload": {
         "psr-4": {
             "Helium\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "extra": {
         "laravel": {

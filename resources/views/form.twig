@@ -1,0 +1,15 @@
+{% extends "helium::layout" %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <form method='POST'>
+            {% for field in form.fields %}
+                {% include field.view with {field: field} %}
+            {% endfor %}
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

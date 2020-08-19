@@ -1,0 +1,20 @@
+<div class="form-group">
+    {% if field.getAttribute('type') != hidden %}
+        {% include "helium::input.common.label" %}
+    {% endif %}
+
+    <select {% include "helium::input.common.attributes" %}>
+        {% if (field.getAttribute('required') is empty) %}
+            <option value="">{{ field.placeholder }}</option>
+        {% endif %}
+
+        {% for value,name in field.options %}
+            <option
+                value="{{ value }}"
+                {{ old(field.name, field.value) ? 'selected' }}
+            >
+                {{ name }}
+            </option>
+        {% endfor %}
+    </select>
+</div>

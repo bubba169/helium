@@ -21,6 +21,6 @@ class DateTimeFieldType extends FieldType
             ]
         ]);
         $this->addClass('flatpickr');
-        $this->setAttribute('placeholder', trans('helium::input.datetime.placeholder'));
+        $this->setPlaceholder(trans('helium::input.datetime.placeholder'));
     }
 }

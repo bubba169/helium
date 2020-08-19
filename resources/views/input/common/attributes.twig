@@ -1,0 +1,8 @@
+id="{{ field.id }}"
+name="{{ field.name }}"
+class="{{ field.classes|join(' ') }}"
+placeholder="{{ field.placeholder }}"
+
+{% for attribute,value in field.attributes %}
+    {{ attribute }}="{{ value }}"
+{% endfor %}

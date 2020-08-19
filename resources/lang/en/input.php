@@ -6,5 +6,8 @@ return [
     ],
     'date' => [
         'placeholder' => 'Please select a date...',
-    ]
+    ],
+    'select' => [
+        'placeholder' => 'Please select...',
+    ],
 ];

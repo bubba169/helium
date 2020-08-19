@@ -1,5 +1,6 @@
 <?php namespace Helium\FieldTypes;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 
@@ -26,14 +27,19 @@ class FieldType
     protected $value = null;
 
     /**
-     * @var Collection
+     * @var array
      */
-    protected $config;
+    protected $config = [];
 
     /**
      * @var Collection
      */
     protected $attributes;
+
+    /**
+     * @var string
+     */
+    protected $placeholder = null;
 
     /**
      * @var Collection
@@ -50,7 +56,6 @@ class FieldType
         // Create the empty collections
         $this->classes = collect(['form-control']);
         $this->attributes = collect([]);
-        $this->config = collect([]);
     }
 
     /**
@@ -78,22 +83,22 @@ class FieldType
     /**
      * Get the whole config collection
      *
-     * @return Collection
+     * @return array
      */
-    public function getConfig() : Collection
+    public function getConfig() : array
     {
         return $this->config;
     }
 
     /**
-     * Get one item from the config array
+     * Get one item from the config array using dot notation
      *
      * @param string $key The key to the config attribute
      * @return mixed
      */
     public function getConfigAttribute(string $key)
     {
-        return $this->getConfig()->get($key, null);
+        return Arr::get($this->getConfig(), $key);
     }
 
     /**
@@ -104,7 +109,7 @@ class FieldType
      */
     public function setConfig(array $config) : self
     {
-        $this->config = collect($config);
+        $this->config = $config;
         return $this;
     }
 
@@ -116,7 +121,7 @@ class FieldType
      */
     public function mergeConfig(array $config) : self
     {
-        $this->config = $this->config->mergeRecursive(collect($config));
+        $this->config = array_merge_deep($this->config, $config);
         return $this;
     }
 
@@ -289,6 +294,28 @@ class FieldType
         $this->classes = $this->classes->filter(function ($existing) use ($class) {
             return $existing != $class;
         });
+        return $this;
+    }
+
+    /**
+     * Gets the current placeholder
+     *
+     * @return string|null
+     */
+    public function getPlaceholder() : ?string
+    {
+        return $this->placeholder;
+    }
+
+    /**
+     * Set the placeholder
+     *
+     * @param string|null $placeholder
+     * @return this
+     */
+    public function setPlaceholder(?string $placeholder) : self
+    {
+        $this->placeholder = $placeholder;
         return $this;
     }
 }

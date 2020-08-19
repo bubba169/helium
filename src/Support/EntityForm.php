@@ -96,6 +96,10 @@ class EntityForm
                 $type->setOptions($field['options'] ?? []);
             }
 
+            if (isset($field['placeholder'])) {
+                $type->setOptions($field['placeholder'] ?? []);
+            }
+
             if ($this->instance) {
                 $type->setValue($this->instance->{$name});
             }

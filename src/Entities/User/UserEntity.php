@@ -31,15 +31,15 @@ class UserEntity extends Entity
     {
         $fields = parent::getFields();
 
-        $fields['page_id'] = array_merge(
-            $fields['page_id'],
+        return array_merge_deep(
+            $fields,
             [
-                'type' => SelectFieldType::class,
-                'options' => app()->make(PageRepository::class)->dropdownOptions(),
-                'label' => 'Page',
+                'page_id' => [
+                    'type' => SelectFieldType::class,
+                    'options' => app()->make(PageRepository::class)->dropdownOptions(),
+                    'label' => 'Page',
+                ]
             ]
         );
-
-        return $fields;
     }
 }

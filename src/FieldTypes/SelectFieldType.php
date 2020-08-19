@@ -11,6 +11,12 @@ class SelectFieldType extends FieldType
      */
     protected $options;
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setPlaceholder(trans('helium::input.select.placeholder'));
+    }
+
     /**
      * Gets the current options
      *
