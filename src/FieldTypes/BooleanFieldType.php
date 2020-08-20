@@ -4,11 +4,17 @@ use Helium\FieldTypes\FieldType;
 
 class BooleanFieldType extends FieldType
 {
-    protected $view = 'helium::input.boolean';
-
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         parent::__construct();
-        $this->addClass('checkbox');
+        $this->mergeConfig([
+            'class' => [
+                'checkbox',
+            ],
+            'view' => 'helium::input.boolean',
+        ]);
     }
 }

@@ -86,22 +86,10 @@ class EntityForm
     {
         return collect($fields)->mapWithKeys(function ($field, $name) {
             $type = app()->make($field['type'])
-                ->setId($field['id'] ?? null)
-                ->setName($field['name'] ?? null)
-                ->setLabel($field['label'] ?? null)
-                ->mergeAttributes($field['attributes'] ?? [])
-                ->mergeConfig($field['config'] ?? []);
-
-            if (isset($field['options'])) {
-                $type->setOptions($field['options'] ?? []);
-            }
-
-            if (isset($field['placeholder'])) {
-                $type->setOptions($field['placeholder'] ?? []);
-            }
+                ->mergeConfig($field);
 
             if ($this->instance) {
-                $type->setValue($this->instance->{$name});
+                $type->setConfig('value', $this->instance->{$name});
             }
 
             return [$name => $type];

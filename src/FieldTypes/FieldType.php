@@ -7,55 +7,25 @@ use Illuminate\Support\Collection;
 class FieldType
 {
     /**
-     * @var string
-     */
-    protected $id = '';
-
-    /**
-     * @var string
-     */
-    protected $name = '';
-
-    /**
-     * @var string
-     */
-    protected $label = '';
-
-    /**
-     * @var string|null
-     */
-    protected $value = null;
-
-    /**
      * @var array
      */
-    protected $config = [];
+    protected $config = [
+        'id' => null,
+        'name' => null,
+        'placeholder' => null,
+        'value' => null,
+        'label' => null,
+        'view' => 'helium::input.string',
+        'class' => [
+            'form-control',
+        ]
+    ];
 
     /**
-     * @var Collection
+     * Constructor
      */
-    protected $attributes;
-
-    /**
-     * @var string
-     */
-    protected $placeholder = null;
-
-    /**
-     * @var Collection
-     */
-    protected $classes;
-
-    /**
-     * @var string
-     */
-    protected $view = 'helium::input.string';
-
     public function __construct()
     {
-        // Create the empty collections
-        $this->classes = collect(['form-control']);
-        $this->attributes = collect([]);
     }
 
     /**
@@ -65,51 +35,32 @@ class FieldType
      */
     public function getValue() : ?string
     {
-        return $this->value;
-    }
-
-    /**
-     * Sets the value
-     *
-     * @param string|null $value
-     * @return this
-     */
-    public function setValue(?string $value) : self
-    {
-        $this->value = $value;
-        return $this;
+        return $this->getConfig('value');
     }
 
     /**
      * Get the whole config collection
      *
-     * @return array
+     * @param string $key THe array key using dot notation
+     * @return mixed
      */
-    public function getConfig() : array
+    public function getConfig(?string $key = null)
     {
+        if (!empty($key)) {
+            return Arr::get($this->config, $key);
+        }
         return $this->config;
     }
 
     /**
-     * Get one item from the config array using dot notation
-     *
-     * @param string $key The key to the config attribute
-     * @return mixed
-     */
-    public function getConfigAttribute(string $key)
-    {
-        return Arr::get($this->getConfig(), $key);
-    }
-
-    /**
-     * Sets the config array
+     * Sets an element of the array using dot notation
      *
      * @param array $config
      * @return this
      */
-    public function setConfig(array $config) : self
+    public function setConfig(string $key, $value) : self
     {
-        $this->config = $config;
+        Arr::set($this->config, $key, $value);
         return $this;
     }
 
@@ -132,7 +83,7 @@ class FieldType
      */
     public function getView() : string
     {
-        return $this->view;
+        return $this->getConfig('view');
     }
 
     /**
@@ -140,57 +91,20 @@ class FieldType
      *
      * @return Collection
      */
-    public function getAttributes() : Collection
+    public function getAttributes() : array
     {
-        return $this->attributes;
+        return $this->getConfig('attributes');
     }
 
     /**
      * Gets a single attribute
      *
      * @param string $key The key to the attribute
-     * @return mixed
+     * @return string|null
      */
-    public function getAttribute(string $key)
+    public function getAttribute(string $key) : ?string
     {
-        return $this->getAttributes()->get($key, null);
-    }
-
-    /**
-     * Gets the HTML attributes for the field type
-     *
-     * @param array $attributes
-     * @return this
-     */
-    public function setAttributes(array $attributes) : self
-    {
-        $this->attributes = collect($attributes);
-        return $this;
-    }
-
-    /**
-     * Sets a HTML attributes for the field type
-     *
-     * @param string $key
-     * @param string $value
-     * @return this
-     */
-    public function setAttribute(string $key, string $value) : self
-    {
-        $this->getAttributes()->put($key, $value);
-        return $this;
-    }
-
-    /**
-     * Merges  HTML attributes into the current collection
-     *
-     * @param array $attributes
-     * @return this
-     */
-    public function mergeAttributes(array $attributes) : self
-    {
-        $this->attributes = $this->getAttributes()->mergeRecursive(collect($attributes));
-        return $this;
+        return Arr::get($this->getAttributes(), $key);
     }
 
     /**
@@ -200,19 +114,7 @@ class FieldType
      */
     public function getId() : string
     {
-        return $this->id ?? $this->name;
-    }
-
-    /**
-     * Gets the field ID
-     *
-     * @param string|null $id
-     * @return this
-     */
-    public function setId(?string $id) : self
-    {
-        $this->id = $id;
-        return $this;
+        return $this->getConfig('id') ?? $this->getConfig('name');
     }
 
     /**
@@ -222,19 +124,7 @@ class FieldType
      */
     public function getName() : string
     {
-        return $this->name ?? $this->id;
-    }
-
-    /**
-     * Gets the field name
-     *
-     * @param string|null $name
-     * @return this
-     */
-    public function setName(?string $name) : self
-    {
-        $this->name = $name;
-        return $this;
+        return $this->getConfig('name') ?? $this->getConfig('id');
     }
 
     /**
@@ -244,57 +134,19 @@ class FieldType
      */
     public function getLabel() : string
     {
-        return $this->label ??
-            Str::title(str_replace('_', ' ', $this->name)) ??
-            Str::title(str_replace('_', ' ', $this->id));
-    }
-
-    /**
-     * Gets the field label
-     *
-     * @param string|null $id
-     * @return this
-     */
-    public function setLabel(?string $label) : self
-    {
-        $this->label = $label;
-        return $this;
+        return $this->getConfig('label') ??
+            Str::title(str_replace('_', ' ', $this->getConfig('name'))) ??
+            Str::title(str_replace('_', ' ', $this->getConfig('id')));
     }
 
     /**
      * Gets the list of classes to apply to the control
      *
-     * @return Collection
+     * @return string
      */
-    public function getClasses() : Collection
+    public function getClassList() : string
     {
-        return $this->classes;
-    }
-
-    /**
-     * Adds a class to the list
-     *
-     * @param string $class
-     * @return self
-     */
-    public function addClass(string $class) : self
-    {
-        $this->classes->push($class);
-        return $this;
-    }
-
-    /**
-     * Adds a class to the list
-     *
-     * @param string $class
-     * @return self
-     */
-    public function removeClass(string $class) : self
-    {
-        $this->classes = $this->classes->filter(function ($existing) use ($class) {
-            return $existing != $class;
-        });
-        return $this;
+        return implode(' ', $this->getConfig('class'));
     }
 
     /**
@@ -304,18 +156,7 @@ class FieldType
      */
     public function getPlaceholder() : ?string
     {
-        return $this->placeholder;
+        return $this->getConfig('placeholder');
     }
 
-    /**
-     * Set the placeholder
-     *
-     * @param string|null $placeholder
-     * @return this
-     */
-    public function setPlaceholder(?string $placeholder) : self
-    {
-        $this->placeholder = $placeholder;
-        return $this;
-    }
 }

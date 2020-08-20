@@ -2,5 +2,14 @@
 
 class ReadOnlyTextFieldType extends FieldType
 {
-    protected $view = 'helium::input.read_only_text';
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->mergeConfig([
+            'view' => 'helium::input.read_only_text',
+        ]);
+    }
 }

@@ -4,12 +4,12 @@ use Helium\FieldTypes\FieldType;
 
 class DateTimeFieldType extends FieldType
 {
-    protected $view = 'helium::input.date';
-
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         parent::__construct();
-
         $this->mergeConfig([
             'flatpickr' => [
                 'enableTime' => true,
@@ -18,9 +18,12 @@ class DateTimeFieldType extends FieldType
                 'altInput' => true,
                 'altFormat' => 'J F Y H:i:S',
                 'dateFormat' => 'Y-m-d H:i:S',
-            ]
+            ],
+            'class' => [
+                'flatpickr',
+            ],
+            'placeholder' => trans('helium::input.datetime.placeholder'),
+            'view' => 'helium::input.date',
         ]);
-        $this->addClass('flatpickr');
-        $this->setPlaceholder(trans('helium::input.datetime.placeholder'));
     }
 }

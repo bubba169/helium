@@ -4,5 +4,14 @@ use Helium\FieldTypes\FieldType;
 
 class HtmlFieldType extends FieldType
 {
-    protected $view = 'helium::input.html';
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->mergeConfig([
+            'view' => 'helium::input.html',
+        ]);
+    }
 }

@@ -43,7 +43,6 @@ class TableReader
                     'type' => $this->getFieldTypeForColumn($column),
                     'attributes' => $this->getFieldAttributesForColumn($column),
                     'rules' => $this->getRulesForColumn($column),
-                    'config' => [],
                 ];
             },
             $columns

@@ -4,38 +4,25 @@ use Illuminate\Support\Collection;
 
 class SelectFieldType extends FieldType
 {
-    protected $view = 'helium::input.select';
-
     /**
-     * @var Collection|string
+     * Constructor
      */
-    protected $options;
-
     public function __construct()
     {
         parent::__construct();
-        $this->setPlaceholder(trans('helium::input.select.placeholder'));
+        $this->mergeConfig([
+            'view' => 'helium::input.select',
+            'placeholder' => trans('helium::input.select.placeholder'),
+        ]);
     }
 
     /**
      * Gets the current options
      *
-     * @return Collection
+     * @return array
      */
-    public function getOptions() : Collection
+    public function getOptions() : array
     {
-        return $this->options;
-    }
-
-    /**
-     * Sets the options. They should be in a [value => name] format
-     *
-     * @param array $options
-     * @return self
-     */
-    public function setOptions(array $options) : self
-    {
-        $this->options = collect($options);
-        return $this;
+        return $this->getConfig('options');
     }
 }
