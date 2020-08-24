@@ -10,12 +10,6 @@ class FieldType
      * @var array
      */
     protected $config = [
-        'id' => null,
-        'name' => null,
-        'placeholder' => null,
-        'value' => null,
-        'label' => null,
-        'view' => 'helium::input.string',
         'class' => [
             'form-control',
         ]
@@ -44,10 +38,10 @@ class FieldType
      * @param string $key THe array key using dot notation
      * @return mixed
      */
-    public function getConfig(?string $key = null)
+    public function getConfig(?string $key = null, $default = null)
     {
         if (!empty($key)) {
-            return Arr::get($this->config, $key);
+            return Arr::get($this->config, $key, $default);
         }
         return $this->config;
     }
@@ -83,7 +77,7 @@ class FieldType
      */
     public function getView() : string
     {
-        return $this->getConfig('view');
+        return $this->getConfig('view', 'helium::input.string');
     }
 
     /**
@@ -93,7 +87,7 @@ class FieldType
      */
     public function getAttributes() : array
     {
-        return $this->getConfig('attributes');
+        return $this->getConfig('attributes', []);
     }
 
     /**
@@ -102,9 +96,9 @@ class FieldType
      * @param string $key The key to the attribute
      * @return string|null
      */
-    public function getAttribute(string $key) : ?string
+    public function getAttribute(string $key, $default = null) : ?string
     {
-        return Arr::get($this->getAttributes(), $key);
+        return Arr::get($this->getAttributes(), $key, $default);
     }
 
     /**
@@ -146,7 +140,7 @@ class FieldType
      */
     public function getClassList() : string
     {
-        return implode(' ', $this->getConfig('class'));
+        return implode(' ', $this->getConfig('class', []));
     }
 
     /**
@@ -158,5 +152,4 @@ class FieldType
     {
         return $this->getConfig('placeholder');
     }
-
 }

@@ -1,8 +1,9 @@
 <?php namespace Helium\Support;
 
-use Helium\Support\EntityForm;
-use Helium\Support\EntityTable;
+use Helium\Form\FormBuilder;
 use Helium\Database\TableReader;
+use Helium\Form\FormHandler;
+use Helium\Support\Table\TableBuilder;
 use Illuminate\Support\Collection;
 use Helium\Support\EntityRepository;
 
@@ -11,12 +12,17 @@ class Entity
     /**
      * @var string
      */
-    protected $formClass = EntityForm::class;
+    protected $formBuilderClass = FormBuilder::class;
 
     /**
      * @var string
      */
-    protected $tableClass = EntityTable::class;
+    protected $formHandlerClass = FormHandler::class;
+
+    /**
+     * @var string
+     */
+    protected $tableBuilderClass = TableBuilder::class;
 
     /**
      * @var string
@@ -24,14 +30,19 @@ class Entity
     protected $repositoryClass = EntityRepository::class;
 
     /**
-     * @var EntityForm
+     * @var FormBuilder
      */
-    protected $form = null;
+    protected $formBuilder = null;
 
     /**
-     * @var EntityTable
+     * @var FormHandler
      */
-    protected $table = null;
+    protected $formHandler = null;
+
+    /**
+     * @var TableBuilder
+     */
+    protected $tableBuilder = null;
 
     /**
      * @var EntityRepository
@@ -46,12 +57,23 @@ class Entity
     /**
      * Gets the form builder
      *
-     * @return EntityForm
+     * @return FormBuilder
      */
-    public function getForm() : EntityForm
+    public function getFormBuilder() : FormBuilder
     {
-        return $this->form ??
-            ($this->form = app()->makeWith($this->formClass, ['entity' => $this]));
+        return $this->formBuilder ??
+            ($this->formBuilder = app()->makeWith($this->formBuilderClass, ['entity' => $this]));
+    }
+
+    /**
+     * Gets the form handler
+     *
+     * @return FormHandler
+     */
+    public function getFormHandler() : FormHandler
+    {
+        return $this->formHandler ??
+            ($this->formHandler = app()->makeWith($this->formHandlerClass, ['entity' => $this]));
     }
 
     /**
@@ -59,10 +81,10 @@ class Entity
      *
      * @return EntityTable
      */
-    public function getTable() : EntityTable
+    public function getTableBuilder() : TableBuilder
     {
-        return $this->table ??
-            ($this->table = app()->makeWith($this->tableClass, ['entity' => $this]));
+        return $this->tableBuilder ??
+            ($this->tableBuilder = app()->makeWith($this->tableBuilderClass, ['entity' => $this]));
     }
 
     /**

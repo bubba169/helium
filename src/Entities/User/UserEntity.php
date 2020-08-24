@@ -1,10 +1,10 @@
 <?php namespace Helium\Entities\User;
 
 use Helium\Support\Entity;
-use Helium\Entities\User\UserForm;
-use Helium\Entities\User\UserTable;
-use Helium\FieldTypes\SelectFieldType;
+use Helium\Entities\User\Form\UserFormHandler;
 use Helium\Entities\Page\PageRepository;
+use Helium\Entities\User\Form\UserFormBuilder;
+use Helium\Entities\User\Table\UserTableBuilder;
 use Helium\Entities\User\UserRepository;
 
 class UserEntity extends Entity
@@ -12,12 +12,12 @@ class UserEntity extends Entity
     /**
      * {@inheritDoc}
      */
-    protected $formClass = UserForm::class;
+    protected $formBuilderClass = UserFormBuilder::class;
 
     /**
      * {@inheritDoc}
      */
-    protected $tableClass = UserTable::class;
+    protected $tableClass = UserTableBuilder::class;
 
     /**
      * {@inheritDoc}
@@ -27,19 +27,29 @@ class UserEntity extends Entity
     /**
      * {@inheritDoc}
      */
+    protected $formHandlerClass = UserFormHandler::class;
+
+    /**
+     * {@inheritDoc}
+     */
     public function getFields() : array
     {
         $fields = parent::getFields();
 
-        $fields['page_id'] = array_merge(
-            $fields['page_id'],
+        return array_merge_deep(
+            $fields,
             [
-                'type' => SelectFieldType::class,
-                'options' => app()->make(PageRepository::class)->dropdownOptions(),
-                'label' => 'Page',
+                'page_id' => [
+                    'type' => 'select',
+                    'options' => app()->make(PageRepository::class)->dropdownOptions(),
+                    'rules' => [
+                        'required'
+                    ],
+                    'messages' => [
+                        'required' => 'Thou must select'
+                    ]
+                ],
             ]
         );
-
-        return $fields;
     }
 }

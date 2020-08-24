@@ -20,6 +20,7 @@ return [
             'datetime' => \Helium\FieldTypes\DateTimeFieldType::class,
             'datetime_immutable' => \Helium\FieldTypes\DateTimeFieldType::class,
             'text' => \Helium\FieldTypes\HtmlFieldType::class,
+            'select' => \Helium\FieldTypes\SelectFieldType::class,
         ]
     ]
 ];

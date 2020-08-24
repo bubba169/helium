@@ -99,4 +99,32 @@ class EntityRepository
     {
         return $this->model->pluck($this->getDisplayField(), 'id')->toArray();
     }
+
+    /**
+     * Saves the data
+     *
+     * @param array $data
+     * @return bool
+     */
+    public function save(array $data) : bool
+    {
+        $model = $this->model->firstOrNew([
+            'id' => $data['id']
+        ]);
+
+        foreach ($this->entity->getFields() as $field) {
+            if (isset($data[$field['name']])) {
+                $value = $data[$field['name']];
+
+                if ($field['type'] == 'boolean') {
+                    $value = !empty($value);
+                }
+
+                $model->{$field['name']} = $value;
+            }
+        }
+
+        $model->save();
+        return true;
+    }
 }

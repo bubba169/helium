@@ -5,6 +5,6 @@
 
     <input
         {% include "helium::input.common.attributes" %}
-        value="{{ old(field.name, field.getAttribute('type') != 'password' ? field.value) }}"
+        value="{{ field.getAttribute('type') != 'password' ? field.value }}"
     >
 </div>

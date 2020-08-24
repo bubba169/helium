@@ -1,9 +1,9 @@
-<?php namespace Helium\Entities\User;
+<?php namespace Helium\Entities\User\Table;
 
-use Helium\Support\EntityForm;
 use Helium\Entities\User\UserEntity;
+use Helium\Support\Table\TableBuilder;
 
-class UserForm extends EntityForm
+class UserTableBuilder extends TableBuilder
 {
     /**
      * Construct

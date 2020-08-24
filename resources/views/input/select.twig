@@ -11,7 +11,7 @@
         {% for value,name in field.options %}
             <option
                 value="{{ value }}"
-                {{ old(field.name, field.value) ? 'selected' }}
+                {{ field.value == value ? 'selected' }}
             >
                 {{ name }}
             </option>

@@ -1,9 +1,9 @@
-<?php namespace Helium\Entities\User;
+<?php namespace Helium\Entities\User\Form;
 
-use Helium\Support\EntityTable;
+use Helium\Form\FormBuilder;
 use Helium\Entities\User\UserEntity;
 
-class UserTable extends EntityTable
+class UserFormBuilder extends FormBuilder
 {
     /**
      * Construct
@@ -13,5 +13,7 @@ class UserTable extends EntityTable
     public function __construct(UserEntity $entity)
     {
         parent::__construct($entity);
+
+        $this->skip[] = 'remember_token';
     }
 }

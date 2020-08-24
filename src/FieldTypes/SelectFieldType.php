@@ -23,6 +23,6 @@ class SelectFieldType extends FieldType
      */
     public function getOptions() : array
     {
-        return $this->getConfig('options');
+        return $this->getConfig('options', []);
     }
 }

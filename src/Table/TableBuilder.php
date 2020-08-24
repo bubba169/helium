@@ -1,8 +1,8 @@
-<?php namespace Helium\Support;
+<?php namespace Helium\Support\Table;
 
 use Helium\Support\Entity;
 
-class EntityTable
+class TableBuilder
 {
     /**
      * @var Entity

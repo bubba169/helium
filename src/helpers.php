@@ -2,7 +2,7 @@
 
 /**
  * Deep merges multiple arrays. String keys will be overwritten unless the
- * value is an array in which case the values will also be deep merged. 
+ * value is an array in which case the values will also be deep merged.
  * Any integer keys will be appended to the original instead
  *
  * @param array ...$arrays
