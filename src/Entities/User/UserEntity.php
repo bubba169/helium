@@ -40,13 +40,29 @@ class UserEntity extends Entity
             $fields,
             [
                 'page_id' => [
-                    'type' => 'select',
-                    'options' => app()->make(PageRepository::class)->dropdownOptions(),
+                    'type' => 'multiple',
+                    'related' => 'pages',
+                    //'relationship' => 'pages',
                     'rules' => [
                         'required'
                     ],
                     'messages' => [
                         'required' => 'Thou must select'
+                    ]
+                ],
+                'pages' => [
+                    'name' => 'pages',
+                    'type' => 'multiple',
+                    'related' => 'pages',
+                    'relationship' => 'pages',
+                    'rules' => [
+                        'required'
+                    ],
+                    'messages' => [
+                        'required' => 'Thou must select'
+                    ],
+                    'config' => [
+                        'name' => 'pages'
                     ]
                 ],
             ]

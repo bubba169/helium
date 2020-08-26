@@ -3,14 +3,18 @@
 use Helium\Form\Form;
 use Helium\Support\Entity;
 use Illuminate\Support\Arr;
+use Helium\Commands\GetEntity;
 use Helium\FieldTypes\FieldType;
 use Illuminate\Support\Collection;
 use Helium\FieldTypes\StringFieldType;
 use Illuminate\Database\Eloquent\Model;
 use Helium\FieldTypes\ReadOnlyTextFieldType;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class FormBuilder
 {
+    use DispatchesJobs;
+
     /**
      * @var Entity
      */
@@ -116,7 +120,15 @@ class FormBuilder
             // Appl any default configuration
             ->mergeConfig(['attributes' => $this->getDefaultFieldAttributes($entityField)])
             // Override with any
-            ->mergeConfig($entityField);
+            ->mergeConfig($entityField['config']);
+
+        if (in_array($entityField['type'], ['relationship', 'multiple'])) {
+            $field->setConfig('options', $this->buildRelationshipOptions($entityField));
+        }
+
+        if (in_array($entityField['type'], ['multiple'])) {
+            $field->setConfig('name', $field->getName() . '[]');
+        }
 
         $this->setFieldValue($field, $entityField);
 
@@ -221,5 +233,17 @@ class FormBuilder
         }
 
         return $attributes;
+    }
+
+    /**
+     * Builds options for relationships
+     *
+     * @param array $entityField
+     * @return array
+     */
+    protected function buildRelationshipOptions(array $entityField) : array
+    {
+        $relatedEntity = $this->dispatchNow(new GetEntity($entityField['related']));
+        return $relatedEntity->getRepository()->dropdownOptions();
     }
 }

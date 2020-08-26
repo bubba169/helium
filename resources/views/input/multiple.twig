@@ -2,7 +2,8 @@
     {% if field.getAttribute('type') != hidden %}
         {% include "helium::input.common.label" %}
     {% endif %}
-    <select {% include "helium::input.common.attributes" %}>
+
+    <select {% include "helium::input.common.attributes" %} multiple>
         {% if (field.getAttribute('required') is empty) %}
             <option value="">{{ field.placeholder }}</option>
         {% endif %}

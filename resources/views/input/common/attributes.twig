@@ -4,5 +4,9 @@ class="{{ field.classList }}"
 placeholder="{{ field.placeholder }}"
 
 {% for attribute,value in field.attributes %}
-    {{ attribute }}="{{ value }}"
+    {% if value is same as(true) %}
+        {{ attribute }}
+    {% else %}
+        {{ attribute }}="{{ value }}"
+    {% endif %}
 {% endfor %}

@@ -120,6 +120,16 @@ class EntityRepository
                     $value = !empty($value);
                 }
 
+                if ($field['type'] == 'multiple') {
+                    if (isset($field['relationship'])) {
+                        // Handle saving through the relationship instead
+                        $model->{$field['relationship']}()->sync($value);
+                        continue;
+                    } else {
+                        $value = json_encode($value);
+                    }
+                }
+
                 $model->{$field['name']} = $value;
             }
         }

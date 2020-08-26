@@ -108,7 +108,7 @@ class FieldType
      */
     public function getId() : string
     {
-        return $this->getConfig('id') ?? $this->getConfig('name');
+        return $this->getConfig('id') ?? str_replace('[]', '', $this->getConfig('name'));
     }
 
     /**
@@ -118,7 +118,7 @@ class FieldType
      */
     public function getName() : string
     {
-        return $this->getConfig('name') ?? $this->getConfig('id');
+        return $this->getConfig('name');
     }
 
     /**
@@ -129,7 +129,7 @@ class FieldType
     public function getLabel() : string
     {
         return $this->getConfig('label') ??
-            Str::title(str_replace('_', ' ', $this->getConfig('name'))) ??
+            Str::title(str_replace(['_', '[]'], [' ', ''], $this->getConfig('name'))) ??
             Str::title(str_replace('_', ' ', $this->getConfig('id')));
     }
 

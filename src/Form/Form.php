@@ -1,7 +1,6 @@
 <?php namespace Helium\Form;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
 
 class Form
 {
