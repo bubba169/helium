@@ -122,12 +122,9 @@ class FormBuilder
             // Override with any
             ->mergeConfig($entityField['config']);
 
-        if (in_array($entityField['type'], ['relationship', 'multiple'])) {
-            $field->setConfig('options', $this->buildRelationshipOptions($entityField));
-        }
-
-        if (in_array($entityField['type'], ['multiple'])) {
-            $field->setConfig('name', $field->getName() . '[]');
+        // If options is a string it'll either be an entity type or a handler class
+        if (is_string(Arr::get($entityField, 'options'))) {
+            $field->setConfig('options', $this->buildFieldOptions($entityField));
         }
 
         $this->setFieldValue($field, $entityField);
@@ -143,13 +140,20 @@ class FormBuilder
      */
     protected function setFieldValue(FieldType $field, array $entityField) : void
     {
-        $field->setConfig(
-            'value',
-            request()->old(
-                $field->getName(),
-                $this->instance->{$field->getName()} ?? Arr::get($entityField, 'default')
-            )
-        );
+        $relationship = Arr::get($entityField, 'relationship');
+        $name = Arr::get($entityField, 'name');
+        $old = request()->old();
+
+        if (array_key_exists($name, $old)) {
+            dump('Using old value for ' . $name);
+            $value = $old[$name];
+        } elseif ($relationship) {
+            $value = $this->instance->{$relationship}->pluck('id');
+        } else {
+            $value = $this->instance->{$name};
+        }
+
+        $field->setConfig('value', $value);
     }
 
     /**
@@ -241,9 +245,31 @@ class FormBuilder
      * @param array $entityField
      * @return array
      */
-    protected function buildRelationshipOptions(array $entityField) : array
+    protected function buildFieldOptions(array $entityField) : array
     {
-        $relatedEntity = $this->dispatchNow(new GetEntity($entityField['related']));
-        return $relatedEntity->getRepository()->dropdownOptions();
+        // If the string matches an entity slug get the options from the entity repository
+        if ($entityClass = config('helium.entities.' . $entityField['options'])) {
+            if (class_exists($entityClass)) {
+                return app()->make($entityClass)->getRepository()->dropdownOptions();
+            }
+            return [];
+        // If the string is a callable class call it and return the options
+        } elseif (class_exists(explode('@', $entityField['options'])[0])) {
+            return app()->call($entityField['options'], ['field' => $entityField]);
+        // If the string is a colon separated list e.g. "1:Option 1;2:Option 2;"
+        } elseif (str_contains($entityField['options'], ':')) {
+            return array_reduce(
+                explode(';', trim($entityField['options'], ';: ')),
+                function ($options, $item) {
+                    $parts = explode(':', $item);
+                    $options[$parts[0]] = $parts[1];
+                    return $options;
+                },
+                []
+            );
+        }
+
+        // Just return the string as the only option
+        return [$entityField['options']];
     }
 }

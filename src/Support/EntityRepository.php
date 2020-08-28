@@ -113,7 +113,7 @@ class EntityRepository
         ]);
 
         foreach ($this->entity->getFields() as $field) {
-            if (isset($data[$field['name']])) {
+            if (array_key_exists($field['name'], $data)) {
                 $value = $data[$field['name']];
 
                 if ($field['type'] == 'boolean') {
@@ -123,7 +123,7 @@ class EntityRepository
                 if ($field['type'] == 'multiple') {
                     if (isset($field['relationship'])) {
                         // Handle saving through the relationship instead
-                        $model->{$field['relationship']}()->sync($value);
+                        $model->{$field['relationship']}()->sync($value ?? []);
                         continue;
                     } else {
                         $value = json_encode($value);

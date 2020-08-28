@@ -1,8 +1,8 @@
 <div class="form-group">
+    <input name="{{ field.fieldName }}" value="" type="hidden"/>
     {% if field.getAttribute('type') != hidden %}
         {% include "helium::input.common.label" %}
     {% endif %}
-
     <select {% include "helium::input.common.attributes" %} multiple>
         {% if (field.getAttribute('required') is empty) %}
             <option value="">{{ field.placeholder }}</option>
@@ -11,7 +11,7 @@
         {% for value,name in field.options %}
             <option
                 value="{{ value }}"
-                {{ field.value == value ? 'selected' }}
+                {{ value in field.value ? 'selected' }}
             >
                 {{ name }}
             </option>

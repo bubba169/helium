@@ -41,8 +41,7 @@ class UserEntity extends Entity
             [
                 'page_id' => [
                     'type' => 'multiple',
-                    'related' => 'pages',
-                    //'relationship' => 'pages',
+                    'options' => 'pages',
                     'rules' => [
                         'required'
                     ],
@@ -53,7 +52,7 @@ class UserEntity extends Entity
                 'pages' => [
                     'name' => 'pages',
                     'type' => 'multiple',
-                    'related' => 'pages',
+                    'options' => 'pages',
                     'relationship' => 'pages',
                     'rules' => [
                         'required'

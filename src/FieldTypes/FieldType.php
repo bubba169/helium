@@ -25,9 +25,9 @@ class FieldType
     /**
      * Gets the current value
      *
-     * @return string|null
+     * @return mixed
      */
-    public function getValue() : ?string
+    public function getValue()
     {
         return $this->getConfig('value');
     }
@@ -108,7 +108,7 @@ class FieldType
      */
     public function getId() : string
     {
-        return $this->getConfig('id') ?? str_replace('[]', '', $this->getConfig('name'));
+        return $this->getConfig('id') ?? $this->getConfig('name');
     }
 
     /**
@@ -129,7 +129,7 @@ class FieldType
     public function getLabel() : string
     {
         return $this->getConfig('label') ??
-            Str::title(str_replace(['_', '[]'], [' ', ''], $this->getConfig('name'))) ??
+            Str::title(str_replace('_', ' ', $this->getConfig('name'))) ??
             Str::title(str_replace('_', ' ', $this->getConfig('id')));
     }
 
