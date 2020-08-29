@@ -6,6 +6,28 @@ use Helium\Entities\User\UserEntity;
 class UserFormBuilder extends FormBuilder
 {
     /**
+     * Form sections
+     *
+     * @var array
+     */
+    protected $sections = [
+        'user' => [
+            'label' => 'User',
+            'fields' => [
+                'id',
+                'name',
+                'email'
+            ]
+        ],
+        'password' => [
+            'label' => 'Password',
+            'fields' => [
+                'password',
+            ]
+        ]
+    ];
+
+    /**
      * Construct
      *
      * @param UserEntity $entity

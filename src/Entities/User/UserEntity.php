@@ -39,23 +39,13 @@ class UserEntity extends Entity
         return array_merge_deep(
             $fields,
             [
-                'page_id' => [
-                    'type' => 'multiple',
-                    'options' => 'pages',
-                    'rules' => [
-                        'required'
-                    ],
-                    'messages' => [
-                        'required' => 'Thou must select'
-                    ]
-                ],
                 'pages' => [
                     'name' => 'pages',
                     'type' => 'multiple',
                     'options' => 'pages',
                     'relationship' => 'pages',
                     'rules' => [
-                        'required'
+                        'required|sometimes'
                     ],
                     'messages' => [
                         'required' => 'Thou must select'

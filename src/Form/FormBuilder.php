@@ -3,7 +3,6 @@
 use Helium\Form\Form;
 use Helium\Support\Entity;
 use Illuminate\Support\Arr;
-use Helium\Commands\GetEntity;
 use Helium\FieldTypes\FieldType;
 use Illuminate\Support\Collection;
 use Helium\FieldTypes\StringFieldType;
@@ -31,6 +30,13 @@ class FormBuilder
      * @param array $skip
      */
     protected $skip = [];
+
+    /**
+     * Sets the layout of the form elements
+     *
+     * @var array
+     */
+    protected $sections = [];
 
     /**
      * These fields will be rendered as plain text instead of being editable
@@ -86,7 +92,8 @@ class FormBuilder
         $fields = $this->entity->getFields();
 
         return app()->make(Form::class)
-            ->setFields($this->buildFields($fields, $instance));
+            ->setFields($this->buildFields($fields, $instance))
+            ->setSections($this->getSections());
     }
 
     /**
@@ -145,7 +152,6 @@ class FormBuilder
         $old = request()->old();
 
         if (array_key_exists($name, $old)) {
-            dump('Using old value for ' . $name);
             $value = $old[$name];
         } elseif ($relationship) {
             $value = $this->instance->{$relationship}->pluck('id');
@@ -271,5 +277,15 @@ class FormBuilder
 
         // Just return the string as the only option
         return [$entityField['options']];
+    }
+
+    /**
+     * Gets the form layout
+     *
+     * @return array
+     */
+    protected function getSections()
+    {
+        return $this->sections;
     }
 }

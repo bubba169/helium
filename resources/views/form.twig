@@ -20,16 +20,36 @@
     </div>
 {% endif %}
 
-<div class="row">
-    <div class="col">
-        <form method='POST'>
-            {{ csrf_field() }}
+<form method='POST'>
+    {{ csrf_field() }}
+    {% if form.sections is not empty %}
+        <div class="nav nav-tabs" role="tablist" aria-orientation="vertical">
+            {% for key,section in form.sections %}
+                <a class="nav-item nav-link {{ loop.first ? 'active' }}" id="{{ key }}-tab" href="#{{ key }}" role="tab" aria-controls="{{ key }}" data-toggle="tab">{{ section.label }}</a>
+            {% endfor %}
+        </div>
+        <div class="tab-content mt-4">
+            {% for key,section in form.sections %}
+                <div class="tab-pane {{ loop.first ? 'show active' }}" id="{{key}}" role="tabpanel" aria-labelledby="{{ key }}-tab">
+                    {% for fieldName in section.fields %}
+                        {% include form.fields[fieldName].view with {field: form.fields[fieldName]} %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div>
             {% for field in form.fields %}
                 {% include field.view with {field: field} %}
             {% endfor %}
-            <button type="submit">Submit</button>
-        </form>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-auto">
+            <button type="submit">Save</button>
+        </div
     </div>
-</div>
+</form>
 {% endblock %}
 

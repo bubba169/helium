@@ -12,6 +12,13 @@ class Form
     protected $fields;
 
     /**
+     * Sections
+     *
+     * @var array
+     */
+    protected $sections = [];
+
+    /**
      * Gets the fields
      *
      * @return Collection
@@ -30,6 +37,28 @@ class Form
     public function setFields(Collection $fields) : self
     {
         $this->fields = $fields;
+        return $this;
+    }
+
+    /**
+     * Gets the form sections
+     *
+     * @return array
+     */
+    public function getSections() : array
+    {
+        return $this->sections;
+    }
+
+    /**
+     * Sets the form sections
+     *
+     * @param array $sections
+     * @return this
+     */
+    public function setSections(array $sections) : self
+    {
+        $this->sections = $sections;
         return $this;
     }
 }
