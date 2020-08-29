@@ -19,6 +19,12 @@ class UserFormBuilder extends FormBuilder
                 'email'
             ]
         ],
+        'pages' => [
+            'label' => 'Pages',
+            'fields' => [
+                'pages',
+            ]
+        ],
         'password' => [
             'label' => 'Password',
             'fields' => [

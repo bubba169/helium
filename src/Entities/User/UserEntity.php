@@ -45,7 +45,8 @@ class UserEntity extends Entity
                     'options' => 'pages',
                     'relationship' => 'pages',
                     'rules' => [
-                        'required|sometimes'
+                        'required',
+                        'sometimes'
                     ],
                     'messages' => [
                         'required' => 'Thou must select'
@@ -54,6 +55,12 @@ class UserEntity extends Entity
                         'name' => 'pages'
                     ]
                 ],
+                'email' => [
+                    'rules' => [
+                        'required',
+                        'sometimes'
+                    ]
+                ]
             ]
         );
     }

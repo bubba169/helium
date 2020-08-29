@@ -1,0 +1,6 @@
+{% if app.session.has('message') %}
+    {% set message = app.session.get('message') %}
+    <div class="alert alert-{{ message.type }}">
+        {{ message.message }}
+    </div>
+{% endif %}
