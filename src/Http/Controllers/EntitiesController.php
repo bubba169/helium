@@ -57,7 +57,7 @@ class EntitiesController extends Controller
      * @return Entity
      */
     protected function getEntity(string $slug) : Entity {
-        $entityClass = config('helium.entities.' . $this->slug);
+        $entityClass = config('helium.entities.' . $slug);
 
         if (!$entityClass || !class_exists($entityClass)) {
             throw new NotFoundHttpException();

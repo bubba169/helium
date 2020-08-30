@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Hash;
 
 class UserFormHandler extends FormHandler
 {
+    protected $rules = [
+        'email' => [
+            'required'
+        ]
+    ];
+
     /**
      * Constructor
      *

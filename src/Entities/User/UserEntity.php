@@ -44,23 +44,10 @@ class UserEntity extends Entity
                     'type' => 'multiple',
                     'options' => 'pages',
                     'relationship' => 'pages',
-                    'rules' => [
-                        'required',
-                        'sometimes'
-                    ],
-                    'messages' => [
-                        'required' => 'Thou must select'
-                    ],
                     'config' => [
                         'name' => 'pages'
                     ]
                 ],
-                'email' => [
-                    'rules' => [
-                        'required',
-                        'sometimes'
-                    ]
-                ]
             ]
         );
     }

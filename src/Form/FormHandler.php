@@ -1,7 +1,6 @@
 <?php namespace Helium\Form;
 
 use Helium\Support\Entity;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
 class FormHandler
@@ -10,6 +9,20 @@ class FormHandler
      * @var Entity
      */
     protected $entity = null;
+
+    /**
+     * Rules to validate the form
+     *
+     * @var array
+     */
+    protected $rules = [];
+
+    /**
+     * Custom messages for validation
+     *
+     * @var array
+     */
+    protected $messages = [];
 
     /**
      * Construct
@@ -59,14 +72,14 @@ class FormHandler
      */
     protected function buildRules(array $fields) : array
     {
-        return array_map(
-            function ($field) {
-                return array_merge_deep(
-                    $this->getDefaultFieldRules($field),
-                    Arr::get($field, 'rules', [])
-                );
-            },
-            $fields
+        return array_merge_deep(
+            array_map(
+                function ($field) {
+                    return $this->getDefaultFieldRules($field);
+                },
+                $fields
+            ),
+            $this->rules
         );
     }
 
@@ -99,15 +112,6 @@ class FormHandler
      */
     protected function buildMessages(array $fields) : array
     {
-        return Arr::dot(
-            array_filter(
-                array_map(
-                    function ($field) {
-                        return Arr::get($field, 'messages', []);
-                    },
-                    $fields
-                )
-            )
-        );
+        return $this->messages;
     }
 }

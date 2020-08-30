@@ -22,7 +22,6 @@ return [
             'datetime_immutable' => \Helium\FieldTypes\DateTimeFieldType::class,
             'text' => \Helium\FieldTypes\HtmlFieldType::class,
             'select' => \Helium\FieldTypes\SelectFieldType::class,
-            'relationship' => \Helium\FieldTypes\SelectFieldType::class,
             'multiple' => \Helium\FieldTypes\MultipleFieldType::class,
         ]
     ]
