@@ -1,6 +1,6 @@
 <?php
 
-Route::prefix('/admin/manage')
+Route::prefix('/admin')
     ->namespace('Helium\\Http\\Controllers')
     ->middleware('web', 'auth')
     ->group(function () {

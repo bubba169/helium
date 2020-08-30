@@ -1,37 +1,34 @@
 <?php namespace Helium\Http\Controllers;
 
+use Helium\Support\Entity;
 use Illuminate\Http\Request;
-use Helium\Commands\GetEntity;
 use App\Http\Controllers\Controller;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntitiesController extends Controller
 {
 
-/**
- * Lists entities using a table builder
- *
- * @return void
- */
+    /**
+     * Lists entities using a table builder
+     *
+     * @return void
+     */
     public function index(string $entityType)
     {
-        $entity = $this->dispatchNow(new GetEntity($entityType));
+        $entity = $this->getEntity($entityType);
         dd('index');
     }
 
-/**
- * Edit an entity using a form builder
- *
- * @param string $entity The entity type
- * @param int $id The entity id
- * @return void
- */
+    /**
+     * Edit an entity using a form builder
+     *
+     * @param string $entity The entity type
+     * @param int $id The entity id
+     * @return void
+     */
     public function edit(Request $request, string $entityType, int $id)
     {
-        $entity = $this->dispatchNow(new GetEntity($entityType));
-
-        $form = $entity->getFormBuilder()
-            ->setInstance($entity->getRepository()->find($id))
-            ->getForm();
+        $entity = $this->getEntity($entityType);
 
         if ($request->isMethod('post')) {
             $entity->getFormHandler()
@@ -44,8 +41,28 @@ class EntitiesController extends Controller
             ]);
         }
 
+        $form = $entity->getFormBuilder()
+            ->setInstance($entity->getRepository()->find($id))
+            ->getForm();
+
         return view('helium::form', [
             'form' => $form
         ]);
+    }
+
+    /**
+     * Gets an Entity by its slug
+     *
+     * @param string $slug
+     * @return Entity
+     */
+    protected function getEntity(string $slug) : Entity {
+        $entityClass = config('helium.entities.' . $this->slug);
+
+        if (!$entityClass || !class_exists($entityClass)) {
+            throw new NotFoundHttpException();
+        }
+
+        return app()->make($entityClass);
     }
 }
