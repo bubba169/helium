@@ -2,5 +2,6 @@
     {% include "helium::input.common.label" %}
     <textarea
         {% include "helium::input.common.attributes" %}
+        data-config="{{ field.tinyConfig }}"
     >{{ field.value }}</textarea>
 </div>

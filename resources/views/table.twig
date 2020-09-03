@@ -1,0 +1,23 @@
+{% extends "helium::layout" %}
+
+{% block content %}
+
+{% include "helium::partials.message" %}
+
+<table class="table">
+    <tr>
+        {% for column in table.columns %}
+            <th>{{ column.label }}</th>
+        {% endfor %}
+    </tr>
+    {% for row in table.rows %}
+        <tr>
+            {% for column in table.columns %}
+                <td>{{ column.renderValue(row)|raw }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
+

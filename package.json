@@ -21,6 +21,7 @@
     "choices.js": "^9.0.1",
     "flatpickr": "^4.6.6",
     "jquery": "^3.5.1",
-    "popper.js": "^1.16.1"
+    "popper.js": "^1.16.1",
+    "tinymce": "^5.4.2"
   }
 }

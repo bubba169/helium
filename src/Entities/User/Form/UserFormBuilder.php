@@ -16,7 +16,9 @@ class UserFormBuilder extends FormBuilder
             'fields' => [
                 'id',
                 'name',
-                'email'
+                'email',
+                'profile',
+                'avatar_file_id',
             ]
         ],
         'pages' => [

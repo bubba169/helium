@@ -5,7 +5,7 @@ use Helium\Support\Entity;
 use Illuminate\Support\Arr;
 use Helium\FieldTypes\FieldType;
 use Illuminate\Support\Collection;
-use Helium\FieldTypes\StringFieldType;
+use Helium\FieldTypes\TextFieldType;
 use Illuminate\Database\Eloquent\Model;
 use Helium\FieldTypes\ReadOnlyTextFieldType;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -175,8 +175,8 @@ class FormBuilder
         }
 
         return config(
-            'helium.database.type_map.' . $field['type'],
-            StringFieldType::class
+            'helium.field_types.' . $field['type'],
+            TextFieldType::class
         );
     }
 

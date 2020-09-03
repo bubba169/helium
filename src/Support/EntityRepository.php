@@ -1,5 +1,6 @@
 <?php namespace Helium\Support;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -30,6 +31,26 @@ class EntityRepository
     {
         $this->entity = $entity;
         $this->model = $model;
+    }
+
+    /**
+     * Gets the Entity
+     *
+     * @return Entity
+     */
+    public function getEntity() : Entity
+    {
+        return $this->entity;
+    }
+
+    /**
+     * Gets the repository model
+     *
+     * @return Model
+     */
+    public function getModel() : Model
+    {
+        return $this->model;
     }
 
     /**
@@ -74,30 +95,24 @@ class EntityRepository
     }
 
     /**
-     * Gets the display field
-     *
-     * @return string
-     */
-    public function getDisplayField() : string
-    {
-        if ($this->displayField) {
-            return $this->displayField;
-        }
-
-        $fields = collect($this->entity->getFields());
-        return $fields->has('name') ? 'name' : (
-            $fields->has('title') ? 'title' : 'id'
-        );
-    }
-
-    /**
      * Gets the dropdown options for the model
      *
      * @return array
      */
     public function dropdownOptions() : array
     {
-        return $this->model->pluck($this->getDisplayField(), 'id')->toArray();
+        return $this->model->pluck($this->entity->getDisplayField(), 'id')->toArray();
+    }
+
+    /**
+     * Gets a paginated list of results
+     *
+     * @param int $itemsPerPage Number of items to fetch for each page
+     * @return LengthAwarePaginator
+     */
+    public function paginate(int $itemsPerPage) : LengthAwarePaginator
+    {
+        return $this->model->paginate($itemsPerPage);
     }
 
     /**

@@ -55,6 +55,11 @@ class Entity
     protected $fields = null;
 
     /**
+     * @var string;
+     */
+    protected $displayField = null;
+
+    /**
      * Gets the form builder
      *
      * @return FormBuilder
@@ -128,5 +133,22 @@ class Entity
         }
 
         return $this->fields = [];
+    }
+
+    /**
+     * Gets the display field to show in dropdowns etc
+     *
+     * @return string
+     */
+    public function getDisplayField() : string
+    {
+        if ($this->displayField) {
+            return $this->displayField;
+        }
+
+        $fields = collect($this->getFields());
+        return $fields->has('name') ? 'name' : (
+            $fields->has('title') ? 'title' : 'id'
+        );
     }
 }

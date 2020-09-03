@@ -5,6 +5,12 @@ use Helium\Support\Table\TableBuilder;
 
 class UserTableBuilder extends TableBuilder
 {
+    protected $columns = [
+        'id',
+        'name',
+        'is_active'
+    ];
+
     /**
      * Construct
      *

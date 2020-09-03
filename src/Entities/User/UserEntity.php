@@ -17,7 +17,7 @@ class UserEntity extends Entity
     /**
      * {@inheritDoc}
      */
-    protected $tableClass = UserTableBuilder::class;
+    protected $tableBuilderClass = UserTableBuilder::class;
 
     /**
      * {@inheritDoc}
@@ -48,6 +48,9 @@ class UserEntity extends Entity
                         'name' => 'pages'
                     ]
                 ],
+                'avatar_file_id' => [
+                    'type' => 'image'
+                ]
             ]
         );
     }

@@ -2,6 +2,6 @@
 
 use Helium\FieldTypes\FieldType;
 
-class StringFieldType extends FieldType
+class TextFieldType extends FieldType
 {
 }

@@ -7,16 +7,24 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntitiesController extends Controller
 {
-
     /**
      * Lists entities using a table builder
      *
-     * @return void
+     * @param string $entityType
+     * @return View
      */
     public function index(string $entityType)
     {
         $entity = $this->getEntity($entityType);
-        dd('index');
+
+        $table = $entity->getTableBuilder()
+            ->getTable();
+
+        dump($table);
+
+        return view($table->getView(), [
+            'table' => $table,
+        ]);
     }
 
     /**
