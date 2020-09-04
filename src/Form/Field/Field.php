@@ -1,28 +1,24 @@
-<?php namespace Helium\FieldTypes;
+<?php namespace Helium\Form\Field;
 
 use Helium\Traits\HasConfig;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 
-class FieldType
+class Field
 {
     use HasConfig;
-
-    /**
-     * @var $config
-     */
-    protected $config = [
-        'class' => [
-            'form-control',
-        ]
-    ];
 
     /**
      * Constructor
      */
     public function __construct()
     {
+        $this->mergeConfig([
+            'class' => [
+                'form-control',
+            ]
+        ]);
     }
 
     /**

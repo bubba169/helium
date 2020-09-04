@@ -1,8 +1,8 @@
-<?php namespace Helium\FieldTypes;
+<?php namespace Helium\Form\Field;
 
-use Illuminate\Support\Collection;
+use Helium\Form\Field\Field;
 
-class SelectFieldType extends FieldType
+class SelectField extends Field
 {
     /**
      * Constructor

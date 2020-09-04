@@ -1,8 +1,8 @@
-<?php namespace Helium\FieldTypes;
+<?php namespace Helium\Form\Field;
 
-use Helium\FieldTypes\FieldType;
+use Helium\Form\Field\Field;
 
-class BooleanFieldType extends FieldType
+class BooleanField extends Field
 {
     /**
      * Constructor

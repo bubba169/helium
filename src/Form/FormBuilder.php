@@ -3,11 +3,11 @@
 use Helium\Form\Form;
 use Helium\Support\Entity;
 use Illuminate\Support\Arr;
-use Helium\FieldTypes\FieldType;
+use Helium\Form\Field\Field;
 use Illuminate\Support\Collection;
-use Helium\FieldTypes\TextFieldType;
+use Helium\Form\Field\TextField;
 use Illuminate\Database\Eloquent\Model;
-use Helium\FieldTypes\ReadOnlyTextFieldType;
+use Helium\Form\Field\ReadOnlyTextField;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class FormBuilder
@@ -119,11 +119,11 @@ class FormBuilder
      * Builds a form field type from the descriptor
      *
      * @param array $field The field descriptor
-     * @return FieldType
+     * @return Field
      */
-    protected function buildField(array $entityField) : FieldType
+    protected function buildField(array $entityField) : Field
     {
-        $field = app()->make($this->getFieldTypeClass($entityField))
+        $field = app()->make($this->getFieldClass($entityField))
             // Appl any default configuration
             ->mergeConfig(['attributes' => $this->getDefaultFieldAttributes($entityField)])
             // Override with any
@@ -142,10 +142,10 @@ class FormBuilder
     /**
      * Sets a field's current value
      *
-     * @param FieldType $field
+     * @param Field $field
      * @return void
      */
-    protected function setFieldValue(FieldType $field, array $entityField) : void
+    protected function setFieldValue(Field $field, array $entityField) : void
     {
         $relationship = Arr::get($entityField, 'relationship');
         $name = Arr::get($entityField, 'name');
@@ -168,15 +168,15 @@ class FormBuilder
      * @param array $field The field description
      * @return string The type class name
      */
-    protected function getFieldTypeClass(array $field) : string
+    protected function getFieldClass(array $field) : string
     {
         if (in_array($field['name'], $this->readOnly)) {
-            return ReadOnlyTextFieldType::class;
+            return ReadOnlyTextField::class;
         }
 
         return config(
             'helium.field_types.' . $field['type'],
-            TextFieldType::class
+            TextField::class
         );
     }
 

@@ -13,7 +13,7 @@
     {% for row in table.rows %}
         <tr>
             {% for column in table.columns %}
-                <td>{{ column.renderValue(row)|raw }}</td>
+                <td>{% include column.view with {column: column, row: row} %}</td>
             {% endfor %}
         </tr>
     {% endfor %}

@@ -1,8 +1,8 @@
-<?php namespace Helium\FieldTypes;
+<?php namespace Helium\Form\Field;
 
-use Helium\FieldTypes\SelectFieldType;
+use Helium\Form\Field\SelectField;
 
-class MultipleFieldType extends SelectFieldType
+class MultipleField extends SelectField
 {
     /**
      * COnstructor

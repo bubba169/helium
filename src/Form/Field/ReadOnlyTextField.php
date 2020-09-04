@@ -1,6 +1,8 @@
-<?php namespace Helium\FieldTypes;
+<?php namespace Helium\Form\Field;
 
-class ReadOnlyTextFieldType extends FieldType
+use Helium\Form\Field\Field;
+
+class ReadOnlyTextField extends Field
 {
     /**
      * Constructor

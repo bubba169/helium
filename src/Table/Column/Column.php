@@ -8,6 +8,16 @@ class Column
     use HasConfig;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->mergeConfig([
+            'view' => 'helium::column.value',
+        ]);
+    }
+
+    /**
      * Gets the column name
      *
      * @return string
@@ -36,10 +46,18 @@ class Column
      * @param Model $row
      * @return string
      */
-    public function renderValue(Model $row) : string
+    public function getValue(Model $row) : string
     {
         return e($row->{$this->getName()});
     }
 
-
+    /**
+     * Gets the view to render a cell
+     *
+     * @return string
+     */
+    public function getView() : string
+    {
+        return $this->getConfig('view');
+    }
 }
