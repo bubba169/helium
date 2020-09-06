@@ -1,22 +1,37 @@
 <?php namespace Helium\Support\Table;
 
+use Helium\Table\Row;
 use Helium\Table\Table;
 use Helium\Support\Entity;
 use Illuminate\Support\Arr;
 use Helium\Table\Column\Column;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class TableBuilder
 {
     /**
+     * The entity type represented by the table
+     *
      * @var Entity
      */
     protected $entity = null;
 
     /**
+     * Defines any columns to be shown in the table. Columns can be
+     * added as a string matching a field name or as an array with
+     * a column configuration
+     *
      * @var array
      */
     protected $columns = null;
+
+    /**
+     * An array of actions
+     *
+     * @var array
+     */
+    protected $actions = null;
 
     /**
      * Construct
@@ -46,10 +61,12 @@ class TableBuilder
     public function getTable() : Table
     {
         $fields = $this->entity->getFields();
+        $paginatedItems = $this->fetchItems();
 
         return app()->make(Table::class)
             ->setColumns($this->buildColumns($fields))
-            ->setRows($this->buildRows($fields));
+            ->setRows($this->buildRows($paginatedItems->items()))
+            ->setPaginator($paginatedItems);
     }
 
     /**
@@ -61,14 +78,12 @@ class TableBuilder
     {
         $columns = $this->columns ?? ['id', $this->entity->getDisplayField()];
 
-        $columns = array_map(
+        return array_map(
             function ($column) use ($fields) {
                 return $this->buildColumn($column, Arr::get($fields, $column['name']));
             },
             array_normalize_keys($columns, 'name')
         );
-
-        return $columns;
     }
 
     /**
@@ -104,12 +119,74 @@ class TableBuilder
     }
 
     /**
-     * Builds the rows from the repository
+     * Builds the rows from the listing items
      *
      * @return LengthAwarePaginator
      */
-    public function buildRows() : LengthAwarePaginator
+    protected function buildRows(array $items) : array
+    {
+        return array_map(
+            function ($item) {
+                return $this->buildRow($item);
+            },
+            $items
+        );
+    }
+
+    protected function buildRow(Model $item) : Row
+    {
+        return app()->make(Row::class)
+            ->setInstance($item)
+            ->mergeConfig([
+                'actions' => $this->buildActions($item)
+            ]);
+    }
+
+    /**
+     * Gets the listing items
+     *
+     * @return LengthAwarePaginator
+     */
+    protected function fetchItems() : LengthAwarePaginator
     {
         return $this->entity->getRepository()->paginate(20);
     }
+
+    /**
+     * Builds the actions from the action config
+     *
+     * @param array $fields
+     * @return array
+     */
+    protected function buildActions(Model $item) : array
+    {
+        $actions = $this->actions ?? ['edit'];
+
+        return array_map(
+            function ($action) use ($item) {
+                return $this->buildAction($action, $item);
+            },
+            array_normalize_keys($actions, 'name')
+        );
+    }
+
+    /**
+     * Builds a single action setting defaults for missing attributes
+     *
+     * @param array $action
+     * @return array
+     */
+    protected function buildAction(array $action, Model $item) : array
+    {
+        $action['url'] = $this->entity->getRoute($action['name'], ['id' => $item->id]);
+        if (!array_key_exists('label', $action)) {
+            $action['label'] = str_humanize($action['name']);
+        }
+        if (!array_key_exists('title', $action)) {
+            $action['title'] = str_humanize($action['name']);
+        }
+        return $action;
+    }
+
+
 }

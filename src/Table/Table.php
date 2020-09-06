@@ -1,6 +1,7 @@
 <?php namespace Helium\Table;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
 class Table
@@ -11,9 +12,14 @@ class Table
     protected $columns;
 
     /**
-     * @var LengthAwarePaginator
+     * @var array
      */
     protected $rows;
+
+    /**
+     * @var LengthAwarePaginator
+     */
+    protected $paginator;
 
     /**
      * @var string
@@ -47,7 +53,7 @@ class Table
      *
      * @return array
      */
-    public function getRows() : LengthAwarePaginator
+    public function getRows() : array
     {
         return $this->rows;
     }
@@ -58,7 +64,7 @@ class Table
      * @param array $rows
      * @return this
      */
-    public function setRows(LengthAwarePaginator $rows) : self
+    public function setRows(array $rows) : self
     {
         $this->rows = $rows;
         return $this;
@@ -72,5 +78,27 @@ class Table
     public function getView() : string
     {
         return $this->view;
+    }
+
+    /**
+     * Get the pagination
+     *
+     * @return LengthAwarePaginator
+     */
+    public function getPaginator() : LengthAwarePaginator
+    {
+        return $this->paginator;
+    }
+
+    /**
+     * Set the paginator
+     *
+     * @param LengthAwarePaginator $paginator
+     * @return this
+     */
+    public function setPaginator(LengthAwarePaginator $paginator) : self
+    {
+        $this->paginator = $paginator;
+        return $this;
     }
 }

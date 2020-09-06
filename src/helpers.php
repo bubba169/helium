@@ -64,3 +64,14 @@ function array_normalize_keys(array $array, ?string $nameKey = null) : array
 
     return $result;
 }
+
+/**
+ * Takes a snake case string and converts it to a human friently format.
+ *
+ * @param string $str
+ * @return string
+ */
+function str_humanize(string $str) : string
+{
+    return ucfirst(str_replace('_', ' ', $str));
+}

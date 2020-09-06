@@ -151,11 +151,12 @@ class FormBuilder
         $name = Arr::get($entityField, 'name');
         $old = request()->old();
 
+        $value = null;
         if (array_key_exists($name, $old)) {
             $value = $old[$name];
-        } elseif ($relationship) {
+        } elseif ($relationship && $this->instance) {
             $value = $this->instance->{$relationship}->pluck('id');
-        } else {
+        } elseif ($this->instance) {
             $value = $this->instance->{$name};
         }
 

@@ -1,11 +1,12 @@
 <?php namespace Helium\Support;
 
+use Illuminate\Support\Str;
 use Helium\Form\FormBuilder;
-use Helium\Database\TableReader;
 use Helium\Form\FormHandler;
-use Helium\Support\Table\TableBuilder;
+use Helium\Database\TableReader;
 use Illuminate\Support\Collection;
 use Helium\Support\EntityRepository;
+use Helium\Support\Table\TableBuilder;
 
 class Entity
 {
@@ -149,6 +150,43 @@ class Entity
         $fields = collect($this->getFields());
         return $fields->has('name') ? 'name' : (
             $fields->has('title') ? 'title' : 'id'
+        );
+    }
+
+    /**
+     * Gets the entity slug from the class name
+     *
+     * @return string
+     */
+    public function getSlug() : string
+    {
+        $classParts = explode('\\', get_class($this));
+        $classWithoutNamespace = end($classParts);
+
+        return Str::plural(
+            Str::camel(
+                str_replace('Entity', '', $classWithoutNamespace)
+            )
+        );
+    }
+
+    /**
+     * Gets the route for an entity action
+     *
+     * @param string $action
+     * @param array $parameters
+     * @return string
+     */
+    public function getRoute(string $action, array $parameters = []) : string
+    {
+        return route(
+            'entity.' . $action,
+            array_merge(
+                [
+                    'entityType' => $this->getSlug(),
+                ],
+                $parameters
+            )
         );
     }
 }

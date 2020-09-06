@@ -11,6 +11,13 @@ class UserTableBuilder extends TableBuilder
         'is_active'
     ];
 
+    protected $actions = [
+        'edit' => [
+            'label' => null,
+            'icon' => 'far fa-edit',
+        ],
+    ];
+
     /**
      * Construct
      *

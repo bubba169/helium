@@ -57,9 +57,9 @@ class EntityRepository
      * Finds an instance
      *
      * @param string $id
-     * @return Model
+     * @return Model|null
      */
-    public function find(string $id) : Model
+    public function find(string $id) : ?Model
     {
         return $this->model->find($id);
     }

@@ -1,5 +1,6 @@
 <?php namespace Helium\Table\Column;
 
+use Helium\Table\Row;
 use Helium\Traits\HasConfig;
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,12 +44,12 @@ class Column
     /**
      * Renders the value
      *
-     * @param Model $row
+     * @param Row $row
      * @return string
      */
-    public function getValue(Model $row) : string
+    public function getValue(Row $row) : string
     {
-        return e($row->{$this->getName()});
+        return e($row->getInstance()->{$this->getName()});
     }
 
     /**

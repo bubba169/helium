@@ -9,12 +9,25 @@
         {% for column in table.columns %}
             <th>{{ column.label }}</th>
         {% endfor %}
+        <th>{# Actions column #}</th>
     </tr>
     {% for row in table.rows %}
         <tr>
             {% for column in table.columns %}
                 <td>{% include column.view with {column: column, row: row} %}</td>
             {% endfor %}
+            <td>
+                {% for action in row.actions %}
+                    <a href="{{ action['url'] }}" class="btn btn-primary" title="{{ action['title'] }}">
+                        {% if action['icon'] %}
+                            <i class="{{ action['icon'] }} btn__icon" aria-hidden="true"></i>
+                        {% endif %}
+                        {% if action['label'] %}
+                            <span class="btn__label">{{ action['label'] }}</span>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </td>
         </tr>
     {% endfor %}
 </table>

@@ -90,8 +90,8 @@ class Field
     public function getLabel() : string
     {
         return $this->getConfig('label') ??
-            Str::title(str_replace('_', ' ', $this->getConfig('name'))) ??
-            Str::title(str_replace('_', ' ', $this->getConfig('id')));
+            Str::title(str_humanize($this->getConfig('name'))) ??
+            Str::title(str_humanize($this->getConfig('id')));
     }
 
     /**

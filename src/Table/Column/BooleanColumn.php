@@ -1,15 +1,15 @@
 <?php namespace Helium\Table\Column;
 
+use Helium\Table\Row;
 use Helium\Table\Column\Column;
-use Illuminate\Database\Eloquent\Model;
 
 class BooleanColumn extends Column
 {
     /**
      * {@inheritDoc}
      */
-    public function getValue(Model $row) : string
+    public function getValue(Row $row) : string
     {
-        return $row->{$this->getName()} ? 'Yes' : 'No';
+        return $row->getInstance()->{$this->getName()} ? 'Yes' : 'No';
     }
 }

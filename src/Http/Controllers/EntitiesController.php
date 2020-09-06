@@ -20,8 +20,6 @@ class EntitiesController extends Controller
         $table = $entity->getTableBuilder()
             ->getTable();
 
-        dump($table);
-
         return view($table->getView(), [
             'table' => $table,
         ]);
