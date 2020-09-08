@@ -39,6 +39,13 @@ class UserEntity extends Entity
         return array_merge_deep(
             $fields,
             [
+                'name' => [
+                    'config' => [
+                        'attributes' => [
+                            'required' => true
+                        ]
+                    ]
+                ],
                 'pages' => [
                     'name' => 'pages',
                     'type' => 'multiple',

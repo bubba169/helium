@@ -10,7 +10,7 @@ class UserFormBuilder extends FormBuilder
      *
      * @var array
      */
-    protected $sections = [
+    /*protected $sections = [
         'user' => [
             'label' => 'User',
             'fields' => [
@@ -33,7 +33,7 @@ class UserFormBuilder extends FormBuilder
                 'password',
             ]
         ]
-    ];
+    ];*/
 
     /**
      * Construct

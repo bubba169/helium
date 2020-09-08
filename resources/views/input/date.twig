@@ -1,8 +1,0 @@
-<div class="form-group">
-    {% include "helium::input.common.label" %}
-    <input
-        {% include "helium::input.common.attributes" %}
-        value="{{ field.value }}"
-        data-config="{{ field.getConfig('flatpickr')|json_encode }}"
-    >
-</div>

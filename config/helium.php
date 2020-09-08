@@ -32,4 +32,8 @@ return [
     'column_types' => [
         'boolean' => \Helium\Table\Column\BooleanColumn::class,
     ],
+
+    'navigation' => [
+        'users' => 'index'
+    ],
 ];
