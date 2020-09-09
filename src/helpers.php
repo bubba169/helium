@@ -29,20 +29,19 @@ function array_merge_deep(array ...$arrays) : array
 }
 
 /**
- * Converts a mixed array of strings with integer keys and nested arrays with string
- * keys to an array of nested arrays with string keys. The strings will be used as the
- * key for an empty array.
+ * Converts a mixed array of values and arrays with mixed key types to an array of
+ * arrays with string keys. This is useful for config arrays where the values can either ]
+ * be a string or an array of options.
  *
- * This is useful for config arrays where the values can either be a string or an
- * array of options.
- *
- * Optionally the key for each item can be copied into the array with the key $nameKey
+ * The key for each item will be copied into the array with the key $nameKey and the
+ * value with $valueKey
  *
  * @param array $array The array to convert
- * @param string|null $nameKey The key will be copied into the array with the given key if specified
+ * @param string $nameKey The key will be copied into the array with the given key if specified
+ * @param string $valueKey A string value will be copied into the array with the given key if specified
  * @return array
  */
-function array_normalize_keys(array $array, ?string $nameKey = null) : array
+function array_normalize_keys(array $array, string $nameKey = 'name', string $valueKey = 'value') : array
 {
     $result = [];
 
@@ -54,8 +53,14 @@ function array_normalize_keys(array $array, ?string $nameKey = null) : array
             $value = [];
         }
 
+        if (!is_array($value)) {
+            $value = [
+                $valueKey => $value
+            ];
+        }
+
         // If the name key is set copy the key into the value array
-        if (!empty($nameKey) && is_array($value) && !array_key_exists($nameKey, $value)) {
+        if (!array_key_exists($nameKey, $value)) {
             $value[$nameKey] = $key;
         }
 

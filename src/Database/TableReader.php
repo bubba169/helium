@@ -40,9 +40,6 @@ class TableReader
                     'length' => $column->getLength(),
                     'precision' => $column->getScale(),
                     'unsigned' => $column->getUnsigned(),
-                    'config' => [
-                        'name' => $column->getName(),
-                    ],
                 ];
             },
             $columns

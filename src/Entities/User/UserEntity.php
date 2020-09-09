@@ -2,7 +2,6 @@
 
 use Helium\Support\Entity;
 use Helium\Entities\User\Form\UserFormHandler;
-use Helium\Entities\Page\PageRepository;
 use Helium\Entities\User\Form\UserFormBuilder;
 use Helium\Entities\User\Table\UserTableBuilder;
 use Helium\Entities\User\UserRepository;
@@ -39,21 +38,10 @@ class UserEntity extends Entity
         return array_merge_deep(
             $fields,
             [
-                'name' => [
-                    'config' => [
-                        'attributes' => [
-                            'required' => true
-                        ]
-                    ]
-                ],
                 'pages' => [
                     'name' => 'pages',
                     'type' => 'multiple',
-                    'options' => 'pages',
                     'relationship' => 'pages',
-                    'config' => [
-                        'name' => 'pages'
-                    ]
                 ],
                 'avatar_file_id' => [
                     'type' => 'image'

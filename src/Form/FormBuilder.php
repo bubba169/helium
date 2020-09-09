@@ -39,6 +39,14 @@ class FormBuilder
     protected $sections = [];
 
     /**
+     * Additional config for form fields. This is merged with the
+     * entity configuration.
+     *
+     * @var array
+     */
+    protected $fields = [];
+
+    /**
      * These fields will be rendered as plain text instead of being editable
      *
      * @var array
@@ -91,6 +99,11 @@ class FormBuilder
     {
         $fields = $this->entity->getFields();
 
+        $fields = array_merge_deep(
+            $fields,
+            $this->fields
+        );
+
         return app()->make(Form::class)
             ->setFields($this->buildFields($fields, $instance))
             ->setSections($this->getSections());
@@ -125,9 +138,10 @@ class FormBuilder
     {
         $field = app()->make($this->getFieldClass($entityField))
             // Appl any default configuration
-            ->mergeConfig(['attributes' => $this->getDefaultFieldAttributes($entityField)])
-            // Override with any
-            ->mergeConfig($entityField['config']);
+            ->mergeConfig([
+                'name' => $entityField['name'],
+                'attributes' => $this->getDefaultFieldAttributes($entityField)
+            ]);
 
         // If options is a string it'll either be an entity type or a handler class
         if (is_string(Arr::get($entityField, 'options'))) {

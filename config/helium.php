@@ -34,6 +34,6 @@ return [
     ],
 
     'navigation' => [
-        'users' => 'index'
+        'users'
     ],
 ];

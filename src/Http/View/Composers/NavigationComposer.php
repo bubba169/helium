@@ -1,6 +1,7 @@
 <?php namespace Helium\Http\View\Composers;
 
 use Illuminate\View\View;
+use Illuminate\Support\Arr;
 
 class NavigationComposer
 {
@@ -12,18 +13,23 @@ class NavigationComposer
             $menu = app()->call($menu);
         }
 
-        foreach ($menu as $key => &$item) {
-            // A simple route ha been given for this menu item.
-            if (is_string($item)) {
-                $item = [
-                    //'url' => route($item)
-                ];
-            }
+        $menu = array_map(
+            function ($item) {
+                if (empty($item['url'])) {
+                    if (!empty($item['route'])) {
+                        $item['url'] = route($item['route']['name'], Arr::get($item, 'route.params', []));
+                    } else {
+                        $item['url'] = route('entity.index', ['entityType' => $item['name']]);
+                    }
+                }
+                if (empty($item['label'])) {
+                    $item['label'] = str_humanize($item['name']);
+                }
 
-            if (empty($item['label'])) {
-                $item['label'] = str_humanize($key);
-            }
-        }
+                return $item;
+            },
+            array_normalize_keys($menu, 'name')
+        );
 
         $view->with('menu', $menu);
     }
