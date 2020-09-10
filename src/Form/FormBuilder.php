@@ -8,12 +8,9 @@ use Illuminate\Support\Collection;
 use Helium\Form\Field\TextField;
 use Illuminate\Database\Eloquent\Model;
 use Helium\Form\Field\ReadOnlyTextField;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class FormBuilder
 {
-    use DispatchesJobs;
-
     /**
      * @var Entity
      */
@@ -97,16 +94,23 @@ class FormBuilder
      */
     public function getForm(?Model $instance = null) : Form
     {
-        $fields = $this->entity->getFields();
+        return app()->make(Form::class)
+            ->setFields($this->buildFields($this->getFields(), $instance))
+            ->setSections($this->getSections());
+    }
 
-        $fields = array_merge_deep(
-            $fields,
+    /**
+     * Gets the field configuration from the entity and any custom
+     * properties
+     *
+     * @return array
+     */
+    public function getFields() : array
+    {
+        return array_merge_deep(
+            $this->entity->getFields(),
             $this->fields
         );
-
-        return app()->make(Form::class)
-            ->setFields($this->buildFields($fields, $instance))
-            ->setSections($this->getSections());
     }
 
     /**

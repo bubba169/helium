@@ -13,7 +13,6 @@ class UserTableBuilder extends TableBuilder
 
     protected $actions = [
         'edit' => [
-            'label' => null,
             'icon' => 'far fa-edit',
         ],
     ];

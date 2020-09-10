@@ -34,6 +34,8 @@ return [
     ],
 
     'navigation' => [
-        'users'
+        'users',
+        'files',
+        'pages'
     ],
 ];

@@ -12,16 +12,7 @@
             </div>
             <div class="row">
                 <div class="col-auto p-0">
-                    <pre>
-                        @dump($menu)
-                    </pre>
-                    <nav class="cms-nav">
-                        <ul class="nav flex-column nav-pills nav-fill">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('entity.index', ['entityType' => 'users']) }}">Users</a>
-                            </li>
-                        </ul>
-                    </nav>
+                    @include('helium::partials.navigation')
                 </div>
                 <div class="col">
                     <div class="container">

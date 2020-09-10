@@ -20,11 +20,11 @@
                 <td>
                     @foreach ($row->getActions() as $action)
                         <a href="{{ $action['url'] }}" class="btn btn-primary" title="{{ $action['title'] }}">
-                            @if($action['icon'])
+                            @if(!empty($action['icon']))
                                 <i class="{{ $action['icon'] }} btn__icon" aria-hidden="true"></i>
                             @endif
-                            @if ($action['label'])
-                                <span class="btn__label">{{ action['label'] }}</span>
+                            @if (!empty($action['label']))
+                                <span class="btn__label">{{ $action['label'] }}</span>
                             @endif
                         </a>
                     @endforeach
