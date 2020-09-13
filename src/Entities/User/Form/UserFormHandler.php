@@ -1,7 +1,6 @@
 <?php namespace Helium\Entities\User\Form;
 
 use Helium\Form\FormHandler;
-use Helium\Entities\User\UserEntity;
 use Illuminate\Support\Facades\Hash;
 
 class UserFormHandler extends FormHandler
@@ -11,16 +10,6 @@ class UserFormHandler extends FormHandler
             'required'
         ]
     ];
-
-    /**
-     * Constructor
-     *
-     * @param UserEntity $entity
-     */
-    public function __construct(UserEntity $entity)
-    {
-        parent::__construct($entity);
-    }
 
     /**
      * {@inheritDoc}

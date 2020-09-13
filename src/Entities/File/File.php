@@ -2,7 +2,7 @@
 
 use Helium\Support\Entity;
 
-class FileEntity extends Entity
+class File extends Entity
 {
 
 }

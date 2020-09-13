@@ -1,18 +1,18 @@
 <?php namespace Helium\Form;
 
 use Helium\Form\Form;
-use Helium\Support\Entity;
 use Illuminate\Support\Arr;
 use Helium\Form\Field\Field;
-use Illuminate\Support\Collection;
 use Helium\Form\Field\TextField;
+use Illuminate\Support\Collection;
+use Helium\Contract\EntityInterface;
 use Illuminate\Database\Eloquent\Model;
 use Helium\Form\Field\ReadOnlyTextField;
 
 class FormBuilder
 {
     /**
-     * @var Entity
+     * @var EntityInterface
      */
     protected $entity = null;
 
@@ -59,7 +59,7 @@ class FormBuilder
      *
      * @param Entity $entity
      */
-    public function __construct(Entity $entity)
+    public function __construct(EntityInterface $entity)
     {
         $this->entity = $entity;
     }

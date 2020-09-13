@@ -1,8 +1,8 @@
 <?php namespace Helium\Support\Table;
 
+use Helium\Contract\EntityInterface;
 use Helium\Table\Row;
 use Helium\Table\Table;
-use Helium\Support\Entity;
 use Illuminate\Support\Arr;
 use Helium\Table\Column\Column;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +13,7 @@ class TableBuilder
     /**
      * The entity type represented by the table
      *
-     * @var Entity
+     * @var EntityINterface
      */
     protected $entity = null;
 
@@ -38,7 +38,7 @@ class TableBuilder
      *
      * @param Entity $entity
      */
-    public function __construct(Entity $entity)
+    public function __construct(EntityInterface $entity)
     {
         $this->entity = $entity;
     }
@@ -48,7 +48,7 @@ class TableBuilder
      *
      * @return Entity
      */
-    public function getEntity() : Entity
+    public function getEntity() : EntityInterface
     {
         return $this->entity;
     }

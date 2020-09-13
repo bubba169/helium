@@ -1,36 +1,26 @@
 <?php namespace Helium\Support;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Helium\Contract\EntityInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EntityRepository
 {
     /**
-     * @var Model
-     */
-    protected $model;
-
-    /**
-     * @var Entity
+     * @var EntityInterface
      */
     protected $entity;
-
-    /**
-     * @var string;
-     */
-    protected $displayField = null;
 
     /**
      * Constructor
      *
      * @param Model $model
      */
-    public function __construct(Entity $entity, Model $model)
+    public function __construct(EntityInterface $entity)
     {
         $this->entity = $entity;
-        $this->model = $model;
     }
 
     /**
@@ -38,30 +28,20 @@ class EntityRepository
      *
      * @return Entity
      */
-    public function getEntity() : Entity
+    public function getEntity() : EntityInterface
     {
         return $this->entity;
-    }
-
-    /**
-     * Gets the repository model
-     *
-     * @return Model
-     */
-    public function getModel() : Model
-    {
-        return $this->model;
     }
 
     /**
      * Finds an instance
      *
      * @param string $id
-     * @return Model|null
+     * @return EntityInterface|null
      */
     public function find(string $id) : ?Model
     {
-        return $this->model->find($id);
+        return $this->entity->getModel()->find($id);
     }
 
     /**
@@ -71,7 +51,7 @@ class EntityRepository
      */
     public function all() : Collection
     {
-        return $this->model->all();
+        return $this->entity->getModel()->all();
     }
 
     /**
@@ -81,7 +61,7 @@ class EntityRepository
      */
     public function query() : Builder
     {
-        return $this->model->query();
+        return $this->entity->getModel()->query();
     }
 
     /**
@@ -91,7 +71,7 @@ class EntityRepository
      */
     public function tableName() : string
     {
-        return $this->model->getTable();
+        return $this->entity->getModel()->getTable();
     }
 
     /**
@@ -101,7 +81,7 @@ class EntityRepository
      */
     public function dropdownOptions() : array
     {
-        return $this->model->pluck($this->entity->getDisplayField(), 'id')->toArray();
+        return $this->entity->getModel()->pluck($this->entity->getDisplayField(), 'id')->toArray();
     }
 
     /**
@@ -112,7 +92,7 @@ class EntityRepository
      */
     public function paginate(int $itemsPerPage) : LengthAwarePaginator
     {
-        return $this->model->paginate($itemsPerPage);
+        return $this->entity->getModel()->paginate($itemsPerPage);
     }
 
     /**
@@ -123,7 +103,7 @@ class EntityRepository
      */
     public function save(array $data) : bool
     {
-        $model = $this->model->firstOrNew([
+        $model = $this->entity->getModel()->firstOrNew([
             'id' => $data['id']
         ]);
 

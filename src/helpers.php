@@ -71,6 +71,24 @@ function array_normalize_keys(array $array, string $nameKey = 'name', string $va
 }
 
 /**
+ * Returns the value of the first key that exists in the array
+ *
+ * @param array $haystack THe array to check for the key
+ * @param array $needles The keys to check
+ * @return mixed
+ */
+function array_first_available(array $haystack, array $needles)
+{
+    foreach ($needles as $key) {
+        if (array_key_exists($key, $haystack)) {
+            return $haystack[$key];
+        }
+    }
+
+    return null;
+}
+
+/**
  * Takes a snake case string and converts it to a human friently format.
  *
  * @param string $str

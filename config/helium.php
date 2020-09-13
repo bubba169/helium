@@ -7,9 +7,9 @@ return [
      * Add any eitites here so they can be managed in the CMS
      */
     'entities' => [
-        'users' => \Helium\Entities\User\UserEntity::class,
-        'pages' => \Helium\Entities\Page\PageEntity::class,
-        'files' => \Helium\Entities\File\FileEntity::class,
+        'users' => \App\User::class,
+        'pages' => \Helium\Entities\Page\Page::class,
+        'files' => \Helium\Entities\File\File::class,
     ],
 
     'field_types' => [
