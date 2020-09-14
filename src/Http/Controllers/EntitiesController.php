@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Helium\Contract\EntityInterface;
+use Helium\Contract\HeliumEntity;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntitiesController extends Controller
@@ -62,7 +62,8 @@ class EntitiesController extends Controller
      * @param string $slug
      * @return EntityInterface
      */
-    protected function getEntity(string $slug) : EntityInterface {
+    protected function getEntity(string $slug) : HeliumEntity
+    {
         $entityClass = config('helium.entities.' . $slug);
 
         if (!$entityClass || !class_exists($entityClass)) {

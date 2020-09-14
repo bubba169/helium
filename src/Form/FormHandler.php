@@ -1,12 +1,12 @@
 <?php namespace Helium\Form;
 
-use Helium\Support\Entity;
+use Helium\Contract\HeliumEntity;
 use Illuminate\Support\Facades\Validator;
 
 class FormHandler
 {
     /**
-     * @var Entity
+     * @var HeliumEntity
      */
     protected $entity = null;
 
@@ -27,9 +27,9 @@ class FormHandler
     /**
      * Construct
      *
-     * @param Entity $entity
+     * @param HeliumEntity $entity
      */
-    public function __construct(Entity $entity)
+    public function __construct(HeliumEntity $entity)
     {
         $this->entity = $entity;
     }
@@ -99,6 +99,10 @@ class FormHandler
             $rules[] = 'integer';
         } elseif (in_array($field['type'], ['float', 'decimal'])) {
             $rules[] = 'numeric';
+        }
+
+        if (!empty($field['required'])) {
+            $rules[] = 'required';
         }
 
         return $rules;

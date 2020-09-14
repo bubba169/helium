@@ -40,6 +40,7 @@ class TableReader
                     'length' => $column->getLength(),
                     'precision' => $column->getScale(),
                     'unsigned' => $column->getUnsigned(),
+                    'required' => $column->getNotnull() && ($column->getType()->getName() !== 'boolean')
                 ];
             },
             $columns

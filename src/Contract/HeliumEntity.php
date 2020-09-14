@@ -6,7 +6,7 @@ use Helium\Support\EntityRepository;
 use Helium\Support\Table\TableBuilder;
 use Illuminate\Database\Eloquent\Model;
 
-interface EntityInterface
+interface HeliumEntity
 {
     /**
      * Gets the form builder

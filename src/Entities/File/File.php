@@ -1,8 +1,8 @@
 <?php namespace Helium\Entities\File;
 
-use Helium\Support\Entity;
+use Helium\Support\HeliumEntityModel;
 
-class File extends Entity
+class File extends HeliumEntityModel
 {
 
 }

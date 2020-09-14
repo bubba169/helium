@@ -1,15 +1,25 @@
 <?php namespace Helium\Entities\User\Form;
 
+use Illuminate\Support\Arr;
 use Helium\Form\FormHandler;
 use Illuminate\Support\Facades\Hash;
 
 class UserFormHandler extends FormHandler
 {
-    protected $rules = [
-        'email' => [
-            'required'
-        ]
-    ];
+    /**
+     * {@inheritDoc}
+     *
+     * Password field is not required
+     */
+    public function buildRules(array $fields) : array
+    {
+        $rules = parent::buildRules($fields);
+        $rules['password'] = array_filter($rules['password'], function ($value) {
+            $value != 'required';
+        });
+
+        return $rules;
+    }
 
     /**
      * {@inheritDoc}

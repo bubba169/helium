@@ -1,15 +1,15 @@
 <?php namespace Helium\Support;
 
-use Illuminate\Support\Collection;
-use Helium\Contract\EntityInterface;
+use Helium\Contract\HeliumEntity;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Traits\ForwardsCalls;
 
 class EntityRepository
 {
+    use ForwardsCalls;
+
     /**
-     * @var EntityInterface
+     * @var HeliumEntity
      */
     protected $entity;
 
@@ -18,60 +18,21 @@ class EntityRepository
      *
      * @param Model $model
      */
-    public function __construct(EntityInterface $entity)
+    public function __construct(HeliumEntity $entity)
     {
         $this->entity = $entity;
     }
 
     /**
-     * Gets the Entity
+     * Forwards all calls to the model
      *
-     * @return Entity
+     * @param string $name
+     * @param array $arguments
+     * @return void
      */
-    public function getEntity() : EntityInterface
+    public function __call(string $name, array $arguments)
     {
-        return $this->entity;
-    }
-
-    /**
-     * Finds an instance
-     *
-     * @param string $id
-     * @return EntityInterface|null
-     */
-    public function find(string $id) : ?Model
-    {
-        return $this->entity->getModel()->find($id);
-    }
-
-    /**
-     * Finds all instances
-     *
-     * @return Collection
-     */
-    public function all() : Collection
-    {
-        return $this->entity->getModel()->all();
-    }
-
-    /**
-     * Gets a query builder
-     *
-     * @return Builder
-     */
-    public function query() : Builder
-    {
-        return $this->entity->getModel()->query();
-    }
-
-    /**
-     * Gets the model's table name
-     *
-     * @return string
-     */
-    public function tableName() : string
-    {
-        return $this->entity->getModel()->getTable();
+        return $this->forwardCallTo($this->entity->getModel(), $name, $arguments);
     }
 
     /**
@@ -81,18 +42,7 @@ class EntityRepository
      */
     public function dropdownOptions() : array
     {
-        return $this->entity->getModel()->pluck($this->entity->getDisplayField(), 'id')->toArray();
-    }
-
-    /**
-     * Gets a paginated list of results
-     *
-     * @param int $itemsPerPage Number of items to fetch for each page
-     * @return LengthAwarePaginator
-     */
-    public function paginate(int $itemsPerPage) : LengthAwarePaginator
-    {
-        return $this->entity->getModel()->paginate($itemsPerPage);
+        return $this->pluck($this->entity->getDisplayField(), 'id')->toArray();
     }
 
     /**

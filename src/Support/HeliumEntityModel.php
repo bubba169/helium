@@ -1,10 +1,10 @@
 <?php namespace Helium\Support;
 
-use Helium\Contract\EntityInterface;
+use Helium\Contract\HeliumEntity as HeliumEntityContract;
 use Helium\Traits\HeliumEntity;
 use Illuminate\Database\Eloquent\Model;
 
-class Entity extends Model implements EntityInterface
+class HeliumEntityModel extends Model implements HeliumEntityContract
 {
     use HeliumEntity;
 }

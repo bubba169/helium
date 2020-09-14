@@ -12,6 +12,9 @@ class UserFormBuilder extends FormBuilder
     protected $fields = [
         'pages' => [
             'options' => 'pages',
+        ],
+        'password' => [
+            'required' => false
         ]
     ];
 

@@ -1,10 +1,11 @@
 <?php namespace Helium\Support\Table;
 
-use Helium\Contract\EntityInterface;
 use Helium\Table\Row;
 use Helium\Table\Table;
 use Illuminate\Support\Arr;
 use Helium\Table\Column\Column;
+use Helium\Contract\HeliumEntity;
+use Helium\Contract\EntityInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -13,7 +14,7 @@ class TableBuilder
     /**
      * The entity type represented by the table
      *
-     * @var EntityINterface
+     * @var HeliumEntity
      */
     protected $entity = null;
 
@@ -36,9 +37,9 @@ class TableBuilder
     /**
      * Construct
      *
-     * @param Entity $entity
+     * @param HeliumEntity $entity
      */
-    public function __construct(EntityInterface $entity)
+    public function __construct(HeliumEntity $entity)
     {
         $this->entity = $entity;
     }

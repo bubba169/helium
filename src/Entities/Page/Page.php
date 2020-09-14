@@ -1,7 +1,7 @@
 <?php namespace Helium\Entities\Page;
 
-use Helium\Support\Entity;
+use Helium\Support\HeliumEntityModel;
 
-class Page extends Entity
+class Page extends HeliumEntityModel
 {
 }

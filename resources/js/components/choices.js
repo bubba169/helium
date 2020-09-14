@@ -6,6 +6,13 @@ const init = () => {
         const select = new Choices(element, {
             removeItemButton: true,
         });
+
+        element.addEventListener('invalid', function() {
+            select.containerOuter.element.classList.add('invalid');
+        });
+        element.addEventListener('change', function() {
+            select.containerOuter.element.classList.remove('invalid');
+        });
     });
 }
 

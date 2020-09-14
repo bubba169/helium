@@ -8,10 +8,12 @@
             <option value="">{{ $field->getPlaceholder() }}</option>
         @endif
 
+        @php($fieldValue = optional($field->getValue())->toArray() ?? [])
+
         @foreach ($field->getOptions() as $value => $name)
             <option
                 value="{{ $value }}"
-                {{ in_array($value, $field->getValue()->toArray()) ? 'selected' : '' }}
+                {{ in_array($value, $fieldValue) ? 'selected' : '' }}
             >
                 {{ $name }}
             </option>

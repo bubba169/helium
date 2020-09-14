@@ -1,13 +1,13 @@
 <?php namespace Helium\Entities\User;
 
 use Helium\Traits\HeliumEntity;
-use Helium\Contract\EntityInterface;
+use Helium\Contract\HeliumEntity as HeliumEntityContract;
 use Helium\Entities\User\Form\UserFormBuilder;
 use Helium\Entities\User\Form\UserFormHandler;
 use Helium\Entities\User\Table\UserTableBuilder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements EntityInterface
+class User extends Authenticatable implements HeliumEntityContract
 {
     use HeliumEntity {
         getFields as entityGetFields;
@@ -23,10 +23,14 @@ class User extends Authenticatable implements EntityInterface
         return array_merge_deep(
             $fields,
             [
+                'email' => [
+                    'required' => true
+                ],
                 'pages' => [
                     'name' => 'pages',
                     'type' => 'multiple',
                     'relationship' => 'pages',
+                    'required' => true
                 ],
                 'avatar_file_id' => [
                     'type' => 'image'
