@@ -23,6 +23,7 @@
     "flatpickr": "^4.6.6",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
+    "slim-select": "^1.26.0",
     "tinymce": "^5.4.2"
   }
 }

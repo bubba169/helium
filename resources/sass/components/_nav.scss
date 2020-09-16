@@ -5,3 +5,8 @@
 .navbar {
     background-color: #fefefe;
 }
+
+.was-validated .nav-tabs .nav-item.has-error {
+    color: $danger;
+    font-weight: bold;
+}

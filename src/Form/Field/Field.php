@@ -14,11 +14,6 @@ class Field
      */
     public function __construct()
     {
-        $this->mergeConfig([
-            'class' => [
-                'form-control',
-            ]
-        ]);
     }
 
     /**
@@ -112,5 +107,15 @@ class Field
     public function getPlaceholder() : ?string
     {
         return $this->getConfig('placeholder');
+    }
+
+    /**
+     * Gets the label class
+     *
+     * @return string|null
+     */
+    public function getLabelClassList() : ?string
+    {
+        return implode(' ', $this->getConfig('labelClass', []));
     }
 }

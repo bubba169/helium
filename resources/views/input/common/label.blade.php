@@ -1,1 +1,1 @@
-<label for="{{ $field->getId() }}">{{ $field->getLabel() }}</label>
+<label for="{{ $field->getId() }}" class="{{ $field->getLabelClassList() }}">{{ $field->getLabel() }}</label>

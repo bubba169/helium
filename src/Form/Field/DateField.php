@@ -19,6 +19,7 @@ class DateField extends Field
             ],
             'class' => [
                 'flatpickr',
+                'form-control'
             ],
             'placeholder' => trans('helium::input.date.placeholder'),
             'view' => 'helium::input.date',

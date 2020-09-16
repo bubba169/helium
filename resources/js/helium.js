@@ -3,6 +3,6 @@ import 'bootstrap/js/dist/util';
 import 'bootstrap/js/dist/tab';
 
 import './components/flatpickr';
-import './components/choices.js';
+import './components/slim-select.js';
 import './components/tinymce.js';
 import './components/form.js';

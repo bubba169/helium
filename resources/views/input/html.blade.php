@@ -4,4 +4,7 @@
         @include('helium::input.common.attributes')
         data-config="{{ $field->getTinyConfig() }}"
     >{{ $field->getValue() }}</textarea>
+    <div class="invalid-feedback">
+        This field is required
+    </div>
 </div>

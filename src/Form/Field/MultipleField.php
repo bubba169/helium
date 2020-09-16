@@ -12,10 +12,7 @@ class MultipleField extends SelectField
         parent::__construct();
 
         $this->mergeConfig([
-            'class' => [
-                'choices-input'
-            ],
-            'view' => 'helium::input.multiple'
+            'view' => 'helium::input.multiple',
         ]);
     }
 

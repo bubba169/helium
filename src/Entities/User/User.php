@@ -33,7 +33,13 @@ class User extends Authenticatable implements HeliumEntityContract
                     'required' => true
                 ],
                 'avatar_file_id' => [
-                    'type' => 'image'
+                    'type' => 'select',
+                    'relationship' => 'pages',
+                    'options' => 'pages',
+                    'required' => true
+                ],
+                'profile' => [
+                    'required' => true,
                 ]
             ]
         );

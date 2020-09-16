@@ -14,4 +14,7 @@
             </option>
         @endforeach
     </select>
+    <div class="invalid-feedback">
+        This field is required
+    </div>
 </div>

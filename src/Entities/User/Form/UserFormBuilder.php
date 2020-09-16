@@ -32,6 +32,7 @@ class UserFormBuilder extends FormBuilder
                 'email',
                 'profile',
                 'avatar_file_id',
+                'is_active',
             ]
         ],
         'pages' => [

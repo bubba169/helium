@@ -5,9 +5,9 @@
 @include('helium::partials.form-error')
 @include('helium::partials.message')
 
-@php ($fields = $form->getFields())
+@php($fields = $form->getFields())
 
-<form method='POST'>
+<form method="POST" class="entity-form needs-validation" novalidate>
     @csrf
     @if (!empty($form->getSections()))
         <div class="nav nav-tabs" role="tablist" aria-orientation="vertical">

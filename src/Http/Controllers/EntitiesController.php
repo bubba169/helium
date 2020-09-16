@@ -36,23 +36,47 @@ class EntitiesController extends Controller
     {
         $entity = $this->getEntity($entityType);
 
-        if ($request->isMethod('post')) {
-            $entity->getFormHandler()
-                ->validate($request->all())
-                ->post($request->all());
-
-            return back()->with('message', [
-                'type' => 'success',
-                'message' => 'Saved successfully'
-            ]);
-        }
-
         $form = $entity->getFormBuilder()
             ->setInstance($entity->getRepository()->find($id))
             ->getForm();
 
         return view('helium::form', [
             'form' => $form
+        ]);
+    }
+
+    /**
+     * Shows a form to create a new entity
+     *
+     * @return View
+     */
+    public function create(Request $request, string $entityType)
+    {
+        $entity = $this->getEntity($entityType);
+
+        $form = $entity->getFormBuilder()->getForm();
+
+        return view('helium::form', [
+            'form' => $form
+        ]);
+    }
+
+    /**
+     * Validates and saves the post data
+     *
+     * @return Redirect
+     */
+    public function save(Request $request, string $entityType)
+    {
+        $entity = $this->getEntity($entityType);
+
+        $entity->getFormHandler()
+            ->validate($request->all())
+            ->post($request->all());
+
+        return back()->with('message', [
+            'type' => 'success',
+            'message' => 'Saved successfully'
         ]);
     }
 

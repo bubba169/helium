@@ -15,8 +15,16 @@ const init = () => {
     Array.prototype.forEach.call(editors, editor => {
         let config = JSON.parse(editor.getAttribute('data-config'));
         config.selector = '#' + editor.id;
+        config.setup = function (editor) {
+            editor.on('change', function() {
+                console.log('changed');
+                editor.save();
+            })
+        }
 
         tinymce.init(config);
+
+
     })
 
 }

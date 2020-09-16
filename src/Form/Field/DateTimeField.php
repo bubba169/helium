@@ -21,6 +21,7 @@ class DateTimeField extends Field
             ],
             'class' => [
                 'flatpickr',
+                'form-control'
             ],
             'placeholder' => trans('helium::input.datetime.placeholder'),
             'view' => 'helium::input.date',

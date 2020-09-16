@@ -12,7 +12,11 @@ class BooleanField extends Field
         parent::__construct();
         $this->mergeConfig([
             'class' => [
-                'checkbox',
+                'custom-control-input',
+                'form-control'
+            ],
+            'labelClass' => [
+                'custom-control-label',
             ],
             'view' => 'helium::input.boolean',
         ]);

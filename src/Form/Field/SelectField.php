@@ -11,6 +11,9 @@ class SelectField extends Field
     {
         parent::__construct();
         $this->mergeConfig([
+            'class' => [
+                'slimselect'
+            ],
             'view' => 'helium::input.select',
             'placeholder' => trans('helium::input.select.placeholder'),
         ]);

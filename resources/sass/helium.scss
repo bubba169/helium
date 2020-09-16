@@ -1,12 +1,11 @@
 @import "~bootstrap/scss/bootstrap";
 @import "~flatpickr/dist/flatpickr.css";
-@import "~choices.js/src/styles/choices.scss";
+@import "~slim-select/dist/slimselect.min.css";
 @import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
 @import "~@fortawesome/fontawesome-free/scss/regular.scss";
 @import "~@fortawesome/fontawesome-free/scss/solid.scss";
 @import "~@fortawesome/fontawesome-free/scss/brands.scss";
 
 @import 'components/form';
-@import 'components/checkbox';
 @import 'components/buttons';
 @import 'components/nav';
