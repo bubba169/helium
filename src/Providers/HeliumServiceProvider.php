@@ -2,9 +2,7 @@
 
 namespace Helium\Providers;
 
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Helium\Http\View\Composers\NavigationComposer;
 
 class HeliumServiceProvider extends ServiceProvider
 {
@@ -37,10 +35,7 @@ class HeliumServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__.'/../../config/routes.php');
         $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
-        $this->loadFactoriesFrom(__DIR__.'/../../database/factories');
         $this->loadTranslationsFrom(__DIR__.'/../../resources/lang', 'helium');
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'helium');
-
-        View::composer('helium::layout', NavigationComposer::class);
     }
 }

@@ -6,7 +6,9 @@
     </head>
     <body>
         <div class="flex min-h-screen">
-            <div class="w-48 overflow-auto text-white bg-gradient-to-bl from-gray-800 to-gray-600">Nav</div>
+            <div class="z-10 w-56 overflow-auto text-white shadow-2xl bg-gradient-to-bl from-gray-800 to-gray-600">
+                {% include "helium::partials/nav" %}
+            </div>
             <div class="flex-1 min-h-full p-8 bg-gradient-to-b from-gray-300 to-gray-100">
                 {% block content %}{% endblock %}
             </div>

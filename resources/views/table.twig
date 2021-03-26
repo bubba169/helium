@@ -1,0 +1,21 @@
+{% extends 'helium::layouts/default' %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <table class="w-full">
+        <thead>
+            {% for column in config.table.columns %}
+                <th class="text-left">{{ column.label ?? column.name|title }}</th>
+            {% endfor %}
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+                <tr>
+                    {% for column in config.table.columns %}
+                        <td>{{ entry.attribute(column.value ?? column.name) }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
