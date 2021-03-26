@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ asset('vendor/helium/css/helium.css') }}">
+        <script src="{{  asset('vendor/helium/js/helium.js') }}" defer></script>
+    </head>
+    <body>
+        <div class="flex min-h-screen">
+            <div class="w-48 overflow-auto text-white bg-gradient-to-bl from-gray-800 to-gray-600">Nav</div>
+            <div class="flex-1 min-h-full p-8 bg-gradient-to-b from-gray-300 to-gray-100">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </body>
+</html>
