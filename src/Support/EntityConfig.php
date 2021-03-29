@@ -40,21 +40,55 @@ class EntityConfig
      */
     protected function normaliseTable(array $config) : array
     {
-        $config['table']['columns'] = array_normalise_keys($config['table']['columns']);
-        foreach ($config['table']['columns'] as &$column) {
-            // Use the name as the value if not set
-            if (!isset($column['value'])) {
-                $column['value'] = $column['name'];
-            }
-            // Try to build a label from the value
-            if (!isset($column['label'])) {
-                $column['label'] = Str::title(str_humanize($column['value']));
-            }
-        }
+        $config = $this->normaliseTableColumns($config);
+        $config = $this->normaliseTableActions($config);
 
         // Fill in the title
         if (!isset($config['table']['title'])) {
             $config['table']['title'] = Str::plural(str_humanize(Str::camel($config['name'])));
+        }
+
+        return $config;
+    }
+
+    protected function normaliseTableColumns(array $config) : array
+    {
+        // Normalise columns
+        $config['table']['columns'] = array_normalise_keys($config['table']['columns']);
+        foreach ($config['table']['columns'] as &$column) {
+            // Use the name as the value if not set
+            if (!isset($column['value'])) {
+                $column['value'] = '{entity.' . $column['name'] . '}';
+            }
+            // Try to build a label from the value
+            if (!isset($column['label'])) {
+                $column['label'] = Str::title(str_humanize($column['name']));
+            }
+
+            if (!isset($column['view'])) {
+                $column['view'] = 'helium::partials.table-cell.text-cell';
+            }
+        }
+        return $config;
+    }
+
+    protected function normaliseTableActions(array $config) : array
+    {
+        // Normalise actions
+        $config['table']['actions'] = array_normalise_keys($config['table']['actions'], 'name', 'action');
+        foreach ($config['table']['actions'] as &$action) {
+            // Get the action from the name if not set separately
+            if (!isset($action['action'])) {
+                $action['action'] = $action['name'];
+            }
+            // Try to build a label from the name if not set
+            if (!isset($action['label'])) {
+                $action['label'] = Str::title(str_humanize($action['name']));
+            }
+            // Create a url
+            if (!isset($action['url'])) {
+                $action['url'] = '{entity.id}/' . $action['action'];
+            }
         }
 
         return $config;

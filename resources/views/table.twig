@@ -1,19 +1,30 @@
 {% extends 'helium::layouts/default' %}
 
 {% block content %}
-    <h1>{{ config.table.title }}</h1>
-    <table class="w-full">
-        <thead>
+    <h1 class="mb-6 text-3xl font-bold">{{ config.table.title }}</h1>
+    <table class="w-full bg-gray-200 rounded-t-lg">
+        <thead class="text-left border-b border-gray-300">
             {% for column in config.table.columns %}
-                <th class="text-left">{{ column.label }}</th>
+                <th class="px-4 py-3">{{ column.label }}</th>
             {% endfor %}
+            <th class="px-4 py-3">Actions</th>
         </thead>
         <tbody>
             {% for entry in entries %}
-                <tr>
+                <tr class="text-left border-b border-gray-300">
                     {% for column in config.table.columns %}
-                        <td>{{ entry.attribute(column.value) }}</td>
+                        <td class="px-4 py-3">{% include column.view with {entry: entry, value: column.value} %}</td>
                     {% endfor %}
+                    <td class="px-4 py-3">
+                        {% for action in config.table.actions %}
+                            {% if action.icon %}
+
+                            {% endif %}
+                            <a href="{{  action.url|resolve(entry) }}"
+                                class="px-4 py-2 text-white bg-gray-800 rounded hover:bg-gray-700"
+                            >{{ action.label }}</a>
+                        {% endfor %}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

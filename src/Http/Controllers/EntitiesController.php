@@ -3,7 +3,6 @@
 namespace Helium\Http\Controllers;
 
 use Helium\Support\EntityConfig;
-use Illuminate\Support\Str;
 
 class EntitiesController extends HeliumController
 {
