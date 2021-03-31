@@ -17,12 +17,16 @@
                     {% endfor %}
                     <td class="px-4 py-3">
                         {% for action in config.table.actions %}
-                            {% if action.icon %}
-
-                            {% endif %}
-                            <a href="{{  action.url|resolve(entry) }}"
+                            <a href="{{ action.url|resolve(entry) }}"
                                 class="px-4 py-2 text-white bg-gray-800 rounded hover:bg-gray-700"
-                            >{{ action.label }}</a>
+                            >
+                                {% if action.iconClass %}
+                                    <div class="inline-block w-5">
+                                        <i class="{{ action.iconClass }}" aria-hidden="true"></i>
+                                    </div>
+                                {% endif %}
+                                {{ action.label }}
+                            </a>
                         {% endfor %}
                     </td>
                 </tr>

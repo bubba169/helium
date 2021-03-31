@@ -2,6 +2,7 @@
 
 namespace Helium\Support;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -10,6 +11,9 @@ class EntityConfig
     protected const DEFAULT = [
         'table' => [
             'view' => 'helium::table'
+        ],
+        'form' => [
+            'view' => 'helium::form'
         ]
     ];
 
@@ -25,7 +29,7 @@ class EntityConfig
         }
 
         $config = array_merge_deep(self::DEFAULT, $config);
-
+        $config['slug'] = $entityName;
         if (!isset($config['name'])) {
             $config['name'] = class_basename($config['model']);
         }
@@ -85,9 +89,28 @@ class EntityConfig
             if (!isset($action['label'])) {
                 $action['label'] = Str::title(str_humanize($action['name']));
             }
-            // Create a url
-            if (!isset($action['url'])) {
-                $action['url'] = '{entity.id}/' . $action['action'];
+            // Create a url.
+            if (!isset($action['url']) && Route::has('helium.entity.' . $action['action'])) {
+                $action['url'] = str_replace(
+                    '%id%',
+                    '{entity.id}',
+                    route(
+                        'helium.entity.' . $action['action'],
+                        [
+                            'type' => $config['slug'],
+                            'id' => '%id%'
+                        ]
+                    )
+                );
+            }
+
+            // Some preset icons
+            if (!isset($action['iconClass'])) {
+                switch ($action['action']) {
+                    case 'edit':
+                        $action['iconClass'] = 'fas fa-edit';
+                        break;
+                }
             }
         }
 

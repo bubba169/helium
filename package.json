@@ -12,7 +12,10 @@
     "laravel-mix": "^6.0.13",
     "postcss": "^8.1",
     "postcss-loader": "^5.2.0",
-    "tailwindcss": "^2.0.4"
+    "tailwindcss": "^2.0.4",
+    "postcss-import": "^14.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.3"
+  }
 }

@@ -6,6 +6,12 @@
 {% for item in menuConfig %}
     <li>
         <a class="block w-full px-8 py-2 border-t border-b border-gray-700 border-solid hover:bg-gray-800" href="{{ item.url }}">
+            {% if item.iconClass %}
+                <div class="inline-block w-5 mr-2">
+                    <i class="{{ item.iconClass }}" aria-hidden="true"></i>
+                </div>
+            {% endif %}
+
             {{  item.label }}
         </a>
     </li>
