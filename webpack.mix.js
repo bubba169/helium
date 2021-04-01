@@ -13,5 +13,6 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/helium.js', 'public/js')
     .postCss('resources/css/helium.css', 'public/css', [
+        require('postcss-import'),
         require('tailwindcss')
     ]);

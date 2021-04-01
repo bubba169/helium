@@ -37,7 +37,6 @@ class HeliumServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../../public' => public_path('vendor/helium'),
-            __DIR__.'/../../fonts' => public_path('fonts'),
         ], 'helium-public');
 
         $this->loadRoutesFrom(__DIR__.'/../../config/routes.php');
