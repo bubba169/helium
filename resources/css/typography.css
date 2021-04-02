@@ -1,5 +1,5 @@
-@layer base {
-    h1 {
-        @apply mb-4 text-3xl font-bold;
+@layer components {
+    .h1 {
+        @apply text-3xl font-bold;
     }
 }

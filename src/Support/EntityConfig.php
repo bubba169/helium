@@ -35,6 +35,7 @@ class EntityConfig
         }
 
         $config = $this->normaliseTable($config);
+        $config = $this->normaliseForm($config);
 
         return $config;
     }
@@ -55,6 +56,9 @@ class EntityConfig
         return $config;
     }
 
+    /**
+     * Normalises the columns and fills in the gaps with sensible defaults
+     */
     protected function normaliseTableColumns(array $config) : array
     {
         // Normalise columns
@@ -62,7 +66,7 @@ class EntityConfig
         foreach ($config['table']['columns'] as &$column) {
             // Use the name as the value if not set
             if (!isset($column['value'])) {
-                $column['value'] = '{entity.' . $column['name'] . '}';
+                $column['value'] = '{entry.' . $column['name'] . '}';
             }
             // Try to build a label from the value
             if (!isset($column['label'])) {
@@ -70,12 +74,15 @@ class EntityConfig
             }
 
             if (!isset($column['view'])) {
-                $column['view'] = 'helium::partials.table-cell.text-cell';
+                $column['view'] = 'helium::table-cell.text';
             }
         }
         return $config;
     }
 
+    /**
+     * Normalises the actions and fills in the gaps with sensible defaults
+     */
     protected function normaliseTableActions(array $config) : array
     {
         // Normalise actions
@@ -93,7 +100,7 @@ class EntityConfig
             if (!isset($action['url']) && Route::has('helium.entity.' . $action['action'])) {
                 $action['url'] = str_replace(
                     '%id%',
-                    '{entity.id}',
+                    '{entry.id}',
                     route(
                         'helium.entity.' . $action['action'],
                         [
@@ -110,6 +117,57 @@ class EntityConfig
                     case 'edit':
                         $action['iconClass'] = 'fas fa-edit';
                         break;
+                }
+            }
+        }
+
+        return $config;
+    }
+
+    /**
+     * Builds a table config. This will also normalise the data and fill in the blanks
+     */
+    protected function normaliseForm(array $config) : array
+    {
+        // Fill in the title
+        if (!isset($config['form']['title'])) {
+            $config['form']['title'] = 'Update ' . str_humanize(Str::camel($config['name']));
+        }
+
+        $config = $this->normaliseFormFields($config);
+
+        return $config;
+    }
+
+    /**
+     * Builds a table config. This will also normalise the data and fill in the blanks
+     */
+    protected function normaliseFormFields(array $config) : array
+    {
+       // Normalise actions
+        $config['form']['fields'] = array_normalise_keys($config['form']['fields'], 'name', 'value');
+        foreach ($config['form']['fields'] as &$field) {
+            // Set the type to text by default
+            if (!isset($field['label'])) {
+                $field['label'] = Str::title(str_humanize($field['name']));
+            }
+            // Set the type to text by default
+            if (!isset($field['type'])) {
+                $field['type'] = 'text';
+            }
+            // Set the type to text by default
+            if (!isset($field['id'])) {
+                $field['id'] = 'name';
+            }
+            // Set the type to text by default
+            if (!isset($field['value'])) {
+                $field['value'] = $field['name'];
+            }
+            // Set the view based on the type
+            if (!isset($field['view'])) {
+                switch ($field['type']) {
+                    default:
+                        $field['view'] = 'helium::form-fields.input';
                 }
             }
         }

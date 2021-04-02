@@ -22,7 +22,7 @@ class EntitiesController extends HeliumController
 
         return view($config['form']['view'], [
             'config' => $config,
-            'entries' => $config['model']::all(),
+            'entry' => $config['model']::find($id),
         ]);
     }
 }

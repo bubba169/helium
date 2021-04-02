@@ -1,7 +1,11 @@
 {% extends "helium::layouts/default" %}
 
 {% block content %}
+    <h1 class="mb-4 h1">{{ config.form.title }}</h1>
 
-<h1 >Update {{ config.name }}</h1>
-
+    <div class="p-8 bg-gray-100 rounded-xl">
+        {% for field in config.form.fields %}
+            {% include field.view with {field: field, entry: entry} %}
+        {% endfor %}
+    </div>
 {% endblock %}
