@@ -1,0 +1,18 @@
+{% if action.submit %}
+    <button type="submit" name="helium_action" value="{{ action.action }}"
+{% else %}
+    <a href="{{ action.url|resolve(entry) }}"
+{% endif %}
+    class="px-4 py-2 text-white bg-{{ action.colour }} rounded hover:bg-{{ action.hoverColour }}"
+>
+    {% if action.iconClass %}
+        <div class="inline-block w-5">
+            <i class="{{ action.iconClass }}" aria-hidden="true"></i>
+        </div>
+    {% endif %}
+    {{ action.label }}
+{% if action.submit %}
+    </button>
+{% else %}
+    </a>
+{% endif %}

@@ -6,5 +6,5 @@ Route::prefix('/admin')
     ->group(function () {
         Route::view('/', 'helium::dashboard')->name('helium.home');
         Route::get('/entities/{type}', 'EntitiesController@list')->name('helium.entity.list');
-        Route::get('/entities/{type}/{id}/edit', 'EntitiesController@edit')->name('helium.entity.edit');
+        Route::any('/entities/{type}/{id}/edit', 'EntitiesController@edit')->name('helium.entity.edit');
     });

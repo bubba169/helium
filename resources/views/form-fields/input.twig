@@ -4,7 +4,8 @@
         type="{{ field.type }}"
         name="{{ field.name }}"
         id="{{ field.id }}"
-        value="{{ entry ? entry.attribute(field.value) }}"
+        value="{{ entry ? field.value|resolve(entry) }}"
+        placeholder="{{ field.placeholder }}"
         {{ field.required ? 'required' }}
     >
 </div>
