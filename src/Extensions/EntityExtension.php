@@ -15,6 +15,12 @@ class EntityExtension extends AbstractExtension
                 return preg_replace_callback('/\{entry\.(.*)\}/', function ($match) use ($entry) {
                     return Arr::get($entry, $match[1]);
                 }, $str);
+            }),
+            new TwigFilter('options', function ($value, $entry) {
+                if (is_string($value)) {
+                    return app()->call($value, ['entry' => $entry]);
+                }
+                return $value;
             })
         ];
     }

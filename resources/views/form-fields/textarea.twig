@@ -1,0 +1,10 @@
+<div class="w-full mb-4">
+    <label class="block w-full mb-2 text-lg font-bold" for="{{ field.id }}">{{ field.label }}</label>
+    <textarea class="box-border inline-block w-full p-2 border border-gray-400 rounded-lg"
+        name="{{ field.name }}"
+        id="{{ field.id }}"
+        value=""
+        placeholder="{{ field.placeholder }}"
+        {{ field.required ? 'required' }}
+    >{{ entry ? field.value|resolve(entry) }}</textarea>
+</div>

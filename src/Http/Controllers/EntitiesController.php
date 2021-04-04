@@ -20,25 +20,23 @@ class EntitiesController extends HeliumController
         ]);
     }
 
-    public function edit(string $type, int $id, EntityConfig $configLoader, Request $request)
+    public function edit(string $type, int $id, EntityConfig $configLoader)
     {
         $config = $configLoader->getConfig($type);
-
-        if ($request->isMethod('post')) {
-            $handler = Arr::get($config, 'form.actions.' . $request->input('helium_action') . '.handler');
-            if ($handler) {
-                $result = app()->call($handler . '@handle', ['config' => $config]);
-                if ($result) {
-                    return $result;
-                }
-
-                //Session::flash();
-            }
-        }
 
         return view($config['form']['view'], [
             'config' => $config,
             'entry' => $config['model']::find($id),
         ]);
+    }
+
+    public function store(string $type, int $id, EntityConfig $configLoader, Request $request)
+    {
+        $config = $configLoader->getConfig($type);
+
+        $handler = Arr::get($config, 'form.actions.' . $request->input('helium_action') . '.handler');
+        if ($handler) {
+            return app()->call($handler, ['config' => $config]);
+        }
     }
 }

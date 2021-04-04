@@ -128,9 +128,26 @@ class EntityConfig
             // Set the view based on the type
             if (!isset($field['view'])) {
                 switch ($field['type']) {
+                    case 'select':
+                        $field['view'] = 'helium::form-fields.select';
+                        break;
+                    case 'textarea':
+                        $field['view'] = 'helium::form-fields.textarea';
+                        break;
+                    case 'datetime':
+                        $field['view'] = 'helium::form-fields.datetime';
+                        break;
                     default:
                         $field['view'] = 'helium::form-fields.input';
                 }
+            }
+
+            if (
+                isset($field['options']) &&
+                is_string($field['options']) &&
+                strpos($field['options'], '@') === false
+            ) {
+                $field['options'] .= '@handle';
             }
         }
 
@@ -207,12 +224,22 @@ class EntityConfig
                 }
             }
 
+            // Some preset handlers for form submitting
             if ($action['submit'] && !isset($action['handler'])) {
                 switch ($action['action']) {
                     case 'save':
                         $action['handler'] = FormHandler::class;
                         break;
                 }
+            }
+
+            // If a class name is given but no function call handle
+            if (
+                isset($action['handler']) &&
+                is_string($action['handler']) &&
+                strpos($action['handler'], '@') === false
+            ) {
+                $action['handler'] .= '@handle';
             }
         }
 
