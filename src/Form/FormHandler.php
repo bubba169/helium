@@ -13,6 +13,9 @@ class FormHandler
         foreach ($config['form']['fields'] as $field) {
 
             switch ($field['type']) {
+                case 'checkbox':
+                    $entry->{$field['name']} = $request->input($field['name'], false) ? 1 : 0;
+                    break;
                 case 'datetime':
                     $entry->{$field['name']} = $request->input($field['name'] . '_date') .
                         ' ' . $request->input($field['name'] . '_time');

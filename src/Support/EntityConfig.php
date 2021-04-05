@@ -119,7 +119,7 @@ class EntityConfig
             }
             // Set the type to text by default
             if (!isset($field['id'])) {
-                $field['id'] = 'name';
+                $field['id'] = $field['name'];
             }
             // Set the type to text by default
             if (!isset($field['value'])) {
@@ -130,6 +130,12 @@ class EntityConfig
                 switch ($field['type']) {
                     case 'select':
                         $field['view'] = 'helium::form-fields.select';
+                        break;
+                    case 'radio':
+                        $field['view'] = 'helium::form-fields.radios';
+                        break;
+                    case 'checkbox':
+                        $field['view'] = 'helium::form-fields.checkbox';
                         break;
                     case 'textarea':
                         $field['view'] = 'helium::form-fields.textarea';
