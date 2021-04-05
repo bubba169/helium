@@ -14,14 +14,14 @@ class FormHandler
 
             switch ($field['type']) {
                 case 'checkbox':
-                    $entry->{$field['name']} = $request->input($field['name'], false) ? 1 : 0;
+                    $entry->{$field['column']} = $request->input($field['name'], false) ? 1 : 0;
                     break;
                 case 'datetime':
-                    $entry->{$field['name']} = $request->input($field['name'] . '_date') .
+                    $entry->{$field['column']} = $request->input($field['name'] . '_date') .
                         ' ' . $request->input($field['name'] . '_time');
                     break;
                 default:
-                    $entry->{$field['name']} = $request->input($field['name']);
+                    $entry->{$field['column']} = $request->input($field['name']);
             }
         }
         $entry->save();

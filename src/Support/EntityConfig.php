@@ -3,6 +3,7 @@
 namespace Helium\Support;
 
 use Helium\Form\FormHandler;
+use Helium\Form\RelatedOptionsHandler;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -107,7 +108,7 @@ class EntityConfig
     protected function normaliseFormFields(array $config) : array
     {
        // Normalise actions
-        $config['form']['fields'] = array_normalise_keys($config['form']['fields'], 'name', 'value');
+        $config['form']['fields'] = array_normalise_keys($config['form']['fields'], 'name', 'column');
         foreach ($config['form']['fields'] as &$field) {
             // Set the type to text by default
             if (!isset($field['label'])) {
@@ -122,13 +123,18 @@ class EntityConfig
                 $field['id'] = $field['name'];
             }
             // Set the type to text by default
+            if (!isset($field['column'])) {
+                $field['column'] = $field['name'];
+            }
+            // Set the type to text by default
             if (!isset($field['value'])) {
-                $field['value'] = '{entry.' . $field['name'] . '}';
+                $field['value'] = '{entry.' . $field['column'] . '}';
             }
             // Set the view based on the type
             if (!isset($field['view'])) {
                 switch ($field['type']) {
                     case 'select':
+                    case 'belongsTo':
                         $field['view'] = 'helium::form-fields.select';
                         break;
                     case 'radio':
@@ -145,6 +151,18 @@ class EntityConfig
                         break;
                     default:
                         $field['view'] = 'helium::form-fields.input';
+                }
+            }
+
+            if ($field['type'] == 'belongsTo') {
+                if (!isset($field['options'])) {
+                    $field['options'] = RelatedOptionsHandler::class;
+                }
+                if (!isset($field['related_id'])) {
+                    $field['related_id'] = 'id';
+                }
+                if (!isset($field['relationship'])) {
+                    $field['relationship'] = $field['name'];
                 }
             }
 

@@ -16,9 +16,9 @@ class EntityExtension extends AbstractExtension
                     return Arr::get($entry, $match[1]);
                 }, $str);
             }),
-            new TwigFilter('options', function ($value, $entry) {
+            new TwigFilter('options', function ($value, $entry, $field) {
                 if (is_string($value)) {
-                    return app()->call($value, ['entry' => $entry]);
+                    return app()->call($value, ['entry' => $entry, 'field' => $field]);
                 }
                 return $value;
             })

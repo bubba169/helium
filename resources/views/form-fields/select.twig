@@ -9,9 +9,9 @@
             <option value="">{{ field.placeholder }}</option>
         {% endif %}
 
-        {% for name,value in field.options|options(entry) %}
+        {% for name,value in field.options|options(entry, field) %}
             <option value="{{ value }}"
-                {{ (entry and field.value|resolve(entry) is same as(value)) ? 'selected' }}
+                {{ (entry and field.value|resolve(entry) == value) ? 'selected' }}
             >{{ name }}</option>
         {% endfor %}
     </select>
