@@ -20,6 +20,15 @@ class EntitiesController extends HeliumController
         ]);
     }
 
+    public function add(string $type, EntityConfig $configLoader)
+    {
+        $config = $configLoader->getConfig($type);
+
+        return view($config['form']['view'], [
+            'config' => $config,
+        ]);
+    }
+
     public function edit(string $type, int $id, EntityConfig $configLoader)
     {
         $config = $configLoader->getConfig($type);
@@ -30,7 +39,7 @@ class EntitiesController extends HeliumController
         ]);
     }
 
-    public function store(string $type, int $id, EntityConfig $configLoader, Request $request)
+    public function store(EntityConfig $configLoader, Request $request, string $type, ?int $id = null)
     {
         $config = $configLoader->getConfig($type);
 

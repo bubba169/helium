@@ -153,6 +153,9 @@ class EntityConfig
                     case 'datetime':
                         $field['view'] = 'helium::form-fields.datetime';
                         break;
+                    case 'password':
+                        $field['view'] = 'helium::form-fields.password';
+                        break;
                     default:
                         $field['view'] = 'helium::form-fields.input';
                 }

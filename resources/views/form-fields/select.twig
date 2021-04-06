@@ -11,7 +11,7 @@
 
         {% for name,value in field.options|options(entry, field) %}
             <option value="{{ value }}"
-                {{ (entry and field.value|resolve(entry) == value) ? 'selected' }}
+                {{ (entry is not empty and field.value|resolve(entry) == value) ? 'selected' }}
             >{{ name }}</option>
         {% endfor %}
     </select>

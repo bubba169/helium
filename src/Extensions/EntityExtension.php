@@ -22,7 +22,7 @@ class EntityExtension extends AbstractExtension
                 }
                 return $arr ?? [];
             }),
-            new TwigFilter('options', function ($value, ArrayAccess $entry, array $field) {
+            new TwigFilter('options', function ($value, ?ArrayAccess $entry, array $field) {
                 if (is_string($value)) {
                     return app()->call($value, ['entry' => $entry, 'field' => $field]);
                 }

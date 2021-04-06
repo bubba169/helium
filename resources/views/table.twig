@@ -1,7 +1,7 @@
 {% extends 'helium::layouts/default' %}
 
 {% block content %}
-    <h1 class="">{{ config.table.title }}</h1>
+    <h1 class="mb-4 h1">{{ config.table.title }}</h1>
     <table class="w-full bg-gray-200 rounded-t-lg">
         <thead class="text-left border-b border-gray-300">
             {% for column in config.table.columns %}
