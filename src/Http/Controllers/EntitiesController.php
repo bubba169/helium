@@ -1,99 +1,42 @@
-<?php namespace Helium\Http\Controllers;
+<?php
 
+namespace Helium\Http\Controllers;
+
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Helium\Contract\HeliumEntity;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Helium\Support\EntityConfig;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Session;
 
-class EntitiesController extends Controller
+class EntitiesController extends HeliumController
 {
-    /**
-     * Lists entities using a table builder
-     *
-     * @param string $entityType
-     * @return View
-     */
-    public function index(string $entityType)
+    public function list(string $type, EntityConfig $configLoader)
     {
-        $entity = $this->getEntity($entityType);
+        $config = $configLoader->getConfig($type);
 
-        $table = $entity->getTableBuilder()
-            ->getTable();
-
-        return view($table->getView(), [
-            'table' => $table,
+        return view($config['table']['view'], [
+            'config' => $config,
+            'entries' => $config['model']::all(),
         ]);
     }
 
-    /**
-     * Edit an entity using a form builder
-     *
-     * @param string $entity The entity type
-     * @param int $id The entity id
-     * @return void
-     */
-    public function edit(Request $request, string $entityType, int $id)
+    public function edit(string $type, int $id, EntityConfig $configLoader)
     {
-        $entity = $this->getEntity($entityType);
+        $config = $configLoader->getConfig($type);
 
-        $form = $entity->getFormBuilder()
-            ->setInstance($entity->getRepository()->find($id))
-            ->getForm();
-
-        return view('helium::form', [
-            'form' => $form
+        return view($config['form']['view'], [
+            'config' => $config,
+            'entry' => $config['model']::find($id),
         ]);
     }
 
-    /**
-     * Shows a form to create a new entity
-     *
-     * @return View
-     */
-    public function create(Request $request, string $entityType)
+    public function store(string $type, int $id, EntityConfig $configLoader, Request $request)
     {
-        $entity = $this->getEntity($entityType);
+        $config = $configLoader->getConfig($type);
 
-        $form = $entity->getFormBuilder()->getForm();
-
-        return view('helium::form', [
-            'form' => $form
-        ]);
-    }
-
-    /**
-     * Validates and saves the post data
-     *
-     * @return Redirect
-     */
-    public function save(Request $request, string $entityType)
-    {
-        $entity = $this->getEntity($entityType);
-
-        $entity->getFormHandler()
-            ->validate($request->all())
-            ->post($request->all());
-
-        return back()->with('message', [
-            'type' => 'success',
-            'message' => 'Saved successfully'
-        ]);
-    }
-
-    /**
-     * Gets an Entity by its slug
-     *
-     * @param string $slug
-     * @return EntityInterface
-     */
-    protected function getEntity(string $slug) : HeliumEntity
-    {
-        $entityClass = config('helium.entities.' . $slug);
-
-        if (!$entityClass || !class_exists($entityClass)) {
-            throw new NotFoundHttpException();
+        $handler = Arr::get($config, 'form.actions.' . $request->input('helium_action') . '.handler');
+        if ($handler) {
+            return app()->call($handler, ['config' => $config]);
         }
-
-        return app()->make($entityClass);
     }
 }

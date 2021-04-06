@@ -1,0 +1,15 @@
+<div class="flex flex-wrap w-full px-4 py-2 mb-4 bg-white border border-gray-400 rounded-lg">
+    <label class="block w-full mb-2 text-lg font-bold">{{ field.label }}</label>
+    {% for name,value in field.options|options(entry, field) %}
+        <div class="flex w-full mb-3 md:w-1/2 lg:w-1/3 xl:w-1/4">
+            <input type="checkbox"
+                class="box-border inline-block p-2 bg-white border border-gray-400 rounded-lg cursor-pointer"
+                name="{{ field.name }}[]"
+                id="{{ field.id }}_{{ loop.index }}"
+                value="{{ value }}"
+                {{ (entry and value in field.value|values(entry, field.related_id)) ? 'checked' }}
+            >
+            <label class="flex-1 block ml-3 cursor-pointer" for="{{ field.id }}_{{ loop.index  }}">{{ name }}</label>
+        </div>
+    {% endfor %}
+</div>

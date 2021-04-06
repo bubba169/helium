@@ -41,7 +41,7 @@ function array_merge_deep(array ...$arrays) : array
  * @param string $valueKey A string value will be copied into the array with the given key if specified
  * @return array
  */
-function array_normalize_keys(array $array, string $nameKey = 'name', string $valueKey = 'value') : array
+function array_normalise_keys(array $array, string $nameKey = 'name', string $valueKey = 'value') : array
 {
     $result = [];
 

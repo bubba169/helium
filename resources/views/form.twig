@@ -1,0 +1,24 @@
+{% extends "helium::layouts/default" %}
+
+{% block content %}
+    <form method="POST">
+        {{ csrf_field() }}
+
+        <h1 class="mb-4 h1">{{ config.form.title }}</h1>
+
+        <div class="p-8 bg-gray-100 rounded-xl">
+            <div class="mb-8">
+                <input type="hidden" name="id" value="{{ entry.id }}">
+                {% for field in config.form.fields %}
+                    {% include field.view with {field: field, entry: entry} %}
+                {% endfor %}
+            </div>
+
+            <div class="">
+                {% for action in config.form.actions %}
+                    {% include action.view with {action: action, entry: entry} %}
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+{% endblock %}

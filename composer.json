@@ -1,6 +1,6 @@
 {
     "name": "bubba169/helium",
-    "description": "An experimental CMS for Laravel",
+    "description": "A lightweight CMS for Laravel",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "laravel/framework": "~7.0",
-        "doctrine/dbal": "~2.0"
+        "laravel/framework": "^8.0",
+        "rcrowe/twigbridge": "^0.12.3"
     },
     "autoload": {
         "psr-4": {

@@ -1,0 +1,19 @@
+{% set menuConfig = config('helium.nav.menu') %}
+
+<div class="px-8 py-8 text-2xl font-bold text-white bg-gray-900">Helium CMS</div>
+
+<ul class="">
+{% for item in menuConfig %}
+    <li>
+        <a class="block w-full px-8 py-2 border-t border-b border-gray-700 border-solid hover:bg-gray-800" href="{{ item.url }}">
+            {% if item.iconClass %}
+                <div class="inline-block w-5 mr-2">
+                    <i class="{{ item.iconClass }}" aria-hidden="true"></i>
+                </div>
+            {% endif %}
+
+            {{  item.label }}
+        </a>
+    </li>
+{% endfor %}
+</ul>
