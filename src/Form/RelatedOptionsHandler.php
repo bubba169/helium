@@ -6,8 +6,7 @@ class RelatedOptionsHandler
 {
     public function handle($entry, $field)
     {
-        return $entry->{$field['relationship']}
-            ->pluck($field['related_id'], $field['related_name']);
+        return $field['related_model']::pluck($field['related_id'], $field['related_name']);
     }
 }
 

@@ -137,6 +137,10 @@ class EntityConfig
                     case 'belongsTo':
                         $field['view'] = 'helium::form-fields.select';
                         break;
+                    case 'belongsToMany':
+                    case 'multicheck':
+                        $field['view'] = 'helium::form-fields.multicheck';
+                        break;
                     case 'radio':
                         $field['view'] = 'helium::form-fields.radios';
                         break;
@@ -154,7 +158,7 @@ class EntityConfig
                 }
             }
 
-            if ($field['type'] == 'belongsTo') {
+            if (in_array($field['type'], ['belongsTo', 'belongsToMany'])) {
                 if (!isset($field['options'])) {
                     $field['options'] = RelatedOptionsHandler::class;
                 }
