@@ -108,7 +108,7 @@ class EntityConfig
     protected function normaliseFormFields(array $config) : array
     {
        // Normalise actions
-        $config['form']['fields'] = array_normalise_keys($config['form']['fields'], 'name', 'column');
+        $config['form']['fields'] = array_normalise_keys($config['form']['fields'], 'name', 'type');
         foreach ($config['form']['fields'] as &$field) {
             // Set the type to text by default
             if (!isset($field['label'])) {

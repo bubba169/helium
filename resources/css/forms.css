@@ -1,0 +1,8 @@
+@layer components {
+    .helium-tab {
+        @apply block px-8 py-3 mr-1 font-bold bg-gray-200 rounded-t-xl hover:bg-gray-600 hover:text-white
+    }
+    .helium-tab.active {
+        @apply bg-gray-100 hover:bg-gray-100 hover:text-black
+    }
+}
