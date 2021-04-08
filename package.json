@@ -13,7 +13,8 @@
     "postcss": "^8.1",
     "postcss-import": "^14.0.0",
     "postcss-loader": "^5.2.0",
-    "tailwindcss": "^2.0.4"
+    "tailwindcss": "^2.1"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "version": "0.0.0"
 }
