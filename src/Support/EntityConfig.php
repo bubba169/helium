@@ -97,6 +97,7 @@ class EntityConfig
         }
 
         $config = $this->normaliseFormFields($config);
+        $config = $this->normaliseFormTabs($config);
         $config['form']['actions'] = $this->normaliseActions($config['form']['actions'], $config);
 
         return $config;
@@ -125,6 +126,10 @@ class EntityConfig
             // Set the type to text by default
             if (!isset($field['column'])) {
                 $field['column'] = $field['name'];
+            }
+            // Set the type to text by default
+            if (!isset($field['tab'])) {
+                $field['tab'] = 'main';
             }
             // Set the type to text by default
             if (!isset($field['value'])) {
@@ -179,6 +184,22 @@ class EntityConfig
                 strpos($field['options'], '@') === false
             ) {
                 $field['options'] .= '@handle';
+            }
+        }
+
+        return $config;
+    }
+
+    /**
+     * Builds a table config. This will also normalise the data and fill in the blanks
+     */
+    protected function normaliseFormTabs(array $config) : array
+    {
+       // Normalise actions
+        $config['form']['tabs'] = array_normalise_keys($config['form']['tabs'], 'slug', 'label');
+        foreach ($config['form']['tabs'] as &$tab) {
+            if (!isset($tab['label'])) {
+                $tab['label'] = str_humanize($tab['slug']);
             }
         }
 

@@ -5,9 +5,43 @@
 /*!********************************!*\
   !*** ./resources/js/helium.js ***!
   \********************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+__webpack_require__(/*! ./tabs */ "./resources/js/tabs.js");
+
+/***/ }),
+
+/***/ "./resources/js/tabs.js":
+/*!******************************!*\
+  !*** ./resources/js/tabs.js ***!
+  \******************************/
 /***/ (() => {
 
+var init = function init() {
+  var tabs = document.querySelectorAll('.helium-tab');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function (event) {
+      setActiveTab(tab);
+    });
+  });
+  setActiveTab(document.getElementById('helium-tab-main'));
+};
 
+function setActiveTab(tab) {
+  // Show the active tab content
+  var tabContent = document.querySelectorAll('.helium-tab-content');
+  tabContent.forEach(function (content) {
+    content.style.display = tab.getAttribute('data-tab-content-id') == content.id ? 'block' : 'none';
+  }); // Set the active tab
+
+  var tabs = document.querySelectorAll('.helium-tab.active');
+  tabs.forEach(function (tab) {
+    tab.classList.remove('active');
+  });
+  tab.classList.add('active');
+}
+
+init();
 
 /***/ }),
 
