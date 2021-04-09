@@ -15,7 +15,13 @@ class FormHandler
         $entry = $config['model']::findOrNew($request->input('id'));
         DB::transaction(function () use ($config, $request, $entry) {
             $deferred = [];
-            foreach ($config['form']['fields'] as $field) {
+
+            $fields = call_user_func_array(
+                'array_merge',
+                $config['forms'][$request->input('helium_form')]['fields']
+            );
+
+            foreach ($fields as $field) {
                 switch ($field['type']) {
                     // Defer some types as they cannot be saved until after the
                     // main entry has been saved

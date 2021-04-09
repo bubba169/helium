@@ -16,10 +16,18 @@ class EntityConfig
             'columns' => [],
             'actions' => [],
         ],
-        'form' => [
-            'view' => 'helium::form',
-            'fields' => [],
-            'actions' => [],
+        'fields' => [],
+        'forms' => [
+            '*' => [
+                'view' => 'helium::form',
+                'slug' => '*',
+                'tabs' => [],
+                'fields' => [
+                    'main' => []
+                ],
+                'actions' => [],
+            ]
+
         ]
     ];
 
@@ -35,13 +43,15 @@ class EntityConfig
         }
 
         $config = array_merge_deep(self::DEFAULT, $config);
+
         $config['slug'] = $entityName;
         if (!isset($config['name'])) {
             $config['name'] = class_basename($config['model']);
         }
 
         $config = $this->normaliseTable($config);
-        $config = $this->normaliseForm($config);
+        $config = $this->normaliseFields($config);
+        $config = $this->normaliseForms($config);
 
         return $config;
     }
@@ -89,28 +99,11 @@ class EntityConfig
     /**
      * Builds a table config. This will also normalise the data and fill in the blanks
      */
-    protected function normaliseForm(array $config) : array
-    {
-        // Fill in the title
-        if (!isset($config['form']['title'])) {
-            $config['form']['title'] = 'Update ' . str_humanize(Str::camel($config['name']));
-        }
-
-        $config = $this->normaliseFormFields($config);
-        $config = $this->normaliseFormTabs($config);
-        $config['form']['actions'] = $this->normaliseActions($config['form']['actions'], $config);
-
-        return $config;
-    }
-
-    /**
-     * Builds a table config. This will also normalise the data and fill in the blanks
-     */
-    protected function normaliseFormFields(array $config) : array
+    protected function normaliseFields(array $config) : array
     {
        // Normalise actions
-        $config['form']['fields'] = array_normalise_keys($config['form']['fields'], 'name', 'type');
-        foreach ($config['form']['fields'] as &$field) {
+        $config['fields'] = array_normalise_keys($config['fields'], 'name', 'type');
+        foreach ($config['fields'] as &$field) {
             // Set the type to text by default
             if (!isset($field['label'])) {
                 $field['label'] = Str::title(str_humanize($field['name']));
@@ -190,20 +183,71 @@ class EntityConfig
         return $config;
     }
 
+    protected function normaliseForms(array $config): array
+    {
+        $default = $this->normaliseForm($config['forms']['*'], $config);
+        unset($config['forms']['*']);
+
+        $config['forms'] = array_normalise_keys($config['forms'], 'slug');
+        foreach ($config['forms'] as $slug => &$form) {
+            $form['slug'] = $slug;
+            $form = $this->normaliseForm(array_merge($default, $form), $config);
+        }
+
+        return $config;
+    }
+
     /**
      * Builds a table config. This will also normalise the data and fill in the blanks
      */
-    protected function normaliseFormTabs(array $config) : array
+    protected function normaliseForm(array $form, array $config) : array
+    {
+        // Fill in the title
+        if (!isset($form['title'])) {
+            $form['title'] = Str::title(
+                str_humanize($form['slug']) . ' ' .
+                str_humanize(Str::camel($config['name']))
+            );
+        }
+
+        $form['tabs'] = $this->normaliseFormTabs($form['tabs'], $config);
+        $form['fields'] = $this->normaliseFormFields($form['fields'], $config);
+        $form['actions'] = $this->normaliseActions($form['actions'], $config);
+
+        return $form;
+    }
+
+    /**
+     * Builds a table config. This will also normalise the data and fill in the blanks
+     */
+    protected function normaliseFormTabs(array $tabs, array $config) : array
     {
        // Normalise actions
-        $config['form']['tabs'] = array_normalise_keys($config['form']['tabs'], 'slug', 'label');
-        foreach ($config['form']['tabs'] as &$tab) {
+        $tabs = array_normalise_keys($tabs, 'slug', 'label');
+        foreach ($tabs as &$tab) {
             if (!isset($tab['label'])) {
                 $tab['label'] = str_humanize($tab['slug']);
             }
         }
 
-        return $config;
+        return $tabs;
+    }
+
+    /**
+     * Builds a table config. This will also normalise the data and fill in the blanks
+     */
+    protected function normaliseFormFields(array $fields, array $config) : array
+    {
+        $formFields = [];
+        // Normalise actions
+        foreach ($fields as $tabName => &$tabFields) {
+            $formFields[$tabName] = [];
+            foreach (array_normalise_keys($tabFields, null, null) as $fieldName => $field) {
+                $formFields[$tabName][$fieldName] = array_merge($config['fields'][$fieldName], $field);
+            }
+        }
+
+        return $formFields;
     }
 
     /**

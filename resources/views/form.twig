@@ -4,16 +4,15 @@
     <form method="POST">
         {{ csrf_field() }}
 
-        <h1 class="mb-4 h1">{{ config.form.title }}</h1>
+        <h1 class="mb-4 h1">{{ form.title }}</h1>
 
         <div class="flex flex-1 px-8 py-6 bg-gray-100 rounded-xl">
-            {% if config.form.tabs|length > 0 %}
+            {% set tabs = form.fields|keys %}
+
+            {% if tabs|length > 0 %}
                 <div class="flex flex-col mr-8 border-r-2 border-gray-200">
-                    <a class="helium-tab" id="helium-tab-main" data-tab-content-id="helium-tab-content-main" href="#">
-                        Content
-                    </a>
-                    {% for tab in config.form.tabs %}
-                        <a class="helium-tab" data-tab-content-id="helium-tab-content-{{ tab.slug }}" href="#{{ tab.slug }}">
+                    {% for tab in form.tabs %}
+                        <a class="helium-tab" id="helium-tab-{{ tab.slug }}" data-tab-content-id="helium-tab-content-{{ tab.slug  }}" href="#{{ tab.slug }}">
                             {{ tab.label }}
                         </a>
                     {% endfor %}
@@ -21,19 +20,13 @@
             {% endif %}
 
             <div class="flex-1">
-                <div id="helium-tab-content-main" class="helium-tab-content">
-                    <div class="mb-8">
-                        <input type="hidden" name="id" value="{{ entry.id }}">
-                        {% for field in config.form.fields|filter(field => field.tab == 'main') %}
-                            {% include field.view with {field: field, entry: entry} %}
-                        {% endfor %}
-                    </div>
-                </div>
+                <input type="hidden" name="id" value="{{ entry.id }}">
+                <input type="hidden" name="helium_form" value="{{ form.slug }}">
 
-                {% for tab in config.form.tabs %}
-                    <div id="helium-tab-content-{{ tab.slug }}" class="helium-tab-content">
+                {% for tabSlug,fields in form.fields %}
+                    <div id="helium-tab-content-{{ tabSlug }}" class="helium-tab-content">
                     <div class="mb-8">
-                        {% for field in config.form.fields|filter(field => field.tab == tab.slug) %}
+                        {% for field in fields %}
                             {% include field.view with {field: field, entry: entry} %}
                         {% endfor %}
                     </div>
@@ -41,7 +34,7 @@
                 {% endfor %}
 
                 <div class="">
-                    {% for action in config.form.actions %}
+                    {% for action in form.actions %}
                         {% include action.view with {action: action, entry: entry} %}
                     {% endfor %}
                 </div>

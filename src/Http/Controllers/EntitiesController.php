@@ -33,8 +33,9 @@ class EntitiesController extends HeliumController
     {
         $config = $configLoader->getConfig($type);
 
-        return view($config['form']['view'], [
+        return view($config['forms']['edit']['view'], [
             'config' => $config,
+            'form' => $config['forms']['edit'],
             'entry' => $config['model']::find($id),
         ]);
     }
@@ -43,7 +44,7 @@ class EntitiesController extends HeliumController
     {
         $config = $configLoader->getConfig($type);
 
-        $handler = Arr::get($config, 'form.actions.' . $request->input('helium_action') . '.handler');
+        $handler = Arr::get($config, 'forms.' . $request->input('helium_form') . '.actions.' . $request->input('helium_action') . '.handler');
         if ($handler) {
             return app()->call($handler, ['config' => $config]);
         }

@@ -14,7 +14,7 @@ function array_merge_deep(array ...$arrays) : array
     foreach ($arrays as $array) {
         foreach ($array as $key => $value) {
             if (is_string($key)) {
-                if (is_array($value) && isset($result[$key]) && is_array($result[$key])) {
+                if (is_array($value) && array_key_exists($key, $result) && is_array($result[$key])) {
                     $result[$key] = array_merge_deep($result[$key], $value);
                 } else {
                     $result[$key] = $value;
@@ -41,26 +41,26 @@ function array_merge_deep(array ...$arrays) : array
  * @param string $valueKey A string value will be copied into the array with the given key if specified
  * @return array
  */
-function array_normalise_keys(array $array, string $nameKey = 'name', string $valueKey = 'value') : array
+function array_normalise_keys(array $array, ?string $nameKey = 'name', ?string $valueKey = 'value') : array
 {
     $result = [];
 
     foreach ($array as $key => $value) {
         // If a string with an anteger key convert to an
         // empty array with the old value as the key
-        if (is_string($value) and is_integer($key)) {
+        if (is_string($value) && is_integer($key)) {
             $key = $value;
             $value = [];
         }
 
-        if (!is_array($value)) {
+        if ($valueKey !== null && !is_array($value)) {
             $value = [
                 $valueKey => $value
             ];
         }
 
         // If the name key is set copy the key into the value array
-        if (!array_key_exists($nameKey, $value)) {
+        if ($nameKey !== null && !array_key_exists($nameKey, $value)) {
             $value[$nameKey] = $key;
         }
 
