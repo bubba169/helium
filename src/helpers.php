@@ -94,7 +94,7 @@ function array_first_available(array $haystack, array $needles)
  * @param string $str
  * @return string
  */
-function str_humanize(string $str) : string
+function str_humanise(string $str) : string
 {
     return ucfirst(str_replace('_', ' ', $str));
 }

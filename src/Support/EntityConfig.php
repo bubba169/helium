@@ -45,7 +45,7 @@ class EntityConfig
         $config = array_merge_deep(self::DEFAULT, $config);
 
         $config['slug'] = $entityName;
-        if (!isset($config['name'])) {
+        if (!array_key_exists('name', $config)) {
             $config['name'] = class_basename($config['model']);
         }
 
@@ -62,8 +62,8 @@ class EntityConfig
     protected function normaliseTable(array $config) : array
     {
         // Fill in the title
-        if (!isset($config['table']['title'])) {
-            $config['table']['title'] = Str::plural(str_humanize(Str::camel($config['name'])));
+        if (!array_key_exists('title', $config['table'])) {
+            $config['table']['title'] = Str::plural(str_humanise(Str::camel($config['name'])));
         }
 
         $config = $this->normaliseTableColumns($config);
@@ -80,16 +80,16 @@ class EntityConfig
         // Normalise columns
         $config['table']['columns'] = array_normalise_keys($config['table']['columns']);
         foreach ($config['table']['columns'] as &$column) {
-            // Use the name as the value if not set
-            if (!isset($column['value'])) {
+            // Reolve the name as the value if not set
+            if (!array_key_exists('value', $column)) {
                 $column['value'] = '{entry.' . $column['name'] . '}';
             }
             // Try to build a label from the value
-            if (!isset($column['label'])) {
-                $column['label'] = Str::title(str_humanize($column['name']));
+            if (!array_key_exists('label', $column)) {
+                $column['label'] = Str::title(str_humanise($column['name']));
             }
-
-            if (!isset($column['view'])) {
+            // Default to a plain text cell
+            if (!array_key_exists('view', $column)) {
                 $column['view'] = 'helium::table-cell.text';
             }
         }
@@ -104,32 +104,28 @@ class EntityConfig
        // Normalise actions
         $config['fields'] = array_normalise_keys($config['fields'], 'name', 'type');
         foreach ($config['fields'] as &$field) {
-            // Set the type to text by default
-            if (!isset($field['label'])) {
-                $field['label'] = Str::title(str_humanize($field['name']));
+            // Set the label to the humanised field name by default
+            if (!array_key_exists('label', $field)) {
+                $field['label'] = Str::title(str_humanise($field['name']));
             }
             // Set the type to text by default
-            if (!isset($field['type'])) {
+            if (!array_key_exists('type', $field)) {
                 $field['type'] = 'text';
             }
-            // Set the type to text by default
-            if (!isset($field['id'])) {
+            // Set the id to the field name by default
+            if (!array_key_exists('id', $field)) {
                 $field['id'] = $field['name'];
             }
-            // Set the type to text by default
-            if (!isset($field['column'])) {
+            // Set the column to the field name by default
+            if (!array_key_exists('column', $field)) {
                 $field['column'] = $field['name'];
             }
-            // Set the type to text by default
-            if (!isset($field['tab'])) {
-                $field['tab'] = 'main';
-            }
-            // Set the type to text by default
-            if (!isset($field['value'])) {
+            // Set the value to resolve the column on the entry by default
+            if (!array_key_exists('value', $field)) {
                 $field['value'] = '{entry.' . $field['column'] . '}';
             }
             // Set the view based on the type
-            if (!isset($field['view'])) {
+            if (!array_key_exists('view', $field)) {
                 switch ($field['type']) {
                     case 'select':
                     case 'belongsTo':
@@ -160,19 +156,18 @@ class EntityConfig
             }
 
             if (in_array($field['type'], ['belongsTo', 'belongsToMany'])) {
-                if (!isset($field['options'])) {
+                if (!array_key_exists('options', $field)) {
                     $field['options'] = RelatedOptionsHandler::class;
                 }
-                if (!isset($field['related_id'])) {
+                if (!array_key_exists('related_id', $field)) {
                     $field['related_id'] = 'id';
                 }
-                if (!isset($field['relationship'])) {
+                if (!array_key_exists('relationship', $field)) {
                     $field['relationship'] = $field['name'];
                 }
             }
 
-            if (
-                isset($field['options']) &&
+            if (array_key_exists('options', $field) &&
                 is_string($field['options']) &&
                 strpos($field['options'], '@') === false
             ) {
@@ -188,9 +183,8 @@ class EntityConfig
         $default = $this->normaliseForm($config['forms']['*'], $config);
         unset($config['forms']['*']);
 
-        $config['forms'] = array_normalise_keys($config['forms'], 'slug');
-        foreach ($config['forms'] as $slug => &$form) {
-            $form['slug'] = $slug;
+        $config['forms'] = array_normalise_keys($config['forms'], 'slug', null);
+        foreach ($config['forms'] as &$form) {
             $form = $this->normaliseForm(array_merge($default, $form), $config);
         }
 
@@ -203,10 +197,10 @@ class EntityConfig
     protected function normaliseForm(array $form, array $config) : array
     {
         // Fill in the title
-        if (!isset($form['title'])) {
+        if (!array_key_exists('title', $form)) {
             $form['title'] = Str::title(
-                str_humanize($form['slug']) . ' ' .
-                str_humanize(Str::camel($config['name']))
+                str_humanise($form['slug']) . ' ' .
+                str_humanise(Str::camel($config['name']))
             );
         }
 
@@ -225,8 +219,8 @@ class EntityConfig
        // Normalise actions
         $tabs = array_normalise_keys($tabs, 'slug', 'label');
         foreach ($tabs as &$tab) {
-            if (!isset($tab['label'])) {
-                $tab['label'] = str_humanize($tab['slug']);
+            if (!array_key_exists('label', $tab)) {
+                $tab['label'] = str_humanise($tab['slug']);
             }
         }
 
@@ -253,55 +247,42 @@ class EntityConfig
     /**
      * Normalises the actions and fills in the gaps with sensible defaults
      */
-    protected function normaliseActions(array $config, array $mainConfig) : array
+    protected function normaliseActions(array $actions, array $config) : array
     {
         // Normalise actions
-        $config = array_normalise_keys($config, 'name', 'action');
-        foreach ($config as &$action) {
+        $actions = array_normalise_keys($actions, 'name', 'action');
+        foreach ($actions as &$action) {
             // Get the action from the name if not set separately
-            if (!isset($action['action'])) {
+            if (!array_key_exists('action', $action)) {
                 $action['action'] = $action['name'];
             }
             // Try to build a label from the name if not set
-            if (!isset($action['label'])) {
-                $action['label'] = Str::title(str_humanize($action['name']));
+            if (!array_key_exists('label', $action)) {
+                $action['label'] = Str::title(str_humanise($action['name']));
             }
 
             // Default save to a submit type, others will not
-            if (!isset($action['submit'])) {
+            if (!array_key_exists('submit', $action)) {
                 $action['submit'] = ($action['action'] == 'save');
             }
 
-            // Default save to a submit type, others will not
-            if (!isset($action['view'])) {
+            // Set the default view to an action button
+            if (!array_key_exists('view', $action)) {
                 $action['view'] = 'helium::partials.action-button';
             }
 
-            // Default save to a submit type, others will not
-            if (!isset($action['colour'])) {
-                $action['colour'] = 'gray-700';
-            }
-
-            // Default save to a submit type, others will not
-            if (!isset($action['hoverColour'])) {
-                $action['hoverColour'] = preg_replace_callback(
-                    '/(\w+)-(\d+)/',
-                    function ($matches) {
-                        return $matches[1] . '-' . ($matches[2] + 100);
-                    },
-                    $action['colour']
-                );
-            }
-
             // Create a url.
-            if (!$action['submit'] && !isset($action['url']) && Route::has('helium.entity.' . $action['action'])) {
+            if (!$action['submit'] &&
+                !array_key_exists('url', $action) &&
+                Route::has('helium.entity.' . $action['action'])
+            ) {
                 $action['url'] = str_replace(
                     '%id%',
                     '{entry.id}',
                     route(
                         'helium.entity.' . $action['action'],
                         [
-                            'type' => $mainConfig['slug'],
+                            'type' => $config['slug'],
                             'id' => '%id%'
                         ]
                     )
@@ -330,8 +311,7 @@ class EntityConfig
             }
 
             // If a class name is given but no function call handle
-            if (
-                isset($action['handler']) &&
+            if (array_key_exists('handler', $action) &&
                 is_string($action['handler']) &&
                 strpos($action['handler'], '@') === false
             ) {
@@ -339,6 +319,6 @@ class EntityConfig
             }
         }
 
-        return $config;
+        return $actions;
     }
 }
