@@ -2,15 +2,17 @@
 
 namespace Helium\Http\Controllers;
 
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
 use Helium\Support\EntityConfig;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Arr;
+use Illuminate\View\View;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntitiesController extends HeliumController
 {
-    public function list(string $type, EntityConfig $configLoader)
+    /**
+     * Renders the list
+     */
+    public function list(EntityConfig $configLoader, string $type) : View
     {
         $config = $configLoader->getConfig($type);
 
@@ -20,33 +22,53 @@ class EntitiesController extends HeliumController
         ]);
     }
 
-    public function add(string $type, EntityConfig $configLoader)
+    /**
+     * Renders a form using the config
+     */
+    public function form(EntityConfig $configLoader, string $type, string $form, ?int $id = null) : View
     {
         $config = $configLoader->getConfig($type);
+        $formConfig = Arr::get($config, "forms.$form");
+        $entry = null;
 
-        return view($config['form']['view'], [
+        // If the form config is not found then 404
+        if (!$formConfig) {
+            throw new NotFoundHttpException();
+        }
+
+        // If an id is given load the entry
+        if ($id) {
+            $entry = $config['model']::find($id);
+
+            // If the entry can't be found then 404
+            if (!$entry) {
+                throw new NotFoundHttpException();
+            }
+        }
+
+        return view($config['forms'][$form]['view'], [
             'config' => $config,
+            'form' => $formConfig,
+            'entry' => $entry,
         ]);
     }
 
-    public function edit(string $type, int $id, EntityConfig $configLoader)
+    /**
+     * Processes a form action using the assigned request type
+     */
+    public function store(EntityConfig $configLoader, string $type, string $form, ?int $id = null)
     {
         $config = $configLoader->getConfig($type);
+        $action = request()->input('helium_action');
+        $requestType = Arr::get($config, "forms.$form.actions.$action.handler");
 
-        return view($config['forms']['edit']['view'], [
-            'config' => $config,
-            'form' => $config['forms']['edit'],
-            'entry' => $config['model']::find($id),
-        ]);
-    }
-
-    public function store(EntityConfig $configLoader, Request $request, string $type, ?int $id = null)
-    {
-        $config = $configLoader->getConfig($type);
-
-        $handler = Arr::get($config, 'forms.' . $request->input('helium_form') . '.actions.' . $request->input('helium_action') . '.handler');
-        if ($handler) {
-            return app()->call($handler, ['config' => $config]);
+        if ($requestType) {
+            $request = app($requestType, [
+                'entityConfig' => $config,
+                'formName' => $form,
+                'entryId' => $id
+            ]);
+            return $request->handle();
         }
     }
 }

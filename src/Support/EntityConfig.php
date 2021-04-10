@@ -2,9 +2,8 @@
 
 namespace Helium\Support;
 
-use Helium\Form\FormHandler;
 use Helium\Form\RelatedOptionsHandler;
-use Illuminate\Support\Facades\Route;
+use Helium\Http\Requests\EntityFormRequest;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -49,8 +48,9 @@ class EntityConfig
             $config['name'] = class_basename($config['model']);
         }
 
+        $config['fields'] = array_normalise_keys($config['fields'], 'slug', 'type');
+
         $config = $this->normaliseTable($config);
-        $config = $this->normaliseFields($config);
         $config = $this->normaliseForms($config);
 
         return $config;
@@ -67,7 +67,7 @@ class EntityConfig
         }
 
         $config = $this->normaliseTableColumns($config);
-        $config['table']['actions'] = $this->normaliseActions($config['table']['actions'], $config);
+        $config['table']['actions'] = $this->normaliseActions($config['table']['actions'], $config, true);
 
         return $config;
     }
@@ -99,93 +99,93 @@ class EntityConfig
     /**
      * Builds a table config. This will also normalise the data and fill in the blanks
      */
-    protected function normaliseFields(array $config) : array
+    protected function normaliseField(array $field, array $config) : array
     {
-       // Normalise actions
-        $config['fields'] = array_normalise_keys($config['fields'], 'name', 'type');
-        foreach ($config['fields'] as &$field) {
-            // Set the label to the humanised field name by default
-            if (!array_key_exists('label', $field)) {
-                $field['label'] = Str::title(str_humanise($field['name']));
-            }
-            // Set the type to text by default
-            if (!array_key_exists('type', $field)) {
-                $field['type'] = 'text';
-            }
-            // Set the id to the field name by default
-            if (!array_key_exists('id', $field)) {
-                $field['id'] = $field['name'];
-            }
-            // Set the column to the field name by default
-            if (!array_key_exists('column', $field)) {
-                $field['column'] = $field['name'];
-            }
-            // Set the value to resolve the column on the entry by default
-            if (!array_key_exists('value', $field)) {
-                $field['value'] = '{entry.' . $field['column'] . '}';
-            }
-            // Set the view based on the type
-            if (!array_key_exists('view', $field)) {
-                switch ($field['type']) {
-                    case 'select':
-                    case 'belongsTo':
-                        $field['view'] = 'helium::form-fields.select';
-                        break;
-                    case 'belongsToMany':
-                    case 'multicheck':
-                        $field['view'] = 'helium::form-fields.multicheck';
-                        break;
-                    case 'radio':
-                        $field['view'] = 'helium::form-fields.radios';
-                        break;
-                    case 'checkbox':
-                        $field['view'] = 'helium::form-fields.checkbox';
-                        break;
-                    case 'textarea':
-                        $field['view'] = 'helium::form-fields.textarea';
-                        break;
-                    case 'datetime':
-                        $field['view'] = 'helium::form-fields.datetime';
-                        break;
-                    case 'password':
-                        $field['view'] = 'helium::form-fields.password';
-                        break;
-                    default:
-                        $field['view'] = 'helium::form-fields.input';
-                }
-            }
-
-            if (in_array($field['type'], ['belongsTo', 'belongsToMany'])) {
-                if (!array_key_exists('options', $field)) {
-                    $field['options'] = RelatedOptionsHandler::class;
-                }
-                if (!array_key_exists('related_id', $field)) {
-                    $field['related_id'] = 'id';
-                }
-                if (!array_key_exists('relationship', $field)) {
-                    $field['relationship'] = $field['name'];
-                }
-            }
-
-            if (array_key_exists('options', $field) &&
-                is_string($field['options']) &&
-                strpos($field['options'], '@') === false
-            ) {
-                $field['options'] .= '@handle';
+        // Set the label to the humanised field name by default
+        if (!array_key_exists('name', $field)) {
+            $field['name'] = $field['slug'];
+        }
+        // Set the label to the humanised field name by default
+        if (!array_key_exists('label', $field)) {
+            $field['label'] = Str::title(str_humanise($field['slug']));
+        }
+        // Set the type to text by default
+        if (!array_key_exists('type', $field)) {
+            $field['type'] = 'text';
+        }
+        // Set the id to the field name by default
+        if (!array_key_exists('id', $field)) {
+            $field['id'] = $field['slug'];
+        }
+        // Set the column to the field name by default
+        if (!array_key_exists('column', $field)) {
+            $field['column'] = $field['slug'];
+        }
+        // Set the value to resolve the column on the entry by default
+        if (!array_key_exists('value', $field)) {
+            $field['value'] = '{entry.' . $field['column'] . '}';
+        }
+        // Set the view based on the type
+        if (!array_key_exists('view', $field)) {
+            switch ($field['type']) {
+                case 'select':
+                case 'belongsTo':
+                    $field['view'] = 'helium::form-fields.select';
+                    break;
+                case 'belongsToMany':
+                case 'multicheck':
+                    $field['view'] = 'helium::form-fields.multicheck';
+                    break;
+                case 'radio':
+                    $field['view'] = 'helium::form-fields.radios';
+                    break;
+                case 'checkbox':
+                    $field['view'] = 'helium::form-fields.checkbox';
+                    break;
+                case 'textarea':
+                    $field['view'] = 'helium::form-fields.textarea';
+                    break;
+                case 'datetime':
+                    $field['view'] = 'helium::form-fields.datetime';
+                    break;
+                case 'password':
+                    $field['view'] = 'helium::form-fields.password';
+                    break;
+                default:
+                    $field['view'] = 'helium::form-fields.input';
             }
         }
 
-        return $config;
+        if (in_array($field['type'], ['belongsTo', 'belongsToMany'])) {
+            if (!array_key_exists('options', $field)) {
+                $field['options'] = RelatedOptionsHandler::class;
+            }
+            if (!array_key_exists('related_id', $field)) {
+                $field['related_id'] = 'id';
+            }
+            if (!array_key_exists('relationship', $field)) {
+                $field['relationship'] = $field['slug'];
+            }
+        }
+
+        if (array_key_exists('options', $field) &&
+            is_string($field['options']) &&
+            strpos($field['options'], '@') === false
+        ) {
+            $field['options'] .= '@handle';
+        }
+
+        return $field;
     }
 
     protected function normaliseForms(array $config): array
     {
-        $default = $this->normaliseForm($config['forms']['*'], $config);
+        $default = $this->normaliseForm($config['forms']['*'], $config, false);
         unset($config['forms']['*']);
 
         $config['forms'] = array_normalise_keys($config['forms'], 'slug', null);
         foreach ($config['forms'] as &$form) {
-            $form = $this->normaliseForm(array_merge($default, $form), $config);
+            $form = $this->normaliseForm(array_merge($default, $form), $config, true);
         }
 
         return $config;
@@ -194,19 +194,19 @@ class EntityConfig
     /**
      * Builds a table config. This will also normalise the data and fill in the blanks
      */
-    protected function normaliseForm(array $form, array $config) : array
+    protected function normaliseForm(array $form, array $config, bool $expand) : array
     {
         // Fill in the title
-        if (!array_key_exists('title', $form)) {
+        if ($expand && !array_key_exists('title', $form)) {
             $form['title'] = Str::title(
                 str_humanise($form['slug']) . ' ' .
                 str_humanise(Str::camel($config['name']))
             );
         }
 
-        $form['tabs'] = $this->normaliseFormTabs($form['tabs'], $config);
-        $form['fields'] = $this->normaliseFormFields($form['fields'], $config);
-        $form['actions'] = $this->normaliseActions($form['actions'], $config);
+        $form['tabs'] = $this->normaliseFormTabs($form['tabs'], $config, $expand);
+        $form['fields'] = $this->normaliseFormFields($form['fields'], $config, $expand);
+        $form['actions'] = $this->normaliseActions($form['actions'], $config, $expand);
 
         return $form;
     }
@@ -214,10 +214,15 @@ class EntityConfig
     /**
      * Builds a table config. This will also normalise the data and fill in the blanks
      */
-    protected function normaliseFormTabs(array $tabs, array $config) : array
+    protected function normaliseFormTabs(array $tabs, array $config, bool $expand) : array
     {
        // Normalise actions
         $tabs = array_normalise_keys($tabs, 'slug', 'label');
+
+        if (!$expand) {
+            return $tabs;
+        }
+
         foreach ($tabs as &$tab) {
             if (!array_key_exists('label', $tab)) {
                 $tab['label'] = str_humanise($tab['slug']);
@@ -230,14 +235,21 @@ class EntityConfig
     /**
      * Builds a table config. This will also normalise the data and fill in the blanks
      */
-    protected function normaliseFormFields(array $fields, array $config) : array
+    protected function normaliseFormFields(array $fields, array $config, bool $expand) : array
     {
         $formFields = [];
         // Normalise actions
         foreach ($fields as $tabName => &$tabFields) {
             $formFields[$tabName] = [];
-            foreach (array_normalise_keys($tabFields, null, null) as $fieldName => $field) {
+            foreach (array_normalise_keys($tabFields, 'slug', null) as $fieldName => $field) {
                 $formFields[$tabName][$fieldName] = array_merge($config['fields'][$fieldName], $field);
+
+                if ($expand) {
+                    $formFields[$tabName][$fieldName] = $this->normaliseField(
+                        $formFields[$tabName][$fieldName],
+                        $config
+                    );
+                }
             }
         }
 
@@ -247,10 +259,15 @@ class EntityConfig
     /**
      * Normalises the actions and fills in the gaps with sensible defaults
      */
-    protected function normaliseActions(array $actions, array $config) : array
+    protected function normaliseActions(array $actions, array $config, bool $expand) : array
     {
         // Normalise actions
         $actions = array_normalise_keys($actions, 'name', 'action');
+
+        if (!$expand) {
+            return $actions;
+        }
+
         foreach ($actions as &$action) {
             // Get the action from the name if not set separately
             if (!array_key_exists('action', $action)) {
@@ -272,16 +289,14 @@ class EntityConfig
             }
 
             // Create a url.
-            if (!$action['submit'] &&
-                !array_key_exists('url', $action) &&
-                Route::has('helium.entity.' . $action['action'])
-            ) {
+            if (!$action['submit'] && !array_key_exists('url', $action)) {
                 $action['url'] = str_replace(
                     '%id%',
                     '{entry.id}',
                     route(
-                        'helium.entity.' . $action['action'],
+                        'helium.entity.form',
                         [
+                            'form' => $action['action'],
                             'type' => $config['slug'],
                             'id' => '%id%'
                         ]
@@ -305,17 +320,9 @@ class EntityConfig
             if ($action['submit'] && !isset($action['handler'])) {
                 switch ($action['action']) {
                     case 'save':
-                        $action['handler'] = FormHandler::class;
+                        $action['handler'] = EntityFormRequest::class;
                         break;
                 }
-            }
-
-            // If a class name is given but no function call handle
-            if (array_key_exists('handler', $action) &&
-                is_string($action['handler']) &&
-                strpos($action['handler'], '@') === false
-            ) {
-                $action['handler'] .= '@handle';
             }
         }
 

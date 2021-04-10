@@ -9,7 +9,7 @@
         <div class="flex flex-1 px-8 py-6 bg-gray-100 rounded-xl">
             {% set tabs = form.fields|keys %}
 
-            {% if tabs|length > 0 %}
+            {% if tabs|length > 1 %}
                 <div class="flex flex-col mr-8 border-r-2 border-gray-200">
                     {% for tab in form.tabs %}
                         <a class="helium-tab" id="helium-tab-{{ tab.slug }}" data-tab-content-id="helium-tab-content-{{ tab.slug  }}" href="#{{ tab.slug }}">
@@ -20,9 +20,6 @@
             {% endif %}
 
             <div class="flex-1">
-                <input type="hidden" name="id" value="{{ entry.id }}">
-                <input type="hidden" name="helium_form" value="{{ form.slug }}">
-
                 {% for tabSlug,fields in form.fields %}
                     <div id="helium-tab-content-{{ tabSlug }}" class="helium-tab-content">
                     <div class="mb-8">
