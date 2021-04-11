@@ -2,12 +2,28 @@
     {% if field.type != 'hidden' %}
         <label class="block w-full mb-2 text-lg font-bold" for="{{ field.id }}">{{ field.label }}</label>
     {% endif %}
-    <input class="w-full p-2 border border-gray-400 rounded-lg"
+    {% if field.description %}
+        <div class="w-full mb-2 -mt-1 text-sm text-gray-700">{{ field.description }}</div>
+    {% endif %}
+
+    <input class="w-full p-2 border rounded-lg
+        {{ errors.has(field.name) ? 'border-red-700' : 'border-gray-400' }}
+        {{ field.classes ? ' ' ~ field.classes }}"
         type="{{ field.type }}"
         name="{{ field.name }}"
         id="{{ field.id }}"
         value="{{ entry ? field.value|resolve(entry) }}"
         placeholder="{{ field.placeholder }}"
         {{ field.required ? 'required' }}
+        {% for attribute in field.attributes|default([]) %}
+            {{ attribute.name }}{{ attribute.value is defined ? '="' ~ attribute.value ~ '"' }}
+        {% endfor %}
     >
+
+    {% if errors.has(field.name) %}
+        <div class="w-full mt-2 text-sm text-red-700">
+            {{ errors.messages[field.name]|join(' ') }}
+        </div>
+    {% endif %}
+
 </div>

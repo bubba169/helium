@@ -2,9 +2,10 @@
 
 namespace Helium\Support;
 
-use Helium\Form\RelatedOptionsHandler;
-use Helium\Http\Requests\EntityFormRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Helium\Form\RelatedOptionsHandler;
+use Helium\Http\Requests\SaveEntityFormRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntityConfig
@@ -124,6 +125,34 @@ class EntityConfig
         // Set the value to resolve the column on the entry by default
         if (!array_key_exists('value', $field)) {
             $field['value'] = '{entry.' . $field['column'] . '}';
+        }
+        // If a field is required, add it to the validation rules
+        if (!array_key_exists('rules', $field) && !empty($field['required'])) {
+            $field['rules'] = 'required';
+        }
+        // Normalise the attributes if set
+        if (array_key_exists('attributes', $field)) {
+            // Datetime is a special case that splits the attributes between two fields
+            if ($field['type'] == 'datetime') {
+                $all = $field['attributes'];
+                unset($all['date'], $all['time']);
+                $field['attributes'] = [
+                    'date' => array_normalise_keys(array_merge($all, Arr::get($field['attributes'], 'date', []))),
+                    'time' => array_normalise_keys(array_merge($all, Arr::get($field['attributes'], 'time', []))),
+                ];
+            } else {
+                $field['attributes'] = array_normalise_keys($field['attributes']);
+            }
+        }
+        // If datetime has classes as a string split them between the fields
+        if ($field['type'] == 'datetime' &&
+            array_key_exists('classes', $field) &&
+            is_string($field['classes'])
+        ) {
+            $field['classes'] = [
+                'date' => $field['classes'],
+                'time' => $field['classes']
+            ];
         }
         // Set the view based on the type
         if (!array_key_exists('view', $field)) {
@@ -320,7 +349,7 @@ class EntityConfig
             if ($action['submit'] && !isset($action['handler'])) {
                 switch ($action['action']) {
                     case 'save':
-                        $action['handler'] = EntityFormRequest::class;
+                        $action['handler'] = SaveEntityFormRequest::class;
                         break;
                 }
             }
