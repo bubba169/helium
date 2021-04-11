@@ -1,6 +1,15 @@
 <div class="w-full mb-4">
     <label class="block w-full mb-2 text-lg font-bold">{{ field.label }}</label>
-    <div class="flex flex-wrap w-full px-4 pt-3 pb-1 bg-white border border-gray-400 rounded-lg">
+    {% if field.description %}
+        <div class="w-full mb-2 -mt-1 text-sm text-gray-700">{{ field.description }}</div>
+    {% endif %}
+    <div class="flex flex-wrap w-full px-4 pt-3 pb-1 bg-white border border-gray-400 rounded-lg
+        {{ errors.has(field.name) ? 'border-red-700' : 'border-gray-400' }}
+        {{ field.classes ? ' ' ~ field.classes }}"
+        {% for attribute in field.attributes|default([]) %}
+            {{ attribute.name }}{{ attribute.value is defined ? '="' ~ attribute.value ~ '"' }}
+        {% endfor %}
+    >
         {% for name,value in field.options|options(entry, field) %}
             <div class="flex w-full mb-3 md:w-1/2 lg:w-1/3 xl:w-1/4">
                 <input type="checkbox"
@@ -14,4 +23,10 @@
             </div>
         {% endfor %}
     </div>
+
+    {% if errors.has(field.name) %}
+        <div class="w-full mt-2 text-sm text-red-700">
+            {{ errors.messages[field.name]|join(' ') }}
+        </div>
+    {% endif %}
 </div>
