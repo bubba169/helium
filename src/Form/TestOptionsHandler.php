@@ -8,7 +8,7 @@ class TestOptionsHandler
     {
         return [
             'Hello' => 'hi',
-            'So Long' => 'bye',
+            'So Long and thanks for all the fish' => 'bye',
             'Fred' => 'fred',
             'Bob' => 'bob',
             'Harrison' => 'Ford',

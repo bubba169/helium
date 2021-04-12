@@ -1,0 +1,32 @@
+{% if type == 'error' %}
+    {% set colour = 'bg-red-600' %}
+    {% set icon = 'fas fa-exclamation-circle' %}
+{% elseif type == "warning" %}
+    {% set colour = 'bg-yellow-600' %}
+    {% set icon = 'fas fa-exclamation-triangle' %}
+{% elseif type == 'success' %}
+    {% set colour = 'bg-green-600' %}
+    {% set icon = 'fas fa-check-circle' %}
+{% else %}
+    {% set colour = 'bg-grey-600' %}
+    {% set icon = 'fas fa-info-circle' %}
+{% endif %}
+
+<div class="w-full {{ colour }} rounded-xl px-8 py-3 mb-4 text-white flex flex-wrap items-center">
+    <i class="block {{  icon }} text-2xl text-white mr-4" aria-hidden="true"></i>
+    <div class="flex-1">
+        <div class="mb-1 text-lg font-bold ">
+            {{ message }}
+        </div>
+
+        {% if errorList %}
+            <ul class="w-full ml-6 list-disc">
+                {% for field in errorList %}
+                    {% for error in field %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>

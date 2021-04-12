@@ -9,15 +9,17 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 
-class EntityFormRequest extends FormRequest
+class SaveEntityFormRequest extends FormRequest
 {
     protected array $entityConfig;
 
     protected string $formName;
 
+    protected ?array $formConfig;
+
     protected string $entryId;
 
-    protected array $fields;
+    protected ?array $fields;
 
     /**
      * {@inheritDoc}
@@ -37,6 +39,7 @@ class EntityFormRequest extends FormRequest
         $this->entityConfig = $entityConfig;
         $this->formName = $formName;
         $this->entryId = $entryId;
+        $this->formConfig = Arr::get($this->entityConfig, 'forms.' . $this->formName);
         $this->fields = call_user_func_array(
             'array_merge',
             $this->entityConfig['forms'][$this->formName]['fields']
@@ -45,9 +48,7 @@ class EntityFormRequest extends FormRequest
     }
 
     /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public function authorize()
     {
@@ -55,19 +56,48 @@ class EntityFormRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function rules()
     {
         return array_filter(Arr::pluck($this->fields, 'rules', 'slug'));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function messages()
+    {
+        return Arr::get($this->formConfig, 'messages', []);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function prepareForValidation()
+    {
+        foreach ($this->fields as $field) {
+            switch ($field['type']) {
+                // Put the date and time back together for validation
+                case 'datetime':
+                    $this->merge([
+                        $field['name'] => trim(
+                            $this->input($field['name'] . '_date') . ' ' .
+                            $this->input($field['name'] . '_time')
+                        ) ?: null
+                    ]);
+                    break;
+            }
+        }
+    }
+    /**
+     * Handle the request and save the record
+     *
+     * @return Response|View
+     */
     public function handle()
     {
         $entry = $this->entityConfig['model']::findOrNew($this->entryId);
-        $form = $this->entityConfig['forms'][$this->formName];
 
         DB::transaction(function () use ($entry) {
             $deferred = [];
@@ -89,11 +119,20 @@ class EntityFormRequest extends FormRequest
             foreach ($deferred as $field) {
                 $this->handleField($field, $entry);
             }
+
+            if ($entry->isDirty()) {
+                $entry->save();
+            }
         });
+
+        session()->flash('message', [
+            'type' => 'success',
+            'message' => 'Saved succesfully'
+        ]);
 
         // Redirect back to the current url to avoid post on refresh
         return new RedirectResponse(
-            route('helium.entity.form', [$this->entityConfig['slug'], $form['slug'], $entry])
+            route('helium.entity.form', [$this->entityConfig['slug'], $this->formConfig['slug'], $entry])
         );
     }
 
@@ -127,5 +166,15 @@ class EntityFormRequest extends FormRequest
             default:
                 $entry->{$field['column']} = $this->input($field['name']) ?? null;
         }
+    }
+
+    public function failedValidation($validator)
+    {
+        session()->flash('message', [
+            'type' => 'error',
+            'message' => 'There was a problem saving the entry.',
+            'errorList' => $validator->errors()->messages(),
+        ]);
+        return parent::failedValidation($validator);
     }
 }

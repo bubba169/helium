@@ -1,14 +1,31 @@
 <div class="w-full pt-2 mb-4">
-    <div class="w-full px-4 py-2 bg-white border border-gray-400 rounded-lg">
+    <div class="w-full px-4 py-2 bg-white border border-gray-400 rounded-lg
+        {{ errors.has(field.name) ? 'border-red-700' : 'border-gray-400' }}
+        {{ field.classes ? ' ' ~ field.classes }}"
+    >
+        {% if field.description %}
+            <div class="w-full mb-2 text-sm text-gray-700">{{ field.description }}</div>
+        {% endif %}
         <div class="flex">
+            <input type="hidden" name="{{ field.name }}" id="{{ field.id }}_empty" value="0">
             <input class="cursor-pointer"
                 type="checkbox"
                 name="{{ field.name }}"
                 id="{{ field.id }}"
                 {{ field.required ? 'required' }}
-                {{ (entry and field.value|resolve(entry)) ? 'checked' }}
+                {{ input_old(field.name, (entry and field.value|resolve(entry))) ? 'checked' }}
+                {% for attribute in field.attributes|default([]) %}
+                    {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
+                {% endfor %}
             >
             <label class="flex-1 block pl-4 font-bold cursor-pointer" for="{{ field.id }}">{{ field.label }}</label>
         </div>
     </div>
+
+    {% if errors.has(field.name) %}
+        <div class="w-full mt-2 text-sm text-red-700">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+            {{ errors.messages[field.name]|join(' ') }}
+        </div>
+    {% endif %}
 </div>
