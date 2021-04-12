@@ -1,8 +1,21 @@
 @layer components {
     .helium-tab {
-        @apply py-2 pl-4 pr-8 font-bold text-blue-900 rounded-l min-w-[150px] max-w-[200px] hover:bg-gray-200;
-    }
-    .helium-tab.active {
-        @apply text-white bg-blue-900;
+        @apply py-2 px-8 font-bold text-blue-900 rounded-l min-w-[180px] max-w-[250px] hover:bg-gray-200;
+
+        &.active {
+            @apply text-white bg-blue-900;
+
+            &.error {
+                @apply text-white bg-red-700;
+            }
+        }
+
+        &.error {
+            @apply text-red-700;
+
+            & .error-icon {
+                @apply inline-block;
+            }
+        }
     }
 }
