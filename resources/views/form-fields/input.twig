@@ -12,7 +12,7 @@
         type="{{ field.type }}"
         name="{{ field.name }}"
         id="{{ field.id }}"
-        value="{{ entry ? field.value|resolve(entry) }}"
+        value="{{ input_old(field.name, entry ? field.value|resolve(entry)) }}"
         placeholder="{{ field.placeholder }}"
         {{ field.required ? 'required' }}
         {% for attribute in field.attributes|default([]) %}

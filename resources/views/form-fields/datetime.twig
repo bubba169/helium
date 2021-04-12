@@ -10,7 +10,7 @@
             type="date"
             name="{{ field.name }}_date"
             id="{{ field.id }}_date"
-            value="{{ entry ? field.value|resolve(entry)|date('Y-m-d') }}"
+            value="{{ input_old(field.name ~ '_date', entry ? field.value|resolve(entry)|date('Y-m-d')) }}"
             {{ field.required ? 'required' }}
             {% for attribute in field.attributes.date|default([]) %}
                 {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
@@ -23,7 +23,7 @@
             step="1"
             name="{{ field.name }}_time"
             id="{{ field.id }}_time"
-            value="{{ entry ? field.value|resolve(entry)|date('H:i:s') }}"
+            value="{{ input_old(field.name ~ '_time', entry ? field.value|resolve(entry)|date('H:i:s')) }}"
             {{ field.required ? 'required' }}
             {% for attribute in field.attributes.time|default([]) %}
                 {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}

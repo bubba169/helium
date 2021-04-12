@@ -17,7 +17,7 @@
                     name="{{ field.name }}[]"
                     id="{{ field.id }}_{{ loop.index }}"
                     value="{{ value }}"
-                    {{ (entry and value in field.value|values(entry, field.related_id)) ? 'checked' }}
+                    {{ (value in input_old(field.name, entry ? field.value|values(entry, field.related_id) : [])) ? 'checked' }}
                 >
                 <label class="flex-1 block ml-3 mr-5 cursor-pointer" for="{{ field.id }}_{{ loop.index  }}">{{ name }}</label>
             </div>

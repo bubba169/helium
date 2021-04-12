@@ -7,12 +7,13 @@
             <div class="w-full mb-2 text-sm text-gray-700">{{ field.description }}</div>
         {% endif %}
         <div class="flex">
+            <input type="hidden" name="{{ field.name }}" id="{{ field.id }}_empty" value="0">
             <input class="cursor-pointer"
                 type="checkbox"
                 name="{{ field.name }}"
                 id="{{ field.id }}"
                 {{ field.required ? 'required' }}
-                {{ (entry and field.value|resolve(entry)) ? 'checked' }}
+                {{ input_old(field.name, (entry and field.value|resolve(entry))) ? 'checked' }}
                 {% for attribute in field.attributes|default([]) %}
                     {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
                 {% endfor %}

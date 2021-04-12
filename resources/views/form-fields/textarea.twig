@@ -14,7 +14,7 @@
         {% for attribute in field.attributes|default([]) %}
             {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
         {% endfor %}
-    >{{ entry ? field.value|resolve(entry) }}</textarea>
+    >{{ entry ? input_old(field.name, field.value|resolve(entry)) }}</textarea>
 
     {% if errors.has(field.name) %}
         <div class="w-full mt-2 text-sm text-red-700">
