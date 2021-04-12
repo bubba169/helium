@@ -270,7 +270,7 @@ class EntityConfig
         // Normalise actions
         foreach ($fields as $tabName => &$tabFields) {
             $formFields[$tabName] = [];
-            foreach (array_normalise_keys($tabFields, 'slug', null) as $fieldName => $field) {
+            foreach (array_normalise_keys($tabFields, 'slug', 'type') as $fieldName => $field) {
                 $formFields[$tabName][$fieldName] = array_merge($config['fields'][$fieldName], $field);
 
                 if ($expand) {
