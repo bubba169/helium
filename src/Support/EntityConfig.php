@@ -5,6 +5,8 @@ namespace Helium\Support;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Form\RelatedOptionsHandler;
+use Helium\Table\DefaultFilterHandler;
+use Helium\Table\DefaultListingHandler;
 use Helium\Http\Requests\SaveEntityFormRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -13,6 +15,7 @@ class EntityConfig
     protected const DEFAULT = [
         'table' => [
             'view' => 'helium::table',
+            'filters' => [],
             'columns' => [],
             'actions' => [],
         ],
@@ -67,8 +70,83 @@ class EntityConfig
             $config['table']['title'] = Str::plural(str_humanise(Str::camel($config['name'])));
         }
 
+        // Set a default base query
+        if (!array_key_exists('handler', $config['table'])) {
+            $config['table']['handler'] = DefaultListingHandler::class;
+        }
+
+        $config = $this->normaliseTableFilters($config);
         $config = $this->normaliseTableColumns($config);
         $config['table']['actions'] = $this->normaliseActions($config['table']['actions'], $config, true);
+
+        return $config;
+    }
+
+    public function normaliseTableFilters(array $config) : array
+    {
+        $config['table']['filters'] = array_normalise_keys($config['table']['filters'], 'slug', 'column');
+        foreach ($config['table']['filters'] as &$filter) {
+            // Set the name form the slug
+            if (!array_key_exists('name', $filter)) {
+                $filter['name'] = $filter['slug'];
+            }
+            // Set the name form the slug
+            if (!array_key_exists('id', $filter)) {
+                $filter['id'] = $filter['slug'];
+            }
+            // Look for the current value in the query string
+            if (!array_key_exists('value', $filter)) {
+                $filter['value'] = '{query.' . $filter['name'] . '}';
+            }
+             // Set the label to the humanised field name by default
+            if (!array_key_exists('label', $filter)) {
+                $filter['label'] = Str::title(str_humanise($filter['slug']));
+            }
+            if (!array_key_exists('column', $filter)) {
+                $filter['column'] = $filter['slug'];
+            }
+
+            if (!array_key_exists('handler', $filter)) {
+                $filter['handler'] = DefaultFilterHandler::class;
+            }
+
+            if (!array_key_exists('type', $filter)) {
+                $filter['type'] = 'text';
+            }
+
+            if (array_key_exists('attributes', $filter)) {
+                $filter['attributes'] = array_normalise_keys($filter['attributes']);
+            }
+
+            if (!array_key_exists('view', $filter)) {
+                switch ($filter['type']) {
+                    case 'boolean':
+                        $filter['options'] = [
+                            'Yes' => 'yes',
+                            'No' => 'no',
+                        ];
+                        // Fall through to select
+                    case 'select':
+                    case 'belongsTo':
+                        $filter['view'] = 'helium::form-fields.select';
+                        break;
+                    default:
+                        $filter['view'] = 'helium::form-fields.input';
+                }
+            }
+
+            if (in_array($filter['type'], ['belongsTo', 'belongsToMany'])) {
+                if (!array_key_exists('options', $filter)) {
+                    $filter['options'] = RelatedOptionsHandler::class;
+                }
+                if (!array_key_exists('related_id', $filter)) {
+                    $filter['related_id'] = 'id';
+                }
+                if (!array_key_exists('relationship', $filter)) {
+                    $filter['relationship'] = $filter['slug'];
+                }
+            }
+        }
 
         return $config;
     }
@@ -121,6 +199,9 @@ class EntityConfig
         // Set the column to the field name by default
         if (!array_key_exists('column', $field)) {
             $field['column'] = $field['slug'];
+            if ($field['type'] == 'belongsTo') {
+                $field['column'] .= '_id';
+            }
         }
         // Set the value to resolve the column on the entry by default
         if (!array_key_exists('value', $field)) {
@@ -156,33 +237,7 @@ class EntityConfig
         }
         // Set the view based on the type
         if (!array_key_exists('view', $field)) {
-            switch ($field['type']) {
-                case 'select':
-                case 'belongsTo':
-                    $field['view'] = 'helium::form-fields.select';
-                    break;
-                case 'belongsToMany':
-                case 'multicheck':
-                    $field['view'] = 'helium::form-fields.multicheck';
-                    break;
-                case 'radio':
-                    $field['view'] = 'helium::form-fields.radios';
-                    break;
-                case 'checkbox':
-                    $field['view'] = 'helium::form-fields.checkbox';
-                    break;
-                case 'textarea':
-                    $field['view'] = 'helium::form-fields.textarea';
-                    break;
-                case 'datetime':
-                    $field['view'] = 'helium::form-fields.datetime';
-                    break;
-                case 'password':
-                    $field['view'] = 'helium::form-fields.password';
-                    break;
-                default:
-                    $field['view'] = 'helium::form-fields.input';
-            }
+            $field['view'] = $this->defaultFieldView($field['type']);
         }
 
         if (in_array($field['type'], ['belongsTo', 'belongsToMany'])) {
@@ -195,13 +250,6 @@ class EntityConfig
             if (!array_key_exists('relationship', $field)) {
                 $field['relationship'] = $field['slug'];
             }
-        }
-
-        if (array_key_exists('options', $field) &&
-            is_string($field['options']) &&
-            strpos($field['options'], '@') === false
-        ) {
-            $field['options'] .= '@handle';
         }
 
         return $field;
@@ -356,5 +404,29 @@ class EntityConfig
         }
 
         return $actions;
+    }
+
+    protected function defaultFieldView(string $type) : string
+    {
+        switch ($type) {
+            case 'select':
+            case 'belongsTo':
+                return 'helium::form-fields.select';
+            case 'belongsToMany':
+            case 'multicheck':
+                return 'helium::form-fields.multicheck';
+            case 'radio':
+                return 'helium::form-fields.radios';
+            case 'checkbox':
+                return 'helium::form-fields.checkbox';
+            case 'textarea':
+                return 'helium::form-fields.textarea';
+            case 'datetime':
+                return 'helium::form-fields.datetime';
+            case 'password':
+                return 'helium::form-fields.password';
+        }
+
+        return 'helium::form-fields.input';
     }
 }

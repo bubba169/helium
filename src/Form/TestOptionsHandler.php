@@ -4,7 +4,7 @@ namespace Helium\Form;
 
 class TestOptionsHandler
 {
-    public function handle($entry)
+    public function __invoke()
     {
         return [
             'Hello' => 'hi',

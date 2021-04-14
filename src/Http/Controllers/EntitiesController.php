@@ -16,9 +16,20 @@ class EntitiesController extends HeliumController
     {
         $config = $configLoader->getConfig($type);
 
+        $query = app()->call($config['table']['handler'], ['config' => $config]);
+
+        foreach ($config['table']['filters'] as $filter) {
+            $query = app()->call($filter['handler'], [
+                'query' => $query,
+                'filterConfig' => $filter
+            ]);
+        }
+
+        $entries = $query->paginate(2);
+
         return view($config['table']['view'], [
             'config' => $config,
-            'entries' => $config['model']::all(),
+            'entries' => $entries,
         ]);
     }
 

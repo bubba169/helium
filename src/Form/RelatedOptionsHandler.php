@@ -2,11 +2,13 @@
 
 namespace Helium\Form;
 
+use Illuminate\Database\Eloquent\Model;
+
 class RelatedOptionsHandler
 {
-    public function handle($entry, $field)
+    public function __invoke(array $fieldConfig)
     {
-        return $field['related_model']::pluck($field['related_id'], $field['related_name']);
+        return $fieldConfig['related_model']::pluck($fieldConfig['related_id'], $fieldConfig['related_name']);
     }
 }
 

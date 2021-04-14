@@ -15,11 +15,11 @@ class SaveEntityFormRequest extends FormRequest
 
     protected string $formName;
 
-    protected ?array $formConfig;
+    protected array $formConfig;
 
-    protected string $entryId;
+    protected ?string $entryId;
 
-    protected ?array $fields;
+    protected array $fields;
 
     /**
      * {@inheritDoc}

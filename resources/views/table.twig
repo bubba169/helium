@@ -2,28 +2,51 @@
 
 {% block content %}
     <h1 class="mb-4 h1">{{ config.table.title }}</h1>
-    <table class="w-full bg-gray-200 rounded-t-lg">
-        <thead class="text-left border-b border-gray-300">
-            {% for column in config.table.columns %}
-                <th class="px-4 py-3">{{ column.label }}</th>
-            {% endfor %}
-            <th class="px-4 py-3">Actions</th>
-        </thead>
-        <tbody>
-            {% for entry in entries %}
-                <tr class="text-left border-b border-gray-300">
-                    {% for column in config.table.columns %}
-                        <td class="px-4 py-3">{% include column.view with {entry: entry, value: column.value} %}</td>
-                    {% endfor %}
-                    <td class="px-4 py-3">
-                        {% for action in config.table.actions %}
-                            {% for action in config.table.actions %}
-                                {% include action.view with {action: action, entry: entry} %}
-                            {% endfor %}
+
+    <div>
+        <form method="GET">
+            <div class="flex sm:space-x-4">
+                {% for filter_input in config.table.filters %}
+                    <div class="w-full sm:w-1/2 lg:w-1/4">
+                        {% include filter_input.view with {field: filter_input} %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="flex w-full mb-4">
+                <button type="submit" class="block px-4 py-2 text-white bg-blue-900 rounded">Filter</button>
+                <a href="{{ url().current }}" type="reset" class="block px-4 py-2 ml-2 text-white bg-gray-800 rounded">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="w-full pb-4 rounded-t-lg bg-gray-50">
+        <table class="w-full">
+            <thead class="text-left border-b border-gray-300">
+                {% for column in config.table.columns %}
+                    <th class="px-4 py-3">{{ column.label }}</th>
+                {% endfor %}
+                <th class="px-4 py-3">Actions</th>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                    <tr class="text-left border-b border-gray-300">
+                        {% for column in config.table.columns %}
+                            <td class="px-4 py-3">{% include column.view with {entry: entry, value: column.value} %}</td>
                         {% endfor %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                        <td class="px-4 py-3">
+                            {% for action in config.table.actions %}
+                                {% for action in config.table.actions %}
+                                    {% include action.view with {action: action, entry: entry} %}
+                                {% endfor %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        {{ entries.links('pagination::tailwind')|raw }}
+    </div>
 {% endblock %}

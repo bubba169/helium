@@ -13,7 +13,7 @@
                 name="{{ field.name }}"
                 id="{{ field.id }}"
                 {{ field.required ? 'required' }}
-                {{ input_old(field.name, (entry and field.value|resolve(entry))) ? 'checked' }}
+                {{ input_old(field.name, field.value|resolve(entry)) ? 'checked' }}
                 {% for attribute in field.attributes|default([]) %}
                     {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
                 {% endfor %}
