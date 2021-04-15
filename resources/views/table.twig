@@ -1,18 +1,22 @@
 {% extends 'helium::layouts/default' %}
 
 {% block content %}
-    <h1 class="mb-4 h1">{{ config.table.title }}</h1>
-
-    <div>
+    <div class="mb-6">
         <form method="GET">
-            <div class="flex sm:space-x-4">
-                {% for filter_input in config.table.filters %}
-                    <div class="w-full sm:w-1/2 lg:w-1/4">
+            <div class="flex flex-wrap items-center justify-between">
+                <h1 class="h1">{{ config.table.title }}</h1>
+                {% if config.table.search %}
+                    {% include "helium::partials/search" %}
+                {% endif %}
+            </div>
+            <div class="flex flex-wrap justify-between gap-2">
+                {% for filter_input in config.table.filters if filter_input.slug != 'search' %}
+                    <div class="flex-1">
                         {% include filter_input.view with {field: filter_input} %}
                     </div>
                 {% endfor %}
             </div>
-            <div class="flex w-full mb-4">
+            <div class="flex w-full mb-4 {{ config.table.filters is empty ? 'hidden' }}">
                 <button type="submit" class="block px-4 py-2 text-white bg-blue-900 rounded">Filter</button>
                 <a href="{{ url().current }}" type="reset" class="block px-4 py-2 ml-2 text-white bg-gray-800 rounded">Reset</a>
             </div>
@@ -47,6 +51,6 @@
     </div>
 
     <div class="mt-4">
-        {{ entries.links('pagination::tailwind')|raw }}
+        {{ entries.withQueryString.links('pagination::tailwind')|raw }}
     </div>
 {% endblock %}

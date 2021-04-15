@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Form\RelatedOptionsHandler;
 use Helium\Table\DefaultFilterHandler;
+use Helium\Table\DefaultSearchHandler;
 use Helium\Table\DefaultListingHandler;
 use Helium\Http\Requests\SaveEntityFormRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -73,6 +74,13 @@ class EntityConfig
         // Set a default base query
         if (!array_key_exists('handler', $config['table'])) {
             $config['table']['handler'] = DefaultListingHandler::class;
+        }
+
+        // Set the default search handler
+        if (!empty($config['table']['search']) &&
+            !array_key_exists('handler', $config['table']['search'])
+        ) {
+            $config['table']['search']['handler'] = DefaultSearchHandler::class;
         }
 
         $config = $this->normaliseTableFilters($config);

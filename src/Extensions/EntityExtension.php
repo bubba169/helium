@@ -47,12 +47,14 @@ class EntityExtension extends AbstractExtension
      * Takes a string that can include {entity.xyz} tags that will resolve
      * from the entity or query string using dot notation
      */
-    protected function resolveString(string $str, ?ArrayAccess $entry) : string {
+    protected function resolveString(string $str, ?ArrayAccess $entry = null) : string {
 
         // Replace any entity references with values from the entity
-        $str = preg_replace_callback('/\{entry\.(.*)\}/', function ($match) use ($entry) {
-            return $entry ? Arr::get($entry, $match[1]) : '';
-        }, $str);
+        if ($entry) {
+            $str = preg_replace_callback('/\{entry\.(.*)\}/', function ($match) use ($entry) {
+                return $entry ? Arr::get($entry, $match[1]) : '';
+            }, $str);
+        }
 
         //Replace any values from the query
         $str = preg_replace_callback('/\{query\.(.*)\}/', function ($match) {

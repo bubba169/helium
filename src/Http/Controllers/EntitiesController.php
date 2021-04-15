@@ -18,6 +18,15 @@ class EntitiesController extends HeliumController
 
         $query = app()->call($config['table']['handler'], ['config' => $config]);
 
+        // Apply the search query
+        if (!empty($config['table']['search']['handler'])) {
+            $query = app()->call($config['table']['search']['handler'], [
+                'query' => $query,
+                'searchConfig' => $config['table']['search']
+            ]);
+        }
+
+        // Apply the filter queries
         foreach ($config['table']['filters'] as $filter) {
             $query = app()->call($filter['handler'], [
                 'query' => $query,
@@ -25,7 +34,7 @@ class EntitiesController extends HeliumController
             ]);
         }
 
-        $entries = $query->paginate(2);
+        $entries = $query->paginate(50);
 
         return view($config['table']['view'], [
             'config' => $config,
