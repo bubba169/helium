@@ -1,24 +1,24 @@
 {% extends 'helium::layouts/default' %}
 
 {% block content %}
-    <div class="mb-6">
+    <div class="">
         <form method="GET">
-            <div class="flex flex-wrap items-center justify-between">
-                <h1 class="h1">{{ config.table.title }}</h1>
+            <h1 class="h1">{{ config.table.title }}</h1>
+            <div class="flex flex-wrap items-center items-end justify-start p-4 my-4 -mx-1 bg-gray-100 border-gray-400">
                 {% if config.table.search %}
-                    {% include "helium::partials/search" %}
+                    {% include config.table.search.view with {field: config.table.search} %}
                 {% endif %}
-            </div>
-            <div class="flex flex-wrap justify-between gap-2">
-                {% for filter_input in config.table.filters if filter_input.slug != 'search' %}
-                    <div class="flex-1">
-                        {% include filter_input.view with {field: filter_input} %}
+                {% if config.table.filters|length %}
+                    {% for filter_input in config.table.filters %}
+                        <div class="flex-1 min-w-[25%] w-full px-1 mb-2">
+                            {% include filter_input.view with {field: filter_input} %}
+                        </div>
+                    {% endfor %}
+                    <div class="flex flex-1 px-1 mb-2 justify-end self-end {{ config.table.filters is empty ? 'hidden' }}">
+                        <button type="submit" class="block px-4 py-2 text-white bg-blue-900 rounded">Filter</button>
+                        <a href="{{ url().current }}" type="reset" class="block px-4 py-2 ml-2 text-white bg-gray-800 rounded">Reset</a>
                     </div>
-                {% endfor %}
-            </div>
-            <div class="flex w-full mb-4 {{ config.table.filters is empty ? 'hidden' }}">
-                <button type="submit" class="block px-4 py-2 text-white bg-blue-900 rounded">Filter</button>
-                <a href="{{ url().current }}" type="reset" class="block px-4 py-2 ml-2 text-white bg-gray-800 rounded">Reset</a>
+                {% endif %}
             </div>
         </form>
     </div>

@@ -34,7 +34,9 @@
                     <div id="helium-tab-content-{{ tabSlug }}" class="helium-tab-content">
                     <div class="mb-8">
                         {% for field in fields %}
-                            {% include field.view with {field: field, entry: entry} %}
+                            <div class="mb-4">
+                                {% include field.view with {field: field, entry: entry} %}
+                            </div>
                         {% endfor %}
                     </div>
                 </div>

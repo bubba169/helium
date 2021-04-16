@@ -77,10 +77,21 @@ class EntityConfig
         }
 
         // Set the default search handler
-        if (!empty($config['table']['search']) &&
-            !array_key_exists('handler', $config['table']['search'])
-        ) {
-            $config['table']['search']['handler'] = DefaultSearchHandler::class;
+        if (!empty($config['table']['search'])) {
+            // Set the default search handler
+            if (!array_key_exists('handler', $config['table']['search'])) {
+                $config['table']['search']['handler'] = DefaultSearchHandler::class;
+            }
+            if (!array_key_exists('type', $config['table']['search'])) {
+                $config['table']['search']['type'] = 'search';
+            }
+            if (!array_key_exists('slug', $config['table']['search'])) {
+                $config['table']['search']['slug'] = 'search';
+            }
+            if (!array_key_exists('label', $config['table']['search'])) {
+                $config['table']['search']['label'] = null;
+            }
+            $config['table']['search'] = $this->normaliseFilter($config['table']['search']);
         }
 
         $config = $this->normaliseTableFilters($config);
@@ -94,69 +105,92 @@ class EntityConfig
     {
         $config['table']['filters'] = array_normalise_keys($config['table']['filters'], 'slug', 'column');
         foreach ($config['table']['filters'] as &$filter) {
-            // Set the name form the slug
-            if (!array_key_exists('name', $filter)) {
-                $filter['name'] = $filter['slug'];
-            }
-            // Set the name form the slug
-            if (!array_key_exists('id', $filter)) {
-                $filter['id'] = $filter['slug'];
-            }
-            // Look for the current value in the query string
-            if (!array_key_exists('value', $filter)) {
-                $filter['value'] = '{query.' . $filter['name'] . '}';
-            }
-             // Set the label to the humanised field name by default
-            if (!array_key_exists('label', $filter)) {
-                $filter['label'] = Str::title(str_humanise($filter['slug']));
-            }
-            if (!array_key_exists('column', $filter)) {
-                $filter['column'] = $filter['slug'];
-            }
-
-            if (!array_key_exists('handler', $filter)) {
-                $filter['handler'] = DefaultFilterHandler::class;
-            }
-
-            if (!array_key_exists('type', $filter)) {
-                $filter['type'] = 'text';
-            }
-
-            if (array_key_exists('attributes', $filter)) {
-                $filter['attributes'] = array_normalise_keys($filter['attributes']);
-            }
-
-            if (!array_key_exists('view', $filter)) {
-                switch ($filter['type']) {
-                    case 'boolean':
-                        $filter['options'] = [
-                            'Yes' => 'yes',
-                            'No' => 'no',
-                        ];
-                        // Fall through to select
-                    case 'select':
-                    case 'belongsTo':
-                        $filter['view'] = 'helium::form-fields.select';
-                        break;
-                    default:
-                        $filter['view'] = 'helium::form-fields.input';
-                }
-            }
-
-            if (in_array($filter['type'], ['belongsTo', 'belongsToMany'])) {
-                if (!array_key_exists('options', $filter)) {
-                    $filter['options'] = RelatedOptionsHandler::class;
-                }
-                if (!array_key_exists('related_id', $filter)) {
-                    $filter['related_id'] = 'id';
-                }
-                if (!array_key_exists('relationship', $filter)) {
-                    $filter['relationship'] = $filter['slug'];
-                }
-            }
+            $filter = $this->normaliseFilter($filter);
         }
 
         return $config;
+    }
+
+    public function normaliseFilter(array $filter): array
+    {
+        // Set the name form the slug
+        if (!array_key_exists('name', $filter)) {
+            $filter['name'] = $filter['slug'];
+        }
+        // Set the name form the slug
+        if (!array_key_exists('id', $filter)) {
+            $filter['id'] = $filter['slug'];
+        }
+        // Look for the current value in the query string
+        if (!array_key_exists('value', $filter)) {
+            $filter['value'] = '{query.' . $filter['name'] . '}';
+        }
+
+            // Set the label to the humanised field name by default
+        if (!array_key_exists('label', $filter)) {
+            $filter['label'] = Str::title(str_humanise($filter['slug']));
+        }
+
+        if (!array_key_exists('column', $filter)) {
+            $filter['column'] = $filter['slug'];
+        }
+
+        if (!array_key_exists('handler', $filter)) {
+            $filter['handler'] = DefaultFilterHandler::class;
+        }
+
+        if (!array_key_exists('type', $filter)) {
+            $filter['type'] = 'text';
+        }
+
+        if (!array_key_exists('placeholder', $filter)) {
+            if (in_array($filter['type'], ['select', 'belongsTo', 'boolean'])) {
+                $filter['placeholder'] = 'Select to filter... ';
+            } elseif ($filter['type'] == 'search') {
+                $filter['placeholder'] = 'Search';
+            } else {
+                $filter['placeholder'] = 'Filter By ' . Str::title(str_humanise($filter['slug']));
+            }
+        }
+
+        if (array_key_exists('attributes', $filter)) {
+            $filter['attributes'] = array_normalise_keys($filter['attributes']);
+        }
+
+        if (!array_key_exists('view', $filter)) {
+            switch ($filter['type']) {
+                case 'boolean':
+                    $filter['options'] = [
+                        'Yes' => 'yes',
+                        'No' => 'no',
+                    ];
+                    // Fall through to select
+                case 'select':
+                case 'belongsTo':
+                    $filter['view'] = 'helium::form-fields.select';
+                    break;
+                case 'search':
+                    $filter['view'] = 'helium::form-fields.search';
+                    break;
+                default:
+                    $filter['view'] = 'helium::form-fields.input';
+            }
+        }
+
+        if (in_array($filter['type'], ['belongsTo', 'belongsToMany'])) {
+            if (!array_key_exists('options', $filter)) {
+                $filter['options'] = RelatedOptionsHandler::class;
+            }
+            if (!array_key_exists('related_id', $filter)) {
+                $filter['related_id'] = 'id';
+            }
+            if (!array_key_exists('relationship', $filter)) {
+                $filter['relationship'] = $filter['slug'];
+            }
+        }
+
+        return $filter;
+
     }
 
     /**

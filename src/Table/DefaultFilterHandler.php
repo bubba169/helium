@@ -18,7 +18,7 @@ class DefaultFilterHandler
                         $filterConfig['relationship'],
                         function ($q) use ($filterConfig, $request) {
                             $q->whereIn(
-                                $filterConfig['relationship'] . '.' . $filterConfig['related_id'],
+                                $q->getModel()->getTable() . '.' . $filterConfig['related_id'],
                                 Arr::wrap($request->query($filterConfig['slug']))
                             );
                         }
