@@ -1,1 +1,2 @@
 require('./tabs');
+require('./toggle');

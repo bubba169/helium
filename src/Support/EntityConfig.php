@@ -126,8 +126,12 @@ class EntityConfig
             $filter['value'] = '{query.' . $filter['name'] . '}';
         }
 
-            // Set the label to the humanised field name by default
-        if (!array_key_exists('label', $filter)) {
+        if (!array_key_exists('type', $filter)) {
+            $filter['type'] = 'text';
+        }
+
+        // Set the label to the humanised field name by default
+        if ($filter['type'] != 'hidden' && !array_key_exists('label', $filter)) {
             $filter['label'] = Str::title(str_humanise($filter['slug']));
         }
 
@@ -137,10 +141,6 @@ class EntityConfig
 
         if (!array_key_exists('handler', $filter)) {
             $filter['handler'] = DefaultFilterHandler::class;
-        }
-
-        if (!array_key_exists('type', $filter)) {
-            $filter['type'] = 'text';
         }
 
         if (!array_key_exists('placeholder', $filter)) {
@@ -226,13 +226,13 @@ class EntityConfig
         if (!array_key_exists('name', $field)) {
             $field['name'] = $field['slug'];
         }
-        // Set the label to the humanised field name by default
-        if (!array_key_exists('label', $field)) {
-            $field['label'] = Str::title(str_humanise($field['slug']));
-        }
         // Set the type to text by default
         if (!array_key_exists('type', $field)) {
             $field['type'] = 'text';
+        }
+        // Set the label to the humanised field name by default
+        if ($field['type'] != 'hidden' && !array_key_exists('label', $field)) {
+            $field['label'] = Str::title(str_humanise($field['slug']));
         }
         // Set the id to the field name by default
         if (!array_key_exists('id', $field)) {

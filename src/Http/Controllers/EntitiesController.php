@@ -2,9 +2,10 @@
 
 namespace Helium\Http\Controllers;
 
-use Helium\Support\EntityConfig;
-use Illuminate\Support\Arr;
 use Illuminate\View\View;
+use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
+use Helium\Support\EntityConfig;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntitiesController extends HeliumController
@@ -12,7 +13,7 @@ class EntitiesController extends HeliumController
     /**
      * Renders the list
      */
-    public function list(EntityConfig $configLoader, string $type) : View
+    public function list(EntityConfig $configLoader, Request $request, string $type) : View
     {
         $config = $configLoader->getConfig($type);
 
@@ -39,6 +40,7 @@ class EntitiesController extends HeliumController
         return view($config['table']['view'], [
             'config' => $config,
             'entries' => $entries,
+            'filtersOpen' => count(array_filter($request->except('search'))),
         ]);
     }
 

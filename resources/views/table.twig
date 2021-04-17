@@ -4,26 +4,42 @@
     <div class="">
         <form method="GET">
             <h1 class="h1">{{ config.table.title }}</h1>
-            <div class="flex flex-wrap items-center items-end justify-start p-4 my-4 -mx-1 bg-gray-100 border-gray-400">
-                {% if config.table.search %}
-                    {% include config.table.search.view with {field: config.table.search} %}
-                {% endif %}
-                {% if config.table.filters|length %}
-                    {% for filter_input in config.table.filters %}
-                        <div class="flex-1 min-w-[25%] w-full px-1 mb-2">
-                            {% include filter_input.view with {field: filter_input} %}
+            <div class="flex justify-between w-full mt-4">
+                <div class="flex items-center flex-1">
+                    {% if config.table.search %}
+                        <div class="w-1/2 mr-2">
+                            {% include config.table.search.view with {field: config.table.search} %}
                         </div>
-                    {% endfor %}
-                    <div class="flex flex-1 px-1 mb-2 justify-end self-end {{ config.table.filters is empty ? 'hidden' }}">
-                        <button type="submit" class="block px-4 py-2 text-white bg-blue-900 rounded">Filter</button>
-                        <a href="{{ url().current }}" type="reset" class="block px-4 py-2 ml-2 text-white bg-gray-800 rounded">Reset</a>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                    {% if config.table.filters|length %}
+                        <a class="px-3 py-1.5 text-white bg-blue-900 rounded cursor-pointer helium-toggle" data-target="#filter-container">
+                            <i class="fas fa-filter" aria-hidden="true" title="Show Filters"></i>
+                            <span class="sr-only">Show Filters</span>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
+
+            {% if config.table.filters|length %}
+                <div class="overflow-hidden transition-all duration-300 transition-max-h {{ not filtersOpen ? 'collapsed' }}" id="filter-container">
+                    <div class="flex flex-wrap items-center items-end justify-start p-4 mt-4 bg-gray-100 border-gray-400 rounded-xl">
+                        {% for filter_input in config.table.filters %}
+                            <div class="flex-1 min-w-[25%] w-full px-1 mb-2">
+                                {% include filter_input.view with {field: filter_input} %}
+                            </div>
+                        {% endfor %}
+                        <div class="flex flex-1 px-1 mb-2 justify-end self-end {{ config.table.filters is empty ? 'hidden' }}">
+                            <button type="submit" class="block px-4 py-2 text-white bg-blue-900 rounded">Filter</button>
+                            <a href="{{ url().current }}" type="reset" class="block px-4 py-2 ml-2 text-white bg-gray-800 rounded">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
         </form>
     </div>
 
-    <div class="w-full pb-4 rounded-t-lg bg-gray-50">
+    <div class="w-full pb-4 mt-4 rounded-t-lg bg-gray-50">
         <table class="w-full">
             <thead class="text-left border-b border-gray-300">
                 {% for column in config.table.columns %}

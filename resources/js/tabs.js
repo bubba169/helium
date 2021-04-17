@@ -1,12 +1,14 @@
 const init = () => {
     const tabs = document.querySelectorAll('.helium-tab');
-    tabs.forEach((tab) => {
-        tab.addEventListener('click', (event) => {
-            setActiveTab(tab)
+    if (tabs.length) {
+        tabs.forEach((tab) => {
+            tab.addEventListener('click', (event) => {
+                setActiveTab(tab)
+            });
         });
-    });
 
-    setActiveTab(document.getElementById('helium-tab-main'));
+        setActiveTab(document.getElementById('helium-tab-main'));
+    }
 }
 
 

@@ -1,0 +1,5 @@
+@layer components {
+    .collapsed {
+        @apply max-h-0;
+    }
+}
