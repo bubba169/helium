@@ -1,12 +1,12 @@
 {% extends "helium::form-fields.input" %}
 
 {% block input %}
-    <textarea class="w-full {{ field.classes ? ' ' ~ field.classes }}"
+    <textarea class="w-full focus:outline-none {{ field.classes ? ' ' ~ field.classes }}"
         name="{{ field.name }}"
         id="{{ field.id }}"
         value=""
         placeholder="{{ field.placeholder }}"
-        {{ field.required ? 'required' }}
+        autocomplete="{{ field.autocomplete }}"
         {% for attribute in field.attributes|default([]) %}
             {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
         {% endfor %}

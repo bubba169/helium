@@ -212,6 +212,14 @@ class EntityConfig
         if (!array_key_exists('rules', $field) && !empty($field['required'])) {
             $field['rules'] = 'required';
         }
+        // Set autocomplete to off by default
+        if (!array_key_exists('autocomplete', $field)) {
+            if ($field['type'] == 'password') {
+                $field['autocomplete'] = 'new-password';
+            } else {
+                $field['autocomplete'] = 'off';
+            }
+        }
         // Set attributes if not set
         if (!array_key_exists('attributes', $field)) {
             $field['attributes'] = [];
@@ -245,10 +253,6 @@ class EntityConfig
             case 'password':
                 // Password should never show the existing value
                 $field['value'] = '';
-                // Turn off autosomplete as it causes issues with passwords being reset
-                if (!array_key_exists('autocomplete', $field['attributes'])) {
-                    $field['attributes']['autosomplete'] = 'new-password';
-                }
                 break;
             case 'belongsTo':
             case 'belongsToMany':
