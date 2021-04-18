@@ -18,7 +18,12 @@
                     {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
                 {% endfor %}
             >
-            <label class="flex-1 pl-4 font-bold cursor-pointer" for="{{ field.id }}">{{ field.label }}</label>
+            <label class="flex-1 pl-4 font-bold cursor-pointer {{ field.labelClasses }}" for="{{ field.id }}">
+                {{ field.label }}
+                {% if field.required %}
+                    <span class="text-red-700">*</span>
+                {% endif %}
+            </label>
         </div>
     </div>
 {% endblock %}
