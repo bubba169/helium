@@ -1,42 +1,29 @@
-<div class="w-full">
-    {% if field.label is not empty %}
-        <label class="block w-full mb-2 text-lg font-bold" for="{{ field.id }}">{{ field.label }}</label>
-    {% endif %}
-    {% if field.description is not empty %}
-        <div class="w-full mb-2 -mt-1 text-sm text-gray-700">{{ field.description }}</div>
-    {% endif %}
-    <div class="flex space-x-2">
-        <input class="box-border inline-block w-1/2 p-2 border rounded-lg
-            {{ errors.has(field.name) ? 'border-red-700' : 'border-gray-400' }}
-            {{ field.classes ? ' ' ~ field.classes.date }}"
+{% extends "helium::form-fields.input" %}
+
+{% block container %}
+    <div class="flex space-x-2 {{ field.containerClasses }}">
+        <input class="box-border w-1/2 py-2 px-3 border rounded-lg
+            {{ hasErrors ? 'border-red-700' : 'border-gray-400' }}
+            {{ field.classes.date ? ' ' ~ field.classes.date }}"
             type="date"
             name="{{ field.name }}_date"
             id="{{ field.id }}_date"
             value="{{ input_old(field.name ~ '_date', field.value|resolve(entry)|date('Y-m-d')) }}"
-            {{ field.required ? 'required' }}
-            {% for attribute in field.attributes.date|default([]) %}
+            {% for attribute in field.attributes.date %}
                 {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
             {% endfor %}
         >
-        <input class="box-border inline-block w-1/2 p-2 border rounded-lg
-            {{ errors.has(field.name) ? 'border-red-700' : 'border-gray-400' }}
-            {{ field.classes ? ' ' ~ field.classes.time }}"
+        <input class="box-border w-1/2 py-2 px-3 border rounded-lg
+            {{ hasErrors ? 'border-red-700' : 'border-gray-400' }}
+            {{ field.classes.time ? ' ' ~ field.classes.time }}"
             type="time"
             step="1"
             name="{{ field.name }}_time"
             id="{{ field.id }}_time"
             value="{{ input_old(field.name ~ '_time', field.value|resolve(entry)|date('H:i:s')) }}"
-            {{ field.required ? 'required' }}
-            {% for attribute in field.attributes.time|default([]) %}
+            {% for attribute in field.attributes.time %}
                 {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
             {% endfor %}
         >
     </div>
-
-    {% if errors.has(field.name) %}
-        <div class="w-full mt-2 text-sm text-red-700">
-            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
-            {{ errors.messages[field.name]|join(' ') }}
-        </div>
-    {% endif %}
-</div>
+{% endblock %}

@@ -3,10 +3,10 @@
 {% else %}
     <a href="{{ action.url|resolve(entry) }}"
 {% endif %}
-    class="px-4 py-2 text-white bg-blue-900 rounded hover:bg-blue-800"
+    class="inline-flex px-4 py-2 text-white bg-blue-900 rounded hover:bg-blue-800"
 >
     {% if action.iconClass %}
-        <div class="inline-block w-5">
+        <div class="w-5">
             <i class="{{ action.iconClass }}" aria-hidden="true"></i>
         </div>
     {% endif %}

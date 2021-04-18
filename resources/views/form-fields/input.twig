@@ -1,30 +1,46 @@
-<div class="w-full">
-    {% if field.label is not empty %}
-        <label class="block w-full mb-2 text-lg font-bold" for="{{ field.id }}">{{ field.label }}</label>
-    {% endif %}
-    {% if field.description is not empty %}
-        <div class="w-full mb-2 -mt-1 text-sm text-gray-700">{{ field.description }}</div>
-    {% endif %}
+{% set hasErrors = errors.has(field.name) %}
 
-    <input class="w-full p-2 border rounded-lg invalid-border
-        {{ errors.has(field.name) ? 'border-red-700' : 'border-gray-400' }}
-        {{ field.classes ? ' ' ~ field.classes }}"
-        type="{{ field.type }}"
-        name="{{ field.name }}"
-        id="{{ field.id }}"
-        value="{{ input_old(field.name, field.value|resolve(entry)) }}"
-        placeholder="{{ field.placeholder }}"
-        {{ field.required ? 'required' }}
-        {% for attribute in field.attributes|default([]) %}
-            {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
-        {% endfor %}
-    >
+{% block init %}{% endblock %}
 
-    {% if errors.has(field.name) %}
-        <div class="w-full mt-2 text-sm text-red-700">
-            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
-            {{ errors.messages[field.name]|join(' ') }}
+<div class="helium-field w-full {{ hasErrors ? 'invalid' }}">
+
+    {% block label %}
+        {% include "helium::form-fields.common.label" %}
+    {% endblock %}
+
+    {% block description %}
+        {% include "helium::form-fields.common.description" %}
+    {% endblock %}
+
+    {% block container %}
+        <div class="helium-field-container w-full py-2 px-3 border rounded-lg flex flex-wrap bg-white
+            {{ hasErrors ? 'border-red-700' : 'border-gray-400' }}
+            {{ field.containerClasses }}"
+        >
+            {% block input %}
+                {% if field.prefix is not empty %}
+                    <span class="mr-2 text-gray-400">{{ field.prefix|raw }}</span>
+                {% endif %}
+
+                <input class="w-full flex-1 {{ field.classes }}"
+                    type="{{ field.type }}"
+                    name="{{ field.name }}"
+                    id="{{ field.id }}"
+                    value="{{ input_old(field.name, field.value|resolve(entry)) }}"
+                    placeholder="{{ field.placeholder }}"
+                    {% for attribute in field.attributes %}
+                        {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
+                    {% endfor %}
+                >
+                {% if field.postfix is not empty %}
+                    <span class="ml-2 text-gray-400">{{ field.postfix|raw }}</span>
+                {% endif %}
+            {% endblock %}
         </div>
-    {% endif %}
+    {% endblock %}
+
+    {% block errors %}
+        {% include "helium::form-fields.common.errors" %}
+    {% endblock %}
 
 </div>

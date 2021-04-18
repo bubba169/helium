@@ -91,7 +91,7 @@ class EntityConfig
             if (!array_key_exists('label', $config['table']['search'])) {
                 $config['table']['search']['label'] = null;
             }
-            $config['table']['search'] = $this->normaliseFilter($config['table']['search']);
+            $config['table']['search'] = $this->normaliseFilter($config['table']['search'], $config);
         }
 
         $config = $this->normaliseTableFilters($config);
@@ -105,44 +105,31 @@ class EntityConfig
     {
         $config['table']['filters'] = array_normalise_keys($config['table']['filters'], 'slug', 'column');
         foreach ($config['table']['filters'] as &$filter) {
-            $filter = $this->normaliseFilter($filter);
+            $filter = $this->normaliseFilter($filter, $config);
         }
 
         return $config;
     }
 
-    public function normaliseFilter(array $filter): array
+    public function normaliseFilter(array $filter, array $config): array
     {
         // Set the name form the slug
         if (!array_key_exists('name', $filter)) {
             $filter['name'] = $filter['slug'];
         }
-        // Set the name form the slug
-        if (!array_key_exists('id', $filter)) {
-            $filter['id'] = $filter['slug'];
+        // Set the type to text if not set
+        if (!array_key_exists('type', $filter)) {
+            $filter['type'] = 'text';
         }
         // Look for the current value in the query string
         if (!array_key_exists('value', $filter)) {
             $filter['value'] = '{query.' . $filter['name'] . '}';
         }
-
-        if (!array_key_exists('type', $filter)) {
-            $filter['type'] = 'text';
-        }
-
-        // Set the label to the humanised field name by default
-        if ($filter['type'] != 'hidden' && !array_key_exists('label', $filter)) {
-            $filter['label'] = Str::title(str_humanise($filter['slug']));
-        }
-
-        if (!array_key_exists('column', $filter)) {
-            $filter['column'] = $filter['slug'];
-        }
-
+        // Set the default handler if not otherwise set
         if (!array_key_exists('handler', $filter)) {
             $filter['handler'] = DefaultFilterHandler::class;
         }
-
+        // Set the placeholder text
         if (!array_key_exists('placeholder', $filter)) {
             if (in_array($filter['type'], ['select', 'belongsTo', 'boolean'])) {
                 $filter['placeholder'] = 'Select to filter... ';
@@ -152,44 +139,16 @@ class EntityConfig
                 $filter['placeholder'] = 'Filter By ' . Str::title(str_humanise($filter['slug']));
             }
         }
-
-        if (array_key_exists('attributes', $filter)) {
-            $filter['attributes'] = array_normalise_keys($filter['attributes']);
+        // Boolean should use a select view to avoid confusion in the url data
+        if (!array_key_exists('view', $filter) && $filter['type'] == 'boolean') {
+            $filter['view'] = 'helium::form-fields.select';
+            $filter['options'] = [
+                'Yes' => 'yes',
+                'No' => 'no',
+            ];
         }
-
-        if (!array_key_exists('view', $filter)) {
-            switch ($filter['type']) {
-                case 'boolean':
-                    $filter['options'] = [
-                        'Yes' => 'yes',
-                        'No' => 'no',
-                    ];
-                    // Fall through to select
-                case 'select':
-                case 'belongsTo':
-                    $filter['view'] = 'helium::form-fields.select';
-                    break;
-                case 'search':
-                    $filter['view'] = 'helium::form-fields.search';
-                    break;
-                default:
-                    $filter['view'] = 'helium::form-fields.input';
-            }
-        }
-
-        if (in_array($filter['type'], ['belongsTo', 'belongsToMany'])) {
-            if (!array_key_exists('options', $filter)) {
-                $filter['options'] = RelatedOptionsHandler::class;
-            }
-            if (!array_key_exists('related_id', $filter)) {
-                $filter['related_id'] = 'id';
-            }
-            if (!array_key_exists('relationship', $filter)) {
-                $filter['relationship'] = $filter['slug'];
-            }
-        }
-
-        return $filter;
+        // Normalise the field now the specifics have been set
+        return $this->normaliseField($filter, $config);
 
     }
 
@@ -253,45 +212,66 @@ class EntityConfig
         if (!array_key_exists('rules', $field) && !empty($field['required'])) {
             $field['rules'] = 'required';
         }
+        // Set attributes if not set
+        if (!array_key_exists('attributes', $field)) {
+            $field['attributes'] = [];
+        }
+        // Normalise the attributes. Datetime is a special case dealt with later
+        if ($field['type'] != 'datetime') {
+            $field['attributes'] = array_normalise_keys($field['attributes']);
+        }
         // Normalise the attributes if set
-        if (array_key_exists('attributes', $field)) {
-            // Datetime is a special case that splits the attributes between two fields
-            if ($field['type'] == 'datetime') {
-                $all = $field['attributes'];
-                unset($all['date'], $all['time']);
+        if (!array_key_exists('classes', $field)) {
+            $field['classes'] = '';
+        }
+
+        // Specific field type setup
+        switch ($field['type']) {
+            case 'datetime':
+                // Datetime is a special case that splits the attributes between two fields
+                // Merge all of the attributes with two special keys for the date and time fields
+                $all = Arr::except($field['attributes'], ['date', 'time']);
                 $field['attributes'] = [
                     'date' => array_normalise_keys(array_merge($all, Arr::get($field['attributes'], 'date', []))),
                     'time' => array_normalise_keys(array_merge($all, Arr::get($field['attributes'], 'time', []))),
                 ];
-            } else {
-                $field['attributes'] = array_normalise_keys($field['attributes']);
-            }
+                if (is_string($field['classes'])) {
+                    $field['classes'] = [
+                        'date' => $field['classes'],
+                        'time' => $field['classes']
+                    ];
+                }
+                break;
+            case 'password':
+                // Password should never show the existing value
+                $field['value'] = '';
+                // Turn off autosomplete as it causes issues with passwords being reset
+                if (!array_key_exists('autocomplete', $field['attributes'])) {
+                    $field['attributes']['autosomplete'] = 'new-password';
+                }
+                break;
+            case 'belongsTo':
+            case 'belongsToMany':
+                if (!array_key_exists('options', $field)) {
+                    $field['options'] = RelatedOptionsHandler::class;
+                }
+                if (!array_key_exists('related_id', $field)) {
+                    $field['related_id'] = 'id';
+                }
+                if (!array_key_exists('relationship', $field)) {
+                    $field['relationship'] = $field['slug'];
+                }
+                break;
+            case 'search':
+                if (!array_key_exists('prefix', $field)) {
+                    $field['prefix'] = '<i class="fas fa-search" aria-hidden="true"></i>';
+                }
+                break;
         }
-        // If datetime has classes as a string split them between the fields
-        if ($field['type'] == 'datetime' &&
-            array_key_exists('classes', $field) &&
-            is_string($field['classes'])
-        ) {
-            $field['classes'] = [
-                'date' => $field['classes'],
-                'time' => $field['classes']
-            ];
-        }
+
         // Set the view based on the type
         if (!array_key_exists('view', $field)) {
             $field['view'] = $this->defaultFieldView($field['type']);
-        }
-
-        if (in_array($field['type'], ['belongsTo', 'belongsToMany'])) {
-            if (!array_key_exists('options', $field)) {
-                $field['options'] = RelatedOptionsHandler::class;
-            }
-            if (!array_key_exists('related_id', $field)) {
-                $field['related_id'] = 'id';
-            }
-            if (!array_key_exists('relationship', $field)) {
-                $field['relationship'] = $field['slug'];
-            }
         }
 
         return $field;
@@ -465,8 +445,6 @@ class EntityConfig
                 return 'helium::form-fields.textarea';
             case 'datetime':
                 return 'helium::form-fields.datetime';
-            case 'password':
-                return 'helium::form-fields.password';
         }
 
         return 'helium::form-fields.input';

@@ -1,10 +1,6 @@
-<div class="w-full">
-    {% if field.label is not empty %}
-        <label class="block w-full mb-2 text-lg font-bold" for="{{ field.id }}">{{ field.label }}</label>
-    {% endif %}
-    {% if field.description is not empty %}
-        <div class="w-full mb-2 -mt-1 text-sm text-gray-700">{{ field.description }}</div>
-    {% endif %}
+{% extends "helium::form-fields.input" %}
+
+{% block container %}
     <div class="relative flex w-full h-10">
         <label for="{{ field.id }}" class="absolute text-lg text-gray-400 top-1.5 left-2">
             <i class="fas fa-search" aria-hidden="true"></i>
@@ -15,11 +11,12 @@
             name="{{ field.name }}"
             placeholder="{{ field.placeholder }}"
             value="{{ field.value|resolve(entry) }}"
-            class="flex-1 w-full p-2 pl-8 border border-gray-400 rounded-lg invalid-border
+            class="flex-1 w-full p-2 pl-8 border border-gray-400 rounded-lg
             {{ field.classes ? ' ' ~ field.classes }}"
             {% for attribute in field.attributes|default([]) %}
                 {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
             {% endfor %}
         >
     </div>
+{% endblock %}
 </div>
