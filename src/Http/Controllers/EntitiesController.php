@@ -2,6 +2,7 @@
 
 namespace Helium\Http\Controllers;
 
+use Helium\Config\Entity;
 use Illuminate\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -15,7 +16,11 @@ class EntitiesController extends HeliumController
      */
     public function list(EntityConfig $configLoader, Request $request, string $type) : View
     {
+
+        dd(new Entity($type));
         $config = $configLoader->getConfig($type);
+
+
 
         $query = app()->call($config['table']['handler'], ['config' => $config]);
 
