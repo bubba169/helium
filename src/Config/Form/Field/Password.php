@@ -2,22 +2,16 @@
 
 namespace Helium\Config\Form\Field;
 
+use Helium\Config\Form\Field\Field;
 
-use Helium\Config\Form\Field\BaseField;
-
-class Password extends BaseField
+class Password extends Field
 {
     /**
-     * The input type is always password
+     * Set to a hidden type field
      */
-    public $type = 'password';
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function defaultView(): string
+    public function getType(): string
     {
-        return 'helium::form-fields.input';
+        return 'password';
     }
 
     /**
@@ -25,7 +19,7 @@ class Password extends BaseField
      *
      * Passwords should never populate their value form the stored data
      */
-    protected function defaultValue(): string
+    public function getValue(): string
     {
         return '';
     }

@@ -2,25 +2,23 @@
 
 namespace Helium\Config\Table\Filter;
 
+use Illuminate\Support\Arr;
 use Helium\Config\Table\Filter\Filter;
 
 class Search extends Filter
 {
-    /**
-     * {@inheritDoc}
-     */
-    protected function defaultLabel(): ?string
+    public function getLabel(): ?string
     {
-        return null;
+        return Arr::get('placeholder', $this->fieldConfig, null);
     }
 
-    protected function defaultPlaceholder(): ?string
+    public function getPlaceholder(): ?string
     {
-        return 'Search';
+        return Arr::get('placeholder', $this->fieldConfig, 'Search');
     }
 
-    protected function defaultPrefix(): ?string
+    public function getPrefix(): ?string
     {
-        return '<i class="fas fa-search" aria-hidden="true"></i>';
+        return Arr::get('prefix', $this->fieldConfig, '<i class="fas fa-search" aria-hidden="true"></i>');
     }
 }

@@ -34,9 +34,6 @@ class Table
         $this->tableConfig = $table;
         $this->entityConfig = $config;
 
-        $this->title = Arr::get('title', $table, $this->defaultTitle());
-        $this->handler = Arr::get('handler', $table, $this->defaultListingHandler());
-
         if (!empty($table['search'])) {
             $table['search']['slug'] = 'search';
             $this->search = new Search($table['search'], $config);

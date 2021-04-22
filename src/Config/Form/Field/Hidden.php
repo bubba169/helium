@@ -2,30 +2,25 @@
 
 namespace Helium\Config\Form\Field;
 
-use Helium\Config\Form\Field\BaseField;
+use Helium\Config\Form\Field\Field;
 
-class Hidden extends BaseField
+class Hidden extends Field
 {
     /**
      * Set to a hidden type field
      */
-    public string $type = 'hidden';
+    public function getType(): string
+    {
+        return 'hidden';
+    }
 
     /**
      * {@inheritDoc}
      *
      * No label as the field is invisible
      */
-    protected function defaultLabel(): ?string
+    public function getLabel(): ?string
     {
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function defaultView(): string
-    {
-        return 'helium::form-fields.input';
     }
 }

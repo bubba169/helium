@@ -2,12 +2,13 @@
 
 namespace Helium\Config\Form\Field;
 
-use Helium\Config\Form\Field\BaseField;
+use Illuminate\Support\Arr;
+use Helium\Config\Form\Field\Field;
 
-class TextArea extends BaseField
+class TextArea extends Field
 {
-    protected function defaultView(): string
+    public function getView(): string
     {
-        return 'helium::form-fields.textarea';
+        return Arr::get('view', $this->formConfig, 'helium::form-fields.textarea');
     }
 }
