@@ -2,10 +2,12 @@
 
 namespace Helium\Table;
 
+use Helium\Config\Entity;
+
 class DefaultListingHandler
 {
-    public function __invoke(array $config)
+    public function __invoke(Entity $entity)
     {
-        return $config['model']::query();
+        return $entity->model::query();
     }
 }

@@ -3,16 +3,17 @@
 namespace Helium\Config;
 
 use Exception;
-use Illuminate\Support\Arr;
 use Helium\Config\Table\Table;
+use Helium\Traits\HasConfig;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Entity
 {
-    public Table $table;
+    use HasConfig;
+
     public string $slug;
     public string $model;
-    public string $name;
+    public Table $table;
 
     /**
      * An Entity config object
@@ -25,15 +26,12 @@ class Entity
             throw new NotFoundHttpException();
         }
 
-        $this->slug = $type;
-
         if (empty($config['model'])) {
             throw new Exception($this->slug . ' entity configuration does not specify a model');
         }
 
+        $this->slug = $type;
         $this->model = $config['model'];
-        $this->name = Arr::get('name', $config, $this->defaultName());
-
         $this->table = new Table($config['table'], $this);
     }
 
@@ -42,8 +40,13 @@ class Entity
      *
      * @return string
      */
-    protected function defaultName(): string
+    protected function getDefault(string $key)
     {
-        return class_basename($this->model);
+        switch ($key) {
+            case 'name':
+                return class_basename($this->model);
+        }
+
+        return null;
     }
 }

@@ -16,12 +16,7 @@ class EntitiesController extends HeliumController
      */
     public function list(EntityConfig $configLoader, Request $request, string $type) : View
     {
-
-        dd(new Entity($type));
-        $config = $configLoader->getConfig($type);
-
-
-
+        /*$config = $configLoader->getConfig($type);
         $query = app()->call($config['table']['handler'], ['config' => $config]);
 
         // Apply the search query
@@ -44,6 +39,24 @@ class EntitiesController extends HeliumController
 
         return view($config['table']['view'], [
             'config' => $config,
+            'entries' => $entries,
+            'filtersOpen' => count(array_filter($request->except('search'))),
+        ]);*/
+
+        $entity = new Entity($type);
+        $query = app()->call($entity->table->query, ['entity' => $entity]);
+
+        if ($search = $entity->table->search) {
+            $query = app()->call($search->filterHandler, [
+                'query' => $query,
+                'search' => $search
+            ]);
+        }
+
+        $entries = $query->paginate(50);
+
+        return view($entity->table->view, [
+            'entity' => $entity,
             'entries' => $entries,
             'filtersOpen' => count(array_filter($request->except('search'))),
         ]);
