@@ -10,6 +10,8 @@ class Search extends Filter
     public function getDefault(string $key)
     {
         switch ($key) {
+            case 'value':
+                return '{request.search}';
             case 'columns':
                 return [];
             case 'slug':

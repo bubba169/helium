@@ -5,9 +5,9 @@
 {% endif %}
     class="inline-flex px-4 py-2 text-white bg-blue-900 rounded hover:bg-blue-800"
 >
-    {% if action.iconClass %}
-        <div class="w-5">
-            <i class="{{ action.iconClass }}" aria-hidden="true"></i>
+    {% if action.icon %}
+        <div class="w-5 mr-1">
+            <i class="{{ action.icon }}" aria-hidden="true"></i>
         </div>
     {% endif %}
     {{ action.label }}

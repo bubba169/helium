@@ -31,6 +31,17 @@ trait HasConfig
     }
 
     /**
+     * Override isset to check if a config has been set or has a default
+     *
+     * @param string $name
+     * @return boolean
+     */
+    public function __isset(string $name)
+    {
+        return !empty($this->getConfig($name));
+    }
+
+    /**
      * Get the whole config collection
      *
      * @param string $key THe array key using dot notation

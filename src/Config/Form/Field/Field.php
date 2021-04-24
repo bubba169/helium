@@ -36,7 +36,7 @@ class Field
             case 'column':
                 return $this->slug;
             case 'type':
-                return $this->type;
+                return 'text';
             case 'label':
                 return Str::title(str_humanise($this->slug));
             case 'value':

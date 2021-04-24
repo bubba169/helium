@@ -6,6 +6,7 @@ use Helium\Config\Entity;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
+use Helium\Config\Table\Action;
 use Helium\Config\Table\Filter\Filter;
 use Helium\Config\Table\Filter\Search;
 use Helium\Table\DefaultListingHandler;
@@ -15,6 +16,7 @@ class Table
     use HasConfig;
 
     public ?Search $search;
+    public $columns = [];
     public $filters = [];
     public $actions = [];
 
@@ -36,29 +38,32 @@ class Table
         $this->entity = $entity;
         $this->mergeConfig($table);
 
-        $this->columns = array_normalise_keys($this->columns, 'slug');
-
         if (!empty($table['search'])) {
             $this->search = new Search($table['search'], $entity);
         }
 
-        if (!empty($table['filters'])) {
-            $table['filters'] = array_normalise_keys(Arr::get('filters', $table, []), 'slug', 'column');
-            foreach ($table['filters'] as $filter) {
-                $filterClass = Arr::get('field', $filter, Filter::class);
-                $filters[] = new $filterClass($filter, $this);
-            }
+        $table['filters'] = array_normalise_keys(Arr::get($table, 'filters', []), 'slug', 'column');
+        foreach ($table['filters'] as $filter) {
+            $class = Arr::get('field', $filter, Filter::class);
+            $this->filters[] = new $class($filter, $entity);
         }
 
-        //$config = $this->normaliseTableColumns($config);
-        //$config['table']['actions'] = $this->normaliseActions($config['table']['actions'], $config, true);
+        $table['columns'] = array_normalise_keys(Arr::get($table, 'columns', []), 'slug', 'value');
+        foreach ($table['columns'] as $column) {
+            $this->columns[] = new Column($column, $entity);
+        }
+
+        $table['actions'] = array_normalise_keys(Arr::get($table, 'actions', []), 'slug', 'action');
+        foreach ($table['actions'] as $action) {
+            $this->actions[] = new Action($action, $entity);
+        }
     }
 
     public function getDefault(string $key)
     {
         switch ($key) {
             case 'title':
-                return Str::plural(str_humanise(Str::camel($this->entityConfig->name)));
+                return Str::plural(str_humanise(Str::camel($this->entity->name)));
             case 'query':
                 return DefaultListingHandler::class;
             case 'view':

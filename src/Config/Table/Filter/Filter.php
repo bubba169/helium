@@ -2,21 +2,21 @@
 
 namespace Helium\Config\Table\Filter;
 
-use Illuminate\Support\Str;
 use Helium\Config\Form\Field\Field;
-use Helium\Table\DefaultFilterHandler;
+use Helium\Traits\FilterDefaults;
 
 class Filter extends Field
 {
+    use FilterDefaults;
+
+    /**
+     * Pass to get filter defaults
+     *
+     * @param string $key
+     * @return void
+     */
     public function getDefault(string $key)
     {
-        switch ($key) {
-            case 'filterHandler':
-                return DefaultFilterHandler::class;
-            case 'placeholder':
-                return 'Filter By ' . Str::title(str_humanise($this->slug));
-        }
-
-        return parent::getDefault($key);
+        return $this->getFilterDefault($key, parent::getDefault($key));
     }
 }
