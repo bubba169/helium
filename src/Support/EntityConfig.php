@@ -123,7 +123,7 @@ class EntityConfig
         }
         // Look for the current value in the query string
         if (!array_key_exists('value', $filter)) {
-            $filter['value'] = '{query.' . $filter['name'] . '}';
+            $filter['value'] = '{request.' . $filter['name'] . '}';
         }
         // Set the default handler if not otherwise set
         if (!array_key_exists('handler', $filter)) {
@@ -260,7 +260,7 @@ class EntityConfig
                     $field['options'] = RelatedOptionsHandler::class;
                 }
                 if (!array_key_exists('related_id', $field)) {
-                    $field['related_id'] = 'id';
+                    $field['related_id'] = '{entry.id}';
                 }
                 if (!array_key_exists('relationship', $field)) {
                     $field['relationship'] = $field['slug'];

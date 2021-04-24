@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Arr;
+
 /**
  * Deep merges multiple arrays. String keys will be overwritten unless the
  * value is an array in which case the values will also be deep merged.
@@ -97,4 +99,31 @@ function array_first_available(array $haystack, array $needles)
 function str_humanise(string $str) : string
 {
     return ucfirst(str_replace('_', ' ', $str));
+}
+
+/**
+ * Resolves a string using the given data.
+ * {entry.XXX} will be replaced with the path from $entry using dot notation
+ * {request.XXX} will be replaced by the value from the request data
+ */
+function str_resolve(string $str, ?ArrayAccess $entry = null): string
+{
+    // Replace any entity references with values from the entity
+    if ($entry) {
+        $str = preg_replace_callback('/\{entry\.(.*)\}/', function ($match) use ($entry) {
+            return Arr::get($entry, $match[1]);
+        }, $str);
+    }
+
+    // Replace any values from the query
+    $request = request();
+    $str = preg_replace_callback('/\{request\.(.*)\}/', function ($match) use ($request) {
+        $val = $request->input($match[1]);
+        if (is_array($val)) {
+            $val = json_encode($val);
+        }
+        return $val;
+    }, $str);
+
+    return $str;
 }
