@@ -1,6 +1,6 @@
 <?php
 
-namespace Helium\Table;
+namespace Helium\Handler;
 
 use Helium\Config\Entity;
 

@@ -3,10 +3,13 @@
 namespace Helium\Config\Table\Filter;
 
 use Helium\Config\Table\Filter\Filter;
-use Helium\Table\DefaultSearchHandler;
+use Helium\Handler\Filter\SearchHandler;
 
-class Search extends Filter
+class SearchFilter extends Filter
 {
+    /**
+     * {@inheritDoc}
+     */
     public function getDefault(string $key)
     {
         switch ($key) {
@@ -16,8 +19,8 @@ class Search extends Filter
                 return [];
             case 'slug':
                 return 'search';
-            case 'filterHandler':
-                return DefaultSearchHandler::class;
+            case 'handler':
+                return SearchHandler::class;
             case 'label':
                 return null;
             case 'placeholder':

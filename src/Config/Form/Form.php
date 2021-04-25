@@ -11,12 +11,11 @@ use Helium\Config\Table\Filter\Filter;
 use Helium\Handler\DefaultListingHandler;
 use Helium\Config\Table\Filter\SearchFilter;
 
-class Table
+class Form
 {
     use HasConfig;
 
-    public ?SearchFilter $search;
-    public $columns = [];
+    public $fields = [];
     public $filters = [];
     public $actions = [];
 

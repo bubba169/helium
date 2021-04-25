@@ -14,42 +14,22 @@ class EntitiesController extends HeliumController
     /**
      * Renders the list
      */
-    public function list(EntityConfig $configLoader, Request $request, string $type) : View
+    public function list(Request $request, string $type) : View
     {
-        /*$config = $configLoader->getConfig($type);
-        $query = app()->call($config['table']['handler'], ['config' => $config]);
-
-        // Apply the search query
-        if (!empty($config['table']['search']['handler'])) {
-            $query = app()->call($config['table']['search']['handler'], [
-                'query' => $query,
-                'searchConfig' => $config['table']['search']
-            ]);
-        }
-
-        // Apply the filter queries
-        foreach ($config['table']['filters'] as $filter) {
-            $query = app()->call($filter['handler'], [
-                'query' => $query,
-                'filterConfig' => $filter
-            ]);
-        }
-
-        $entries = $query->paginate(50);
-
-        return view($config['table']['view'], [
-            'config' => $config,
-            'entries' => $entries,
-            'filtersOpen' => count(array_filter($request->except('search'))),
-        ]);*/
-
         $entity = new Entity($type);
         $query = app()->call($entity->table->query, ['entity' => $entity]);
 
         if ($search = $entity->table->search) {
-            $query = app()->call($search->filterHandler, [
+            $query = app()->call($search->handler, [
                 'query' => $query,
-                'search' => $search
+                'filter' => $search
+            ]);
+        }
+
+        foreach ($entity->table->filters as $filter) {
+            $query = app()->call($filter->handler, [
+                'query' => $query,
+                'filter' => $filter
             ]);
         }
 
@@ -67,7 +47,7 @@ class EntitiesController extends HeliumController
      */
     public function form(EntityConfig $configLoader, string $type, string $form, ?int $id = null) : View
     {
-        $config = $configLoader->getConfig($type);
+        $config = new Entity($type);
         $formConfig = Arr::get($config, "forms.$form");
         $entry = null;
 

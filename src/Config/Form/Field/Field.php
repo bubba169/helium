@@ -50,5 +50,7 @@ class Field
             case 'attributes':
                 return [];
         }
+
+        return null;
     }
 }

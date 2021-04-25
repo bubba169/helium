@@ -3,6 +3,7 @@
 namespace Helium\Extensions;
 
 use ArrayAccess;
+use Helium\Config\Form\Field\Field;
 use Twig\TwigFilter;
 use Illuminate\Support\Arr;
 use Twig\Extension\AbstractExtension;
@@ -34,9 +35,9 @@ class EntityExtension extends AbstractExtension
             /**
              * Generates options from a callable
              */
-            new TwigFilter('options', function ($value, ?Model $entry, array $field) {
+            new TwigFilter('options', function ($value, ?Model $entry, Field $field) {
                 if (is_string($value)) {
-                    return app()->call($value, ['entry' => $entry, 'fieldConfig' => $field]);
+                    return app()->call($value, ['entry' => $entry, 'field' => $field]);
                 }
                 return $value;
             })

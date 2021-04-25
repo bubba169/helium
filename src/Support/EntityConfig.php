@@ -5,8 +5,6 @@ namespace Helium\Support;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Form\RelatedOptionsHandler;
-use Helium\Table\DefaultFilterHandler;
-use Helium\Table\DefaultSearchHandler;
 use Helium\Table\DefaultListingHandler;
 use Helium\Http\Requests\SaveEntityFormRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -149,7 +147,6 @@ class EntityConfig
         }
         // Normalise the field now the specifics have been set
         return $this->normaliseField($filter, $config);
-
     }
 
     /**

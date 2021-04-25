@@ -3,8 +3,9 @@
 namespace Helium\Config;
 
 use Exception;
-use Helium\Config\Table\Table;
+use Illuminate\Support\Arr;
 use Helium\Traits\HasConfig;
+use Helium\Config\Table\Table;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Entity
@@ -14,6 +15,7 @@ class Entity
     public string $slug;
     public string $model;
     public Table $table;
+    public array $fields = [];
 
     /**
      * An Entity config object
@@ -33,6 +35,9 @@ class Entity
         $this->slug = $type;
         $this->model = $config['model'];
         $this->table = new Table($config['table'], $this);
+
+        // Fields are not expanded - they are cached here to use as a base for
+        $this->fields = array_normalise_keys(Arr::get($config, 'fields', []), 'slug', 'field');
     }
 
     /**

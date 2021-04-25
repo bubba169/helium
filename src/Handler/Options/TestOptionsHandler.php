@@ -1,6 +1,6 @@
 <?php
 
-namespace Helium\Form;
+namespace Helium\Handler\Options;
 
 class TestOptionsHandler
 {
@@ -17,4 +17,3 @@ class TestOptionsHandler
         ];
     }
 }
-
