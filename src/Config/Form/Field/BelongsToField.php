@@ -4,8 +4,8 @@ namespace Helium\Config\Form\Field;
 
 use Exception;
 use Helium\Config\Entity;
-use Helium\Form\RelatedOptionsHandler;
 use Helium\Config\Form\Field\SelectField;
+use Helium\Handler\Options\RelatedOptionsHandler;
 
 class BelongsToField extends SelectField
 {

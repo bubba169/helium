@@ -45,20 +45,20 @@ class EntitiesController extends HeliumController
     /**
      * Renders a form using the config
      */
-    public function form(EntityConfig $configLoader, string $type, string $form, ?int $id = null) : View
+    public function form(string $type, string $form, ?int $id = null) : View
     {
         $config = new Entity($type);
-        $formConfig = Arr::get($config, "forms.$form");
+        $form = $config->forms[$form];
         $entry = null;
 
         // If the form config is not found then 404
-        if (!$formConfig) {
+        if (!$form) {
             throw new NotFoundHttpException();
         }
 
         // If an id is given load the entry
         if ($id) {
-            $entry = $config['model']::find($id);
+            $entry = $config->model::find($id);
 
             // If the entry can't be found then 404
             if (!$entry) {
@@ -66,9 +66,9 @@ class EntitiesController extends HeliumController
             }
         }
 
-        return view($config['forms'][$form]['view'], [
+        return view($form->view, [
             'config' => $config,
-            'form' => $formConfig,
+            'form' => $form,
             'entry' => $entry,
         ]);
     }

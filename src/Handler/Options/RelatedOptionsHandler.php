@@ -10,8 +10,9 @@ class RelatedOptionsHandler
     {
         $results = $field->related_model::all();
         $options = [];
+
         foreach ($results as $result) {
-            $options[str_resolve($field->related_name, $result)] = str_resolve($field->related_id, $result);
+            $options[str_resolve($field->related_id, $result)] = str_resolve($field->related_name, $result);
         }
 
         return $options;

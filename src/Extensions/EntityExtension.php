@@ -17,7 +17,11 @@ class EntityExtension extends AbstractExtension
             /**
              * Resolves a string with entry and query params
              */
-            new TwigFilter('resolve', function (string $str, ?ArrayAccess $entry = null) {
+            new TwigFilter('resolve', function (?string $str, ?ArrayAccess $entry = null) {
+                if ($str === null) {
+                    return null;
+                }
+
                 return str_resolve($str, $entry);
             }),
 

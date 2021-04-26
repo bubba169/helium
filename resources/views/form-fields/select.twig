@@ -15,7 +15,7 @@
                 <option value="">{{ field.placeholder }}</option>
             {% endif %}
 
-            {% for name,value in field.options|options(entry, field) %}
+            {% for value,name in field.options|options(entry, field) %}
                 <option value="{{ value }}"
                     {{ (input_old(field.name, field.value|resolve(entry)) == value) ? 'selected' }}
                 >{{ name }}</option>

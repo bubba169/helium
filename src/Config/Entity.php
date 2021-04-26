@@ -5,6 +5,7 @@ namespace Helium\Config;
 use Exception;
 use Illuminate\Support\Arr;
 use Helium\Traits\HasConfig;
+use Helium\Config\Form\Form;
 use Helium\Config\Table\Table;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -15,7 +16,9 @@ class Entity
     public string $slug;
     public string $model;
     public Table $table;
+    public array $defaultForm;
     public array $fields = [];
+    public array $forms = [];
 
     /**
      * An Entity config object
@@ -38,6 +41,17 @@ class Entity
 
         // Fields are not expanded - they are cached here to use as a base for
         $this->fields = array_normalise_keys(Arr::get($config, 'fields', []), 'slug', 'field');
+        $this->defaultForm = Arr::get($config, 'forms.*', []);
+
+        $config['forms'] = array_normalise_keys(
+            Arr::except(Arr::get($config, 'forms', []), ['*']),
+            'slug',
+            null
+        );
+        foreach ($config['forms'] as $form) {
+            $form = array_merge($this->defaultForm, $form);
+            $this->forms[$form['slug']] = new Form($form, $this);
+        }
     }
 
     /**

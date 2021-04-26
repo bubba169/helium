@@ -38,7 +38,7 @@ trait HasConfig
      */
     public function __isset(string $name)
     {
-        return !empty($this->getConfig($name));
+        return $this->getConfig($name, null) !== null;
     }
 
     /**
