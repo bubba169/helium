@@ -1,8 +1,9 @@
 <?php
 
-namespace Helium\Config\Table;
+namespace Helium\Config;
 
 use Helium\Config\Entity;
+use Helium\Http\Requests\SaveEntityFormRequest;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
 
@@ -41,7 +42,16 @@ class Action
                 switch ($this->action) {
                     case 'edit':
                         return 'fas fa-edit';
+                    case 'save':
+                        return 'fas fa-save';
                 }
+                break;
+            case 'request':
+                switch ($this->action) {
+                    case 'save':
+                        return SaveEntityFormRequest::class;
+                }
+                break;
         }
 
         return null;

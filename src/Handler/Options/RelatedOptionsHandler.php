@@ -8,11 +8,11 @@ class RelatedOptionsHandler
 {
     public function __invoke(Field $field)
     {
-        $results = $field->related_model::all();
+        $results = $field->relatedModel::all();
         $options = [];
 
         foreach ($results as $result) {
-            $options[str_resolve($field->related_id, $result)] = str_resolve($field->related_name, $result);
+            $options[str_resolve($field->relatedId, $result)] = str_resolve($field->relatedName, $result);
         }
 
         return $options;

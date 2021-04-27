@@ -3,6 +3,7 @@
 namespace Helium\Config\Form\Field;
 
 use Helium\Config\Entity;
+use Helium\Handler\Save\DefaultSaveHandler;
 use Helium\Traits\HasConfig;
 use Illuminate\Support\Str;
 
@@ -49,6 +50,10 @@ class Field
                 return 'off';
             case 'attributes':
                 return [];
+            case 'prepareHandler':
+                return null;
+            case 'saveHandler':
+                return DefaultSaveHandler::class;
         }
 
         return null;

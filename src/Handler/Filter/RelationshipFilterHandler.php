@@ -16,7 +16,7 @@ class RelationshipFilterHandler
             $query->whereHas(
                 $filter->relationship,
                 function ($q) use ($filter, $value) {
-                    $q->whereIn($q->getModel()->getTable() . '.' . $filter->related_id, Arr::wrap($value));
+                    $q->whereIn($q->getModel()->getTable() . '.' . $filter->relatedId, Arr::wrap($value));
                 }
             );
         }

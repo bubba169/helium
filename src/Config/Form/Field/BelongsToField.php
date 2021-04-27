@@ -14,12 +14,12 @@ class BelongsToField extends SelectField
      */
     public function __construct(array $field, Entity $entity)
     {
-        if (!array_key_exists('related_name', $field)) {
-            throw new Exception('Relationship type field requires a related_name value.');
+        if (!array_key_exists('relatedName', $field)) {
+            throw new Exception("Relationship type field {$field['slug']} requires a relatedName value.");
         }
 
-        if (!array_key_exists('related_model', $field)) {
-            throw new Exception('Relationship type field requires a related_model value.');
+        if (!array_key_exists('relatedModel', $field)) {
+            throw new Exception("Relationship type field {$field['slug']} requires a relatedModel value.");
         }
 
         parent::__construct($field, $entity);
@@ -37,7 +37,7 @@ class BelongsToField extends SelectField
                 return $this->slug . '_id';
             case 'options':
                 return RelatedOptionsHandler::class;
-            case 'related_id':
+            case 'relatedId':
                 return '{entry.id}';
             case 'relationship':
                 return $this->slug;

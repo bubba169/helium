@@ -6,6 +6,7 @@ use Exception;
 use Helium\Config\Entity;
 use Helium\Config\Form\Field\MulticheckField;
 use Helium\Handler\Options\RelatedOptionsHandler;
+use Helium\Handler\Save\BelongsToManySaveHandler;
 
 class BelongsToManyField extends MulticheckField
 {
@@ -14,12 +15,12 @@ class BelongsToManyField extends MulticheckField
      */
     public function __construct(array $field, Entity $entity)
     {
-        if (!array_key_exists('related_name', $field)) {
-            throw new Exception('Relationship type field requires a related_name value.');
+        if (!array_key_exists('relatedName', $field)) {
+            throw new Exception("Relationship type field {$field['slug']} requires a relatedName value.");
         }
 
-        if (!array_key_exists('related_model', $field)) {
-            throw new Exception('Relationship type field requires a related_model value.');
+        if (!array_key_exists('relatedModel', $field)) {
+            throw new Exception("Relationship type field {$field['slug']} requires a relatedModel value.");
         }
 
         parent::__construct($field, $entity);
@@ -33,14 +34,14 @@ class BelongsToManyField extends MulticheckField
     public function getDefault(string $key)
     {
         switch ($key) {
-            case 'column':
-                return $this->slug . '_id';
             case 'options':
                 return RelatedOptionsHandler::class;
-            case 'related_id':
+            case 'relatedId':
                 return '{entry.id}';
             case 'relationship':
                 return $this->slug;
+            case 'saveHandler':
+                return BelongsToManySaveHandler::class;
         }
 
         return parent::getDefault($key);

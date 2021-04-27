@@ -7,7 +7,7 @@ use Helium\Config\Form\Tab;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
-use Helium\Config\Table\Action;
+use Helium\Config\Action;
 use Helium\Config\Form\Field\Field;
 
 class Form
@@ -41,18 +41,18 @@ class Form
             foreach ($fields as $field) {
                 $field = array_merge($entity->fields[$field['slug']], $field);
                 $class = Arr::get($field, 'field', Field::class);
-                $this->fields[$tab][] = new $class($field, $entity);
+                $this->fields[$tab][$field['slug']] = new $class($field, $entity);
             }
         }
 
         $form['tabs'] = array_normalise_keys(Arr::get($form, 'tabs', ['main' => 'Content']), 'slug', 'label');
         foreach ($form['tabs'] as $tab) {
-            $this->tabs[] = new Tab($tab, $entity);
+            $this->tabs[$tab['slug']] = new Tab($tab, $entity);
         }
 
         $form['actions'] = array_normalise_keys(Arr::get($form, 'actions', []), 'slug', 'action');
         foreach ($form['actions'] as $action) {
-            $this->actions[] = new Action($action, $entity);
+            $this->actions[$action['slug']] = new Action($action, $entity);
         }
     }
 
@@ -63,6 +63,41 @@ class Form
                 return Str::plural(str_humanise(Str::camel($this->entity->name)));
             case 'view':
                 return 'helium::form';
+            case 'messages':
+                return [];
         }
+    }
+
+    /**
+     * Gets all field across all tabs in a single array
+     */
+    public function allFields(): array
+    {
+        // Merge all of the tabs
+        return call_user_func_array('array_merge', $this->fields);
+    }
+
+    /**
+     * Gets all field rules across all tabs in a single array
+     */
+    public function validationRules(): array
+    {
+        // Get an array of validation rules
+        return array_filter(
+            array_map(fn ($field) => $field->rules, $this->allFields())
+        );
+    }
+
+    /**
+     * Gets all field messages across all tabs in a single array
+     */
+    public function validationMessages(): array
+    {
+        // Get an array of validation messages
+        return Arr::dot(
+            array_filter(
+                array_map(fn ($field) => $field->messages, $this->allFields())
+            )
+        );
     }
 }

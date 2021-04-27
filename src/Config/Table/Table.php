@@ -6,7 +6,7 @@ use Helium\Config\Entity;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
-use Helium\Config\Table\Action;
+use Helium\Config\Action;
 use Helium\Config\Table\Filter\Filter;
 use Helium\Handler\DefaultListingHandler;
 use Helium\Config\Table\Filter\SearchFilter;

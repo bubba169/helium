@@ -76,16 +76,18 @@ class EntitiesController extends HeliumController
     /**
      * Processes a form action using the assigned request type
      */
-    public function store(EntityConfig $configLoader, string $type, string $form, ?int $id = null)
+    public function store(string $type, string $form, ?int $id = null)
     {
-        $config = $configLoader->getConfig($type);
-        $action = request()->input('helium_action');
-        $requestType = Arr::get($config, "forms.$form.actions.$action.handler");
+        $config = new Entity($type);
+        $form = $config->forms[$form];
+
+        $actionName = request()->input('helium_action');
+        $requestType = $form->actions[$actionName]->request;
 
         if ($requestType) {
             $request = app($requestType, [
-                'entityConfig' => $config,
-                'formName' => $form,
+                'entity' => $config,
+                'form' => $form,
                 'entryId' => $id
             ]);
             return $request->handle();

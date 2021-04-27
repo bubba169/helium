@@ -1,4 +1,4 @@
-{% if action.submit %}
+{% if action.request %}
     <button type="submit" name="helium_action" value="{{ action.action }}"
 {% else %}
     <a href="{{ action.url|resolve(entry) }}"
