@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
 use Helium\Config\Action;
+use Helium\Config\Button;
 use Helium\Config\Form\Field\Field;
 
 class Form
@@ -17,6 +18,7 @@ class Form
     public $fields = [];
     public $tabs = [];
     public $actions = [];
+    public $buttons = [];
 
     protected Entity $entity;
 
@@ -53,6 +55,11 @@ class Form
         $form['actions'] = array_normalise_keys(Arr::get($form, 'actions', []), 'slug', 'action');
         foreach ($form['actions'] as $action) {
             $this->actions[$action['slug']] = new Action($action, $entity);
+        }
+
+        $form['buttons'] = array_normalise_keys(Arr::get($form, 'buttons', []), 'slug', 'url');
+        foreach ($form['buttons'] as $button) {
+            $this->buttons[$button['slug']] = new Button($button, $entity);
         }
     }
 

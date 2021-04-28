@@ -18,6 +18,13 @@
                         </a>
                     {% endif %}
                 </div>
+                <div>
+                    {% if entity.table.buttons|length %}
+                        {% for button in entity.table.buttons %}
+                            {% include button.view with {button: button} %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
 
             {% if entity.table.filters|length %}
@@ -55,9 +62,7 @@
                         {% endfor %}
                         <td class="px-4 py-3">
                             {% for action in entity.table.actions %}
-                                {% for action in entity.table.actions %}
-                                    {% include action.view with {action: action, entry: entry} %}
-                                {% endfor %}
+                                {% include action.view with {action: action, entry: entry} %}
                             {% endfor %}
                         </td>
                     </tr>

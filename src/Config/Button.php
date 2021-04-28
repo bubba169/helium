@@ -3,21 +3,21 @@
 namespace Helium\Config;
 
 use Helium\Config\Entity;
-use Helium\Http\Requests\SaveEntityFormRequest;
-use Helium\Support\IconHelper;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
+use Helium\Support\IconHelper;
+use Helium\Http\Requests\SaveEntityFormRequest;
 
-class Action
+class Button
 {
     use HasConfig;
 
     protected Entity $entity;
 
-    public function __construct(array $action, Entity $entity)
+    public function __construct(array $button, Entity $entity)
     {
         $this->entity = $entity;
-        $this->mergeConfig($action);
+        $this->mergeConfig($button);
     }
 
     public function getDefault(string $key)
@@ -28,7 +28,7 @@ class Action
             case 'label':
                 return Str::title(str_humanise($this->slug));
             case 'view':
-                return 'helium::partials.action-button';
+                return 'helium::partials.button';
             case 'url':
                 return str_replace(
                     '%id%',
@@ -41,12 +41,6 @@ class Action
                 );
             case 'icon':
                 return IconHelper::iconFor($this->action);
-            case 'request':
-                switch ($this->action) {
-                    case 'save':
-                        return SaveEntityFormRequest::class;
-                }
-                break;
         }
 
         return null;

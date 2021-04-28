@@ -2,11 +2,12 @@
 
 namespace Helium\Config\Table;
 
+use Helium\Config\Action;
+use Helium\Config\Button;
 use Helium\Config\Entity;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
-use Helium\Config\Action;
 use Helium\Config\Table\Filter\Filter;
 use Helium\Handler\DefaultListingHandler;
 use Helium\Config\Table\Filter\SearchFilter;
@@ -19,6 +20,7 @@ class Table
     public $columns = [];
     public $filters = [];
     public $actions = [];
+    public $buttons = [];
 
     protected Entity $entity;
 
@@ -45,17 +47,22 @@ class Table
         $table['filters'] = array_normalise_keys(Arr::get($table, 'filters', []), 'slug', 'column');
         foreach ($table['filters'] as $filter) {
             $class = Arr::get($filter, 'field', Filter::class);
-            $this->filters[] = new $class($filter, $entity);
+            $this->filters[$filter['slug']] = new $class($filter, $entity);
         }
 
         $table['columns'] = array_normalise_keys(Arr::get($table, 'columns', []), 'slug', 'value');
         foreach ($table['columns'] as $column) {
-            $this->columns[] = new Column($column, $entity);
+            $this->columns[$column['slug']] = new Column($column, $entity);
         }
 
         $table['actions'] = array_normalise_keys(Arr::get($table, 'actions', []), 'slug', 'action');
         foreach ($table['actions'] as $action) {
-            $this->actions[] = new Action($action, $entity);
+            $this->actions[$action['slug']] = new Action($action, $entity);
+        }
+
+        $table['buttons'] = array_normalise_keys(Arr::get($table, 'buttons', []), 'slug', 'url');
+        foreach ($table['buttons'] as $button) {
+            $this->buttons[$button['slug']] = new Button($button, $entity);
         }
     }
 

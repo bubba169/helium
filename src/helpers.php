@@ -109,11 +109,9 @@ function str_humanise(string $str) : string
 function str_resolve(string $str, ?ArrayAccess $entry = null): string
 {
     // Replace any entity references with values from the entity
-    if ($entry) {
-        $str = preg_replace_callback('/\{entry\.(.*)\}/', function ($match) use ($entry) {
-            return Arr::get($entry, $match[1]);
-        }, $str);
-    }
+    $str = preg_replace_callback('/\{entry\.(.*)\}/', function ($match) use ($entry) {
+        return Arr::get($entry, $match[1], '');
+    }, $str);
 
     // Replace any values from the query
     $request = request();

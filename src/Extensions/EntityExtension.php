@@ -32,7 +32,6 @@ class EntityExtension extends AbstractExtension
                 $arr = Arr::wrap(json_decode(str_resolve($str, $entry), true) ?? []);
                 if (is_array(reset($arr))) {
                     return array_map(fn ($result) => str_resolve($key, collect($result)), $arr);
-                    //return Arr::pluck($arr, $key);
                 }
                 return $arr ?? [];
             }),

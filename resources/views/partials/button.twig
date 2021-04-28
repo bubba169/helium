@@ -1,0 +1,10 @@
+<a href="{{ button.url|resolve(entry) }}"
+    class="inline-flex px-4 py-2 text-white bg-blue-900 rounded hover:bg-blue-800"
+>
+    {% if button.icon %}
+        <div class="w-5 mr-1">
+            <i class="{{ button.icon }}" aria-hidden="true"></i>
+        </div>
+    {% endif %}
+    {{ button.label }}
+</a>
