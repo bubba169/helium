@@ -38,7 +38,7 @@ class EntitiesController extends HeliumController
         return view($entity->table->view, [
             'entity' => $entity,
             'entries' => $entries,
-            'filtersOpen' => count(array_filter($request->except('search'))),
+            'filtersOpen' => count(array_filter($request->except(['search', 'sort', 'page']))),
         ]);
     }
 

@@ -6,6 +6,13 @@
             <h1 class="h1">{{ entity.table.title }}</h1>
             <div class="flex justify-between w-full mt-4">
                 <div class="flex items-center flex-1">
+                    {% if entity.table.buttons|length %}
+                        {% for button in entity.table.buttons %}
+                            <div class="mr-2">
+                                {% include button.view with {button: button} %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                     {% if entity.table.search %}
                         <div class="w-1/2 mr-2">
                             {% include entity.table.search.view with {field: entity.table.search} %}
@@ -19,10 +26,15 @@
                     {% endif %}
                 </div>
                 <div>
-                    {% if entity.table.buttons|length %}
-                        {% for button in entity.table.buttons %}
-                            {% include button.view with {button: button} %}
-                        {% endfor %}
+                    {% if entity.table.sort|length %}
+                        <label for="sort">Sort By: </label>
+                        <select id="sort" name="sort" onchange="form.submit()"
+                            class="box-border inline-block px-2 py-2.5 bg-white border rounded-lg focus:outline-none focus:border-blue-700 border-gray-400"
+                        >
+                            {% for value,label in entity.table.sort %}
+                                <option value="{{ value }}" {{ app.request.input('sort') == value ? 'selected' }}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
                     {% endif %}
                 </div>
             </div>

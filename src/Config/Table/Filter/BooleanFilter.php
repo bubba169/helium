@@ -17,8 +17,8 @@ class BooleanFilter extends Filter
                 return BooleanFilterHandler::class;
             case 'options':
                 return [
-                    'Yes' => 'yes',
-                    'No' => 'no'
+                    'yes' => 'Yes',
+                    'no' => 'No'
                 ];
             case 'view':
                 return 'helium::form-fields.select';
