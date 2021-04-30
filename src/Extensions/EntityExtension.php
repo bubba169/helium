@@ -3,6 +3,7 @@
 namespace Helium\Extensions;
 
 use ArrayAccess;
+use Helium\Config\Form\Field\Field;
 use Twig\TwigFilter;
 use Illuminate\Support\Arr;
 use Twig\Extension\AbstractExtension;
@@ -16,7 +17,11 @@ class EntityExtension extends AbstractExtension
             /**
              * Resolves a string with entry and query params
              */
-            new TwigFilter('resolve', function (string $str, ?ArrayAccess $entry = null) {
+            new TwigFilter('resolve', function (?string $str, ?ArrayAccess $entry = null) {
+                if ($str === null) {
+                    return null;
+                }
+
                 return str_resolve($str, $entry);
             }),
 
@@ -24,9 +29,9 @@ class EntityExtension extends AbstractExtension
              * Resolves a string to a set of values
              */
             new TwigFilter('values', function (string $str, ?ArrayAccess $entry = null, ?string $key = null) {
-                $arr = json_decode(str_resolve($str, $entry), true) ?? [];
+                $arr = Arr::wrap(json_decode(str_resolve($str, $entry), true) ?? []);
                 if (is_array(reset($arr))) {
-                    return Arr::pluck($arr, $key);
+                    return array_map(fn ($result) => str_resolve($key, collect($result)), $arr);
                 }
                 return $arr ?? [];
             }),
@@ -34,9 +39,9 @@ class EntityExtension extends AbstractExtension
             /**
              * Generates options from a callable
              */
-            new TwigFilter('options', function ($value, ?Model $entry, array $field) {
+            new TwigFilter('options', function ($value, ?Model $entry, Field $field) {
                 if (is_string($value)) {
-                    return app()->call($value, ['entry' => $entry, 'fieldConfig' => $field]);
+                    return app()->call($value, ['entry' => $entry, 'field' => $field]);
                 }
                 return $value;
             })

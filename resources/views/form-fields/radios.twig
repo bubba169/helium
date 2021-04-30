@@ -2,7 +2,7 @@
 
 {% block input %}
     <div class="flex flex-wrap w-full px-1 pt-2 -mb-1">
-        {% for name,value in field.options|options(entry, field) %}
+        {% for value,name in field.options|options(entry, field) %}
             <div class="flex items-start w-full mb-3 md:w-1/2 lg:w-1/3 xl:w-1/4">
                 <input type="radio"
                     class="p-2 mt-1 cursor-pointer"

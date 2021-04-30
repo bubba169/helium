@@ -3,32 +3,51 @@
 {% block content %}
     <div class="">
         <form method="GET">
-            <h1 class="h1">{{ config.table.title }}</h1>
+            <h1 class="h1">{{ entity.table.title }}</h1>
             <div class="flex justify-between w-full mt-4">
                 <div class="flex items-center flex-1">
-                    {% if config.table.search %}
+                    {% if entity.table.buttons|length %}
+                        {% for button in entity.table.buttons %}
+                            <div class="mr-2">
+                                {% include button.view with {button: button} %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if entity.table.search %}
                         <div class="w-1/2 mr-2">
-                            {% include config.table.search.view with {field: config.table.search} %}
+                            {% include entity.table.search.view with {field: entity.table.search} %}
                         </div>
                     {% endif %}
-                    {% if config.table.filters|length %}
+                    {% if entity.table.filters|length %}
                         <a class="px-3 py-1.5 text-white bg-blue-900 rounded cursor-pointer helium-toggle" data-target="#filter-container">
                             <i class="fas fa-filter" aria-hidden="true" title="Show Filters"></i>
                             <span class="sr-only">Show Filters</span>
                         </a>
                     {% endif %}
                 </div>
+                <div>
+                    {% if entity.table.sort|length %}
+                        <label for="sort">Sort By: </label>
+                        <select id="sort" name="sort" onchange="form.submit()"
+                            class="box-border inline-block px-2 py-2.5 bg-white border rounded-lg focus:outline-none focus:border-blue-700 border-gray-400"
+                        >
+                            {% for value,label in entity.table.sort %}
+                                <option value="{{ value }}" {{ app.request.input('sort') == value ? 'selected' }}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </div>
             </div>
 
-            {% if config.table.filters|length %}
+            {% if entity.table.filters|length %}
                 <div class="overflow-hidden transition-all duration-300 transition-max-h {{ not filtersOpen ? 'collapsed' }}" id="filter-container">
                     <div class="flex flex-wrap items-center items-end justify-start p-4 mt-4 bg-gray-100 border-gray-400 rounded-xl">
-                        {% for filter_input in config.table.filters %}
+                        {% for filter_input in entity.table.filters %}
                             <div class="flex-1 min-w-[25%] w-full px-1 mb-2">
                                 {% include filter_input.view with {field: filter_input} %}
                             </div>
                         {% endfor %}
-                        <div class="flex flex-1 px-1 mb-2 justify-end self-end {{ config.table.filters is empty ? 'hidden' }}">
+                        <div class="flex flex-1 px-1 mb-2 justify-end self-end {{ entity.table.filters is empty ? 'hidden' }}">
                             <button type="submit" class="block px-4 py-2 text-white bg-blue-900 rounded">Filter</button>
                             <a href="{{ url().current }}" type="reset" class="block px-4 py-2 ml-2 text-white bg-gray-800 rounded">Reset</a>
                         </div>
@@ -39,10 +58,10 @@
         </form>
     </div>
 
-    <div class="w-full pb-4 mt-4 rounded-t-lg bg-gray-50">
+    <div class="w-full px-4 pb-4 mt-4 rounded-t-lg bg-gray-50">
         <table class="w-full">
             <thead class="text-left border-b border-gray-300">
-                {% for column in config.table.columns %}
+                {% for column in entity.table.columns %}
                     <th class="px-4 py-3">{{ column.label }}</th>
                 {% endfor %}
                 <th class="px-4 py-3">Actions</th>
@@ -50,14 +69,12 @@
             <tbody>
                 {% for entry in entries %}
                     <tr class="text-left border-b border-gray-300">
-                        {% for column in config.table.columns %}
+                        {% for column in entity.table.columns %}
                             <td class="px-4 py-3">{% include column.view with {entry: entry, value: column.value} %}</td>
                         {% endfor %}
                         <td class="px-4 py-3">
-                            {% for action in config.table.actions %}
-                                {% for action in config.table.actions %}
-                                    {% include action.view with {action: action, entry: entry} %}
-                                {% endfor %}
+                            {% for action in entity.table.actions %}
+                                {% include action.view with {action: action, entry: entry} %}
                             {% endfor %}
                         </td>
                     </tr>

@@ -32,20 +32,27 @@
             <div class="flex-1">
                 {% for tabSlug,fields in form.fields %}
                     <div id="helium-tab-content-{{ tabSlug }}" class="helium-tab-content">
-                    <div class="mb-8">
-                        {% for field in fields %}
-                            <div class="mb-4">
-                                {% include field.view with {field: field, entry: entry} %}
-                            </div>
-                        {% endfor %}
+                        <div class="mb-8">
+                            {% for field in fields %}
+                                <div class="mb-4">
+                                    {% include field.view with {field: field, entry: entry} %}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
                 {% endfor %}
 
-                <div class="">
-                    {% for action in form.actions %}
-                        {% include action.view with {action: action, entry: entry} %}
-                    {% endfor %}
+                <div class="flex justify-between">
+                    <div>
+                        {% for action in form.actions %}
+                            {% include action.view with {action: action, entry: entry} %}
+                        {% endfor %}
+                    </div>
+                    <div>
+                        {% for button in form.buttons %}
+                            {% include button.view with {button: button, entry: entry} %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

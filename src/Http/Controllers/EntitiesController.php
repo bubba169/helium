@@ -2,6 +2,7 @@
 
 namespace Helium\Http\Controllers;
 
+use Helium\Config\Entity;
 use Illuminate\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -13,54 +14,51 @@ class EntitiesController extends HeliumController
     /**
      * Renders the list
      */
-    public function list(EntityConfig $configLoader, Request $request, string $type) : View
+    public function list(Request $request, string $type) : View
     {
-        $config = $configLoader->getConfig($type);
+        $entity = new Entity($type);
+        $query = app()->call($entity->table->query, ['entity' => $entity]);
 
-        $query = app()->call($config['table']['handler'], ['config' => $config]);
-
-        // Apply the search query
-        if (!empty($config['table']['search']['handler'])) {
-            $query = app()->call($config['table']['search']['handler'], [
+        if ($search = $entity->table->search) {
+            $query = app()->call($search->handler, [
                 'query' => $query,
-                'searchConfig' => $config['table']['search']
+                'filter' => $search
             ]);
         }
 
-        // Apply the filter queries
-        foreach ($config['table']['filters'] as $filter) {
-            $query = app()->call($filter['handler'], [
+        foreach ($entity->table->filters as $filter) {
+            $query = app()->call($filter->handler, [
                 'query' => $query,
-                'filterConfig' => $filter
+                'filter' => $filter
             ]);
         }
 
         $entries = $query->paginate(50);
 
-        return view($config['table']['view'], [
-            'config' => $config,
+        return view($entity->table->view, [
+            'entity' => $entity,
             'entries' => $entries,
-            'filtersOpen' => count(array_filter($request->except('search'))),
+            'filtersOpen' => count(array_filter($request->except(['search', 'sort', 'page']))),
         ]);
     }
 
     /**
      * Renders a form using the config
      */
-    public function form(EntityConfig $configLoader, string $type, string $form, ?int $id = null) : View
+    public function form(string $type, string $form, ?int $id = null) : View
     {
-        $config = $configLoader->getConfig($type);
-        $formConfig = Arr::get($config, "forms.$form");
+        $config = new Entity($type);
+        $form = $config->forms[$form];
         $entry = null;
 
         // If the form config is not found then 404
-        if (!$formConfig) {
+        if (!$form) {
             throw new NotFoundHttpException();
         }
 
         // If an id is given load the entry
         if ($id) {
-            $entry = $config['model']::find($id);
+            $entry = $config->model::find($id);
 
             // If the entry can't be found then 404
             if (!$entry) {
@@ -68,9 +66,9 @@ class EntitiesController extends HeliumController
             }
         }
 
-        return view($config['forms'][$form]['view'], [
+        return view($form->view, [
             'config' => $config,
-            'form' => $formConfig,
+            'form' => $form,
             'entry' => $entry,
         ]);
     }
@@ -78,16 +76,18 @@ class EntitiesController extends HeliumController
     /**
      * Processes a form action using the assigned request type
      */
-    public function store(EntityConfig $configLoader, string $type, string $form, ?int $id = null)
+    public function store(string $type, string $form, ?int $id = null)
     {
-        $config = $configLoader->getConfig($type);
-        $action = request()->input('helium_action');
-        $requestType = Arr::get($config, "forms.$form.actions.$action.handler");
+        $config = new Entity($type);
+        $form = $config->forms[$form];
+
+        $actionName = request()->input('helium_action');
+        $requestType = $form->actions[$actionName]->request;
 
         if ($requestType) {
             $request = app($requestType, [
-                'entityConfig' => $config,
-                'formName' => $form,
+                'entity' => $config,
+                'form' => $form,
                 'entryId' => $id
             ]);
             return $request->handle();
