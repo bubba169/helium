@@ -17,12 +17,18 @@ class Field
     protected Entity $entity;
 
     /**
+     * The path to validate using the rules for this field
+     */
+    public string $validationPath;
+
+    /**
      * Constructor
      */
     public function __construct(array $field, Entity $entity)
     {
         $this->mergeConfig($field);
         $this->entity = $entity;
+        $this->validationPath = $this->name;
         $this->attributes = array_normalise_keys($this->attributes);
     }
 
@@ -57,5 +63,31 @@ class Field
         }
 
         return null;
+    }
+
+    /**
+     * Builds the path to the field data in the request
+     * using the current path as a prefix
+     */
+    public function getDataPath(array $path): string
+    {
+        $path[] = $this->name;
+        return implode('.', $path);
+    }
+
+    /**
+     * Gets all of the validation rules with prefixed paths
+     */
+    public function getValidationRules(): array
+    {
+        return [$this->validationPath => $this->rules];
+    }
+
+    /**
+     * Gets all of the validation messages with prefixed paths
+     */
+    public function getValidationMessages(): array
+    {
+        return [$this->validationPath => $this->messages];
     }
 }

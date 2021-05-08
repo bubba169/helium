@@ -1,0 +1,33 @@
+{% extends "helium::form-fields.input" %}
+
+{% block container %}
+    <div class="helium-repeater-field"
+        data-name-path="{{ field.name|field_name(formPath) }}"
+        data-id-path="{{ field.id|field_id(formPath) }}"
+    >
+        {% for existing in field.value|values(entry) %}
+            <div class="helium-repeater-form-container w-full py-4 px-5 border rounded-lg flex flex-wrap bg-white mt-2 border-gray-300
+                {{ field.containerClasses }}"
+            >
+                {% set path = formPath|merge([field.name, loop.index0]) %}
+                {% for repeater_field in field.fields %}
+                    {% include repeater_field.view with {
+                        field: repeater_field,
+                        entry: existing,
+                        formPath: path
+                    } %}
+                {% endfor %}
+                <input type="hidden"
+                    name="{{ 'id'|field_name(path) }}"
+                    id="{{ 'id'|field_id(path) }}"
+                    value="{{ existing.attribute(field.relatedId) }}"
+                >
+            </div>
+        {% endfor %}
+
+        <div class="mt-3 helium-repeater-actions">
+            {% include "helium::partials.action-button" with {action: field.addButton} %}
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,4 +1,7 @@
-{% set hasErrors = errors.has(field.name) %}
+{% set formPath = formPath ?? [] %}
+{% set field_name = field.name|field_name(formPath) %}
+{% set field_id = field.id|field_id(formPath) %}
+{% set hasErrors = errors.has(field.dataPath(formPath)) %}
 
 {% block init %}{% endblock %}
 
@@ -25,9 +28,9 @@
 
                 <input class="w-full flex-1 {{ field.classes }} focus:outline-none"
                     type="{{ field.type }}"
-                    name="{{ field.name }}"
-                    id="{{ field.id }}"
-                    value="{{ input_old(field.name, field.value|resolve(entry)) }}"
+                    name="{{ field_name }}"
+                    id="{{ field_id }}"
+                    value="{{ input_old(field.dataPath(formPath), field.value|resolve(entry)) }}"
                     placeholder="{{ field.placeholder }}"
                     autocomplete="{{ field.autocomplete }}"
                     {% for attribute in field.attributes %}

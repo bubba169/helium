@@ -1,6 +1,6 @@
 {% if hasErrors %}
     <div class="w-full mt-2 text-sm text-red-700 {{ field.errorsClasses }}">
         <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
-        {{ errors.messages[field.name]|join(' ') }}
+        {{ errors.messages[field.dataPath(formPath)]|join(' ') }}
     </div>
 {% endif %}

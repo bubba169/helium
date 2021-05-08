@@ -28,8 +28,6 @@ class BelongsToManyField extends MulticheckField
 
     /**
      * {@inheritDoc}
-     *
-     * Use text area view
      */
     public function getDefault(string $key)
     {
@@ -37,7 +35,7 @@ class BelongsToManyField extends MulticheckField
             case 'options':
                 return RelatedOptionsHandler::class;
             case 'relatedId':
-                return '{entry.id}';
+                return 'id';
             case 'relationship':
                 return $this->slug;
             case 'saveHandler':

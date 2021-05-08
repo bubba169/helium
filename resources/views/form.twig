@@ -17,7 +17,7 @@
             {% if tabs|length > 1 %}
                 <div class="flex flex-col pt-6 mr-8 -my-6 -ml-8 border-r-2 border-gray-200 bg-gray-50 rounded-l-xl">
                     {% for tab in form.tabs %}
-                        {% set error = errors.hasAny(form.fields[tab.slug]|keys) %}
+                        {% set error = errors.hasAny(form.validationRules(tab.slug)|keys) %}
                         <a class="helium-tab {{ error ? 'error' }}" id="helium-tab-{{ tab.slug }}" data-tab-content-id="helium-tab-content-{{ tab.slug  }}" href="#{{ tab.slug }}">
                             <div class="hidden error-icon">
                                 <i class="mr-2 fas fa-exclamation-circle"></i>

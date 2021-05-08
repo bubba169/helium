@@ -38,7 +38,7 @@ class BelongsToField extends SelectField
             case 'options':
                 return RelatedOptionsHandler::class;
             case 'relatedId':
-                return '{entry.id}';
+                return 'id';
             case 'relationship':
                 return $this->slug;
         }

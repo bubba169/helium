@@ -11,8 +11,8 @@ class ArraySaveHandler
     /**
      * Arrays should be json encoded
      */
-    public function __invoke(Field $field, Request $request, Model $entry)
+    public function __invoke(Field $field, Request $request, Model $entry, array $path)
     {
-        $entry->{$field->column} = json_encode($request->input($field->name, []));
+        $entry->{$field->column} = json_encode($request->input($field->getDataPath($path), []));
     }
 }

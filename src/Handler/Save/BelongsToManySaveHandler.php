@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class BelongsToManySaveHandler
 {
+    public static bool $deferred = true;
+
     /**
      * Use Laravel's sync method to save the relationship
      */
-    public function __invoke(Field $field, Request $request, Model $entry)
+    public function __invoke(Field $field, Request $request, Model $entry, array $path)
     {
-        $entry->{$field->relationship}()->sync($request->input($field->name, []));
+        $entry->{$field->relationship}()->sync($request->input($field->getDataPath($path), []));
     }
 }

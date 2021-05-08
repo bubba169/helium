@@ -85,25 +85,33 @@ class Form
     }
 
     /**
-     * Gets all field rules across all tabs in a single array
+     * Gets all field rules for validation
      */
-    public function validationRules(): array
+    public function validationRules(?string $tab = null): array
     {
-        // Get an array of validation rules
+        $fields = $tab ? Arr::get($this->fields, $tab, []) : $this->allFields();
+
         return array_filter(
-            array_map(fn ($field) => $field->rules, $this->allFields())
+            call_user_func_array(
+                'array_merge',
+                array_map(fn ($field) => $field->getValidationRules(), $fields)
+            )
         );
     }
 
     /**
      * Gets all field messages across all tabs in a single array
      */
-    public function validationMessages(): array
+    public function validationMessages(?string $tab = null): array
     {
-        // Get an array of validation messages
+        $fields = $tab ? Arr::get($this->fields, $tab, []) : $this->allFields();
+
         return Arr::dot(
             array_filter(
-                array_map(fn ($field) => $field->messages, $this->allFields())
+                call_user_func_array(
+                    'array_merge',
+                    array_map(fn ($field) => $field->getValidationMessages(), $fields)
+                )
             )
         );
     }

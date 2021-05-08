@@ -12,7 +12,7 @@ class RelatedOptionsHandler
         $options = [];
 
         foreach ($results as $result) {
-            $options[str_resolve($field->relatedId, $result)] = str_resolve($field->relatedName, $result);
+            $options[$result->{$field->relatedId}] = str_resolve($field->relatedName, $result);
         }
 
         return $options;
