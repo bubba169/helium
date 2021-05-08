@@ -27,8 +27,13 @@ class EntityExtension extends AbstractExtension
              * Resolves a string to a set of values
              */
             new TwigFilter('values', function (string $str, $entry = null, ?string $key = null) {
+                $data = str_resolve($str, $entry);
 
-                $data = collect(str_resolve($str, $entry));
+                if (is_string($data)) {
+                    $data = json_decode($data, true);
+                }
+
+                $data = collect($data);
                 if (is_array($data->first()) && !empty($key)) {
                     return $data->map(fn ($result) => str_resolve($key, $result));
                 }
