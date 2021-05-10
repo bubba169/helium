@@ -2,13 +2,13 @@
 
 {% block input %}
     <textarea class="w-full focus:outline-none {{ field.classes ? ' ' ~ field.classes }}"
-        name="{{ field.name }}"
-        id="{{ field.id }}"
+        name="{{ field_name }}"
+        id="{{ field_id }}"
         value=""
         placeholder="{{ field.placeholder }}"
         autocomplete="{{ field.autocomplete }}"
         {% for attribute in field.attributes|default([]) %}
             {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
         {% endfor %}
-    >{{ entry ? input_old(field.name, field.value|resolve(entry)) }}</textarea>
+    >{{ entry ? input_old(field_name, field.value|resolve(entry)) }}</textarea>
 {% endblock %}
