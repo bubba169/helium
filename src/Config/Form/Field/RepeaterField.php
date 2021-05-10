@@ -9,9 +9,12 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Config\Form\Field\Field;
 use Helium\Handler\Save\RepeaterSaveHandler;
+use Helium\Traits\HasFields;
 
 class RepeaterField extends Field
 {
+    use HasFields;
+
     public array $fields = [];
 
     public Action $addButton;
@@ -45,6 +48,7 @@ class RepeaterField extends Field
             $fieldClass = Arr::get($fieldConfig, 'field', Field::class);
             $repeaterField = new $fieldClass($fieldConfig, $entity);
             $repeaterField->validationPath = $this->validationPath . '.*.' . $repeaterField->validationPath;
+            $repeaterField->fieldPath = [...$this->fieldPath, ...$repeaterField->fieldPath];
             $this->fields[$repeaterField->slug] = $repeaterField;
         }
     }
@@ -63,6 +67,8 @@ class RepeaterField extends Field
                 return RepeaterSaveHandler::class;
             case 'view':
                 return 'helium::form-fields.repeater';
+            case 'nestedView':
+                return 'helium::partials.repeater-form';
             case 'value':
                 return '{entry.' . $this->relationship . '}';
         }

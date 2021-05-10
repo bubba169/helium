@@ -12,14 +12,19 @@ class Field
     use HasConfig;
 
     /**
-     * The current entity config
-     */
-    protected Entity $entity;
-
-    /**
      * The path to validate using the rules for this field
      */
     public string $validationPath;
+
+    /**
+     * The path to the field in the entity config
+     */
+    public array $fieldPath;
+
+    /**
+     * The current entity config
+     */
+    protected Entity $entity;
 
     /**
      * Constructor
@@ -29,6 +34,7 @@ class Field
         $this->mergeConfig($field);
         $this->entity = $entity;
         $this->validationPath = $this->name;
+        $this->fieldPath = [$this->slug];
         $this->attributes = array_normalise_keys($this->attributes);
     }
 

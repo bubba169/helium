@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Helium\Config\Form\Field\Field;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class RepeaterSaveHandler
 {
@@ -17,12 +18,13 @@ class RepeaterSaveHandler
      */
     public function __invoke(Field $field, Request $request, Model $entry, array $path): void
     {
-        $relationship = $entry->{$field->relationship}();
-        $relatedKey = $relationship->getModel()->getQualifiedKeyName();
+        $relatedKey = $entry->{$field->relationship}()->getModel()->getQualifiedKeyName();
+        $requestData = $request->input($field->getDataPath($path), []);
+        $ids = array_filter(Arr::pluck($requestData, 'id'));
 
-        foreach ($request->input($field->getDataPath($path)) as $i => $data) {
+        foreach ($requestData as $i => $data) {
             // Find the related object or create a new one if it doesn't exist
-            $related = $relationship->firstOrNew([
+            $related = $entry->{$field->relationship}()->firstOrNew([
                 $relatedKey => $data['id']
             ]);
 
@@ -37,10 +39,14 @@ class RepeaterSaveHandler
             }
 
             $related->save();
+            $ids[] = $related->id;
+
+            if ($related->wasRecentlyCreated && $entry->{$field->relationship}() instanceof BelongsToMany) {
+                $entry->{$field->relationship}()->attach($related);
+            }
         }
 
         // Remove any related items no longer in the list
-        $ids = Arr::pluck($request->input($field->getDataPath($path)), 'id');
-        $relationship->whereNotIn($relatedKey, $ids)->delete();
+        $entry->{$field->relationship}()->whereNotIn($relatedKey, $ids)->delete();
     }
 }

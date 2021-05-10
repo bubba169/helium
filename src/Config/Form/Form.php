@@ -76,6 +76,22 @@ class Form
     }
 
     /**
+     * Gets a field by its slug. Can be dot notation to find nested fields
+     */
+    public function getField(array $path) : ?Field
+    {
+        $field = Arr::get($this->allFields(), array_shift($path), null);
+
+        // No more steps return this field
+        if (empty($path) || empty($field)) {
+            return $field;
+        }
+
+        // Otherwise return a sub-field
+        return $field->getField($path);
+    }
+
+    /**
      * Gets all field across all tabs in a single array
      */
     public function allFields(): array
