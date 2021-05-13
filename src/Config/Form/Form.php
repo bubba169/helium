@@ -131,4 +131,21 @@ class Form
             )
         );
     }
+
+    /**
+     * Gets all field messages across all tabs in a single array
+     */
+    public function validationAttributes(?string $tab = null): array
+    {
+        $fields = $tab ? Arr::get($this->fields, $tab, []) : $this->allFields();
+
+        return Arr::dot(
+            array_filter(
+                call_user_func_array(
+                    'array_merge',
+                    array_map(fn ($field) => $field->getValidationAttributes(), $fields)
+                )
+            )
+        );
+    }
 }

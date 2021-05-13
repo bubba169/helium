@@ -15,8 +15,8 @@ class RelationshipFilterHandler
             // Relationship type can use has to check for related type
             $query->whereHas(
                 $filter->relationship,
-                function ($q) use ($filter, $value) {
-                    $q->whereIn($q->getModel()->getTable() . '.' . $filter->relatedId, Arr::wrap($value));
+                function ($q) use ($value) {
+                    $q->whereIn($q->getModel()->getQualifiedKeyName(), Arr::wrap($value));
                 }
             );
         }

@@ -34,8 +34,6 @@ class BelongsToManyField extends MulticheckField
         switch ($key) {
             case 'options':
                 return RelatedOptionsHandler::class;
-            case 'relatedId':
-                return 'id';
             case 'relationship':
                 return $this->slug;
             case 'saveHandler':

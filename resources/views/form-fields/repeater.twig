@@ -11,7 +11,7 @@
         }|json_encode|escape }}"
     >
         <div class="helium-repeater-forms-container">
-            {% set old_keys = input_old(field_name, [])|keys %}
+            {% set old_keys = input_old(field_data_key, [])|keys %}
             {% set existing = field.value|values(entry) %}
             {% set count = max(old_keys|length, existing|length) %}
 

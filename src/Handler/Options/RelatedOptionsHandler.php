@@ -11,9 +11,9 @@ class RelatedOptionsHandler
         $results = $field->relatedModel::all();
         $options = [];
 
-        foreach ($results as $result) {
-            $options[$result->{$field->relatedId}] = str_resolve($field->relatedName, $result);
-        }
+        $options = $results->mapWithKeys(
+            fn ($result) => [$result->getKey() => str_resolve($field->relatedName, $result)],
+        );
 
         return $options;
     }

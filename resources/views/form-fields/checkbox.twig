@@ -13,7 +13,7 @@
                 type="checkbox"
                 name="{{ field_name }}"
                 id="{{ field_id }}"
-                {{ input_old(field_name, field.value|resolve(entry)) ? 'checked' }}
+                {{ input_old(field_data_key, field.value|resolve(entry)) ? 'checked' }}
                 {% for attribute in field.attributes %}
                     {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
                 {% endfor %}

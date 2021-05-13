@@ -10,5 +10,5 @@
         {% for attribute in field.attributes|default([]) %}
             {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
         {% endfor %}
-    >{{ entry ? input_old(field_name, field.value|resolve(entry)) }}</textarea>
+    >{{ entry ? input_old(field_data_key, field.value|resolve(entry)) }}</textarea>
 {% endblock %}

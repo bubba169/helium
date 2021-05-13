@@ -67,6 +67,14 @@ class SaveEntityFormRequest extends FormRequest
     /**
      * {@inheritDoc}
      */
+    public function attributes()
+    {
+        return $this->form->validationAttributes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function prepareForValidation()
     {
         foreach ($this->form->allFields() as $field) {

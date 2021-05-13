@@ -8,6 +8,7 @@ use Helium\Config\Entity;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Config\Form\Field\Field;
+use Helium\Handler\Prepare\RepeaterPrepareHandler;
 use Helium\Handler\Save\RepeaterSaveHandler;
 use Helium\Traits\HasFields;
 
@@ -61,10 +62,10 @@ class RepeaterField extends Field
         switch ($key) {
             case 'relationship':
                 return $this->slug;
-            case 'relatedId':
-                return 'id';
             case 'saveHandler':
                 return RepeaterSaveHandler::class;
+            case 'prepareHandler':
+                return RepeaterPrepareHandler::class;
             case 'view':
                 return 'helium::form-fields.repeater';
             case 'nestedView':
@@ -99,7 +100,7 @@ class RepeaterField extends Field
 
         foreach ($this->fields as $field) {
             if (!empty($field->rules)) {
-                $rules[$field->validationPath] = $field->rules;
+                $rules = array_merge($rules, $field->getValidationRules());
             }
         }
 
@@ -112,14 +113,29 @@ class RepeaterField extends Field
     public function getValidationMessages(): array
     {
         // Get an array of validation rules
-        $rules = [$this->validationPath => $this->messages];
+        $messages = [$this->validationPath => $this->messages];
 
         foreach ($this->fields as $field) {
             if (!empty($field->messages)) {
-                $rules[$field->validationPath] = $field->messages;
+                $messages = array_merge($messages, $field->getValidationMessages());
             }
         }
 
-        return $rules;
+        return $messages;
+    }
+
+     /**
+     * Gets all of the validation attributes with prefixed paths
+     */
+    public function getValidationAttributes(): array
+    {
+        // Get an array of validation rules
+        $attributes = [$this->validationPath => $this->validationName];
+
+        foreach ($this->fields as $field) {
+            $attributes = array_merge($attributes, $field->getValidationAttributes());
+        }
+
+        return $attributes;
     }
 }
