@@ -2,15 +2,15 @@
 
 {% block container %}
     <div class="flex space-x-2 {{ field.containerClasses }}">
+        {% set currentValue = field.value|resolve(entry) %}
         {% set date_field_name = (field.name ~ '_date')|field_name(formPath) %}
-        {% set date_field_data = (field.getDataPath(formPath) ~ '_date') %}
         <input class="box-border w-1/2 py-2 px-3 border rounded-lg focus:outline-none focus:border-blue-700
             {{ hasErrors ? 'border-red-700' : 'border-gray-400' }}
             {{ field.classes.date ? ' ' ~ field.classes.date }}"
             type="date"
             name="{{ date_field_name }}"
             id="{{ field_id }}_date"
-            value="{{ input_old(field_data_key ~ '_date', field.value|resolve(entry)|date('Y-m-d')) }}"
+            value="{{ input_old(field_data_key ~ '_date', currentValue ? currentValue|date('Y-m-d')) }}"
             autocomplete="{{ field.autocomplete }}"
             {% for attribute in field.attributes.date %}
                 {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
@@ -24,7 +24,7 @@
             step="1"
             name="{{ time_field_name }}"
             id="{{ field_id }}_time"
-            value="{{ input_old(field_data_key ~ '_time', field.value|resolve(entry)|date('H:i:s')) }}"
+            value="{{ input_old(field_data_key ~ '_time', currentValue ? currentValue|date('H:i:s')) }}"
             autocomplete="{{ field.autocomplete }}"
             {% for attribute in field.attributes.time %}
                 {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
