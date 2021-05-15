@@ -1,7 +1,7 @@
 {% extends "helium::form-fields.input" %}
 
 {% block container %}
-    <div class="helium-repeater-field"
+    <div class="helium-repeater-field {{ field.sequenceColumn ? 'orderable' }}"
         data-add-request="{{ {
             form: form ? form.slug,
             path: formPath|merge([field.name]),
@@ -12,7 +12,7 @@
     >
         <div class="helium-repeater-forms-container">
             {% set old_keys = input_old(field_data_key, [])|keys %}
-            {% set existing = field.value|values(entry) %}
+            {% set existing = field.getExistingValue(entry) %}
             {% set count = max(old_keys|length, existing|length) %}
 
             {% if count > 0 %}
@@ -21,7 +21,8 @@
                     {% include field.nestedView with {
                         entry: existing[i] ?? null,
                         formPath: path,
-                        field: field
+                        field: field,
+                        index: loop.index0
                     } %}
                 {% endfor %}
             {% endif %}

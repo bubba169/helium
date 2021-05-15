@@ -7,6 +7,7 @@ use Helium\Config\Entity;
 use Helium\Config\Form\Field\MulticheckField;
 use Helium\Handler\Options\RelatedOptionsHandler;
 use Helium\Handler\Save\BelongsToManySaveHandler;
+use Helium\Handler\Value\RelatedKeysValueHandler;
 
 class BelongsToManyField extends MulticheckField
 {
@@ -38,6 +39,8 @@ class BelongsToManyField extends MulticheckField
                 return $this->slug;
             case 'saveHandler':
                 return BelongsToManySaveHandler::class;
+            case 'valueHandler':
+                return RelatedKeysValueHandler::class;
         }
 
         return parent::getDefault($key);

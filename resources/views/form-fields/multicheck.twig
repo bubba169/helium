@@ -9,7 +9,7 @@
                     name="{{ field_name }}[]"
                     id="{{ field_id }}_{{ loop.index }}"
                     value="{{ value }}"
-                    {{ (value in (input_old(field_data_key, field.value|values(entry, entry.keyName)) ?: [])) ? 'checked' }}
+                    {{ (value in (input_old(field_data_key, field.getExistingValue(entry)) ?: [])) ? 'checked' }}
                 >
                 <label class="flex-1 ml-3 mr-5 cursor-pointer" for="{{ field_id }}_{{ loop.index  }}">{{ name }}</label>
             </div>

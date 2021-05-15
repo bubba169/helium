@@ -1,8 +1,16 @@
 <div class="helium-repeater-form relative w-full py-4 px-5 border rounded-lg bg-white mt-2 border-gray-300
     {{ field.containerClasses }}"
 >
-    <div class="absolute top-2 right-2 helium-repeater-remove">
-        <i class="text-lg cursor-pointer fas fa-times-circle hover:text-red-800"></i>
+    <div class="absolute flex top-2 right-2">
+        <div class="mr-2 helium-repeater-move-up">
+            <i class="text-lg cursor-pointer fas fa-arrow-circle-up hover:text-blue-800"></i>
+        </div>
+         <div class="mr-2 helium-repeater-move-down">
+            <i class="text-lg cursor-pointer fas fa-arrow-circle-down hover:text-blue-800"></i>
+        </div>
+        <div class="helium-repeater-remove">
+            <i class="text-lg cursor-pointer fas fa-times-circle hover:text-red-800"></i>
+        </div>
     </div>
 
     {% for repeater_field in field.fields %}
@@ -15,8 +23,16 @@
         </div>
     {% endfor %}
     <input type="hidden"
-        name="{{ 'id'|field_name(formPath) }}"
-        id="{{ 'id'|field_id(formPath) }}"
-        value="{{ entry.key }}"
+        name="{{ 'helium_id'|field_name(formPath) }}"
+        id="{{ 'helium_id'|field_id(formPath) }}"
+        value="{{ entry.getKey() }}"
     >
+    {% if field.sequenceColumn %}
+        <input type="hidden"
+            name="{{ 'helium_sequence'|field_name(formPath) }}"
+            id="{{ 'helium_sequence'|field_id(formPath) }}"
+            value="{{ index }}"
+            class="helium-sequence-field"
+        >
+    {% endif %}
 </div>

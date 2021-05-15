@@ -2,7 +2,7 @@
 
 {% block container %}
     <div class="flex space-x-2 {{ field.containerClasses }}">
-        {% set currentValue = field.value|resolve(entry) %}
+        {% set currentValue = field.getExistingValue(entry) %}
         {% set date_field_name = (field.name ~ '_date')|field_name(formPath) %}
         <input class="box-border w-1/2 py-2 px-3 border rounded-lg focus:outline-none focus:border-blue-700
             {{ hasErrors ? 'border-red-700' : 'border-gray-400' }}

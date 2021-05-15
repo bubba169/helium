@@ -3,9 +3,10 @@
 namespace Helium\Config\Form\Field;
 
 use Helium\Config\Entity;
-use Helium\Handler\Save\DefaultSaveHandler;
-use Helium\Traits\HasConfig;
 use Illuminate\Support\Str;
+use Helium\Traits\HasConfig;
+use Helium\Handler\Value\EntryValueHandler;
+use Helium\Handler\Save\DefaultSaveHandler;
 
 class Field
 {
@@ -64,10 +65,30 @@ class Field
                 return [];
             case 'prepareHandler':
                 return null;
+            case 'valueHandler':
+                return EntryValueHandler::class;
             case 'saveHandler':
                 return DefaultSaveHandler::class;
             case 'validationName':
                 return Str::lower($this->label);
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the current value for the field
+     *
+     * @param mixed The data source to check
+     * @return mixed
+     */
+    public function getExistingValue($source)
+    {
+        if ($this->valueHandler) {
+            return app()->call($this->valueHandler, [
+                'source' => $source,
+                'field' => $this,
+            ]);
         }
 
         return null;

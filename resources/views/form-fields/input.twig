@@ -31,7 +31,7 @@
                     type="{{ field.type }}"
                     name="{{ field_name }}"
                     id="{{ field_id }}"
-                    value="{{ input_old(field_data_key, field.value|resolve(entry)) }}"
+                    value="{{ input_old(field_data_key, field.getExistingValue(entry)) }}"
                     placeholder="{{ field.placeholder }}"
                     autocomplete="{{ field.autocomplete }}"
                     {% for attribute in field.attributes %}

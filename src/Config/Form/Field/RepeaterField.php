@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Helium\Config\Form\Field\Field;
 use Helium\Handler\Prepare\RepeaterPrepareHandler;
 use Helium\Handler\Save\RepeaterSaveHandler;
+use Helium\Handler\Value\RelatedValueHandler;
 use Helium\Traits\HasFields;
 
 class RepeaterField extends Field
@@ -66,6 +67,8 @@ class RepeaterField extends Field
                 return RepeaterSaveHandler::class;
             case 'prepareHandler':
                 return RepeaterPrepareHandler::class;
+            case 'valueHandler':
+                return RelatedValueHandler::class;
             case 'view':
                 return 'helium::form-fields.repeater';
             case 'nestedView':

@@ -17,7 +17,7 @@
 
             {% for value,name in field.options|options(entry, field) %}
                 <option value="{{ value }}"
-                    {{ (input_old(field_data_key, field.value|resolve(entry)) == value) ? 'selected' }}
+                    {{ (input_old(field_data_key, field.getExistingValue(entry)) == value) ? 'selected' }}
                 >{{ name }}</option>
             {% endfor %}
         </select>
