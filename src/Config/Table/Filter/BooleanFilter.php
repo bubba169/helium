@@ -13,7 +13,7 @@ class BooleanFilter extends Filter
     public function getDefault(string $key)
     {
         switch ($key) {
-            case 'handler':
+            case 'filterHandler':
                 return BooleanFilterHandler::class;
             case 'options':
                 return [

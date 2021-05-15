@@ -20,14 +20,14 @@ class EntitiesController extends HeliumController
         $query = app()->call($entity->table->query, ['entity' => $entity]);
 
         if ($search = $entity->table->search) {
-            $query = app()->call($search->handler, [
+            $query = app()->call($search->filterHandler, [
                 'query' => $query,
                 'filter' => $search
             ]);
         }
 
         foreach ($entity->table->filters as $filter) {
-            $query = app()->call($filter->handler, [
+            $query = app()->call($filter->filterHandler, [
                 'query' => $query,
                 'filter' => $filter
             ]);

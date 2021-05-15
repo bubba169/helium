@@ -32,7 +32,7 @@ class BelongsToFilter extends Filter
     public function getDefault(string $key)
     {
         switch ($key) {
-            case 'handler':
+            case 'filterHandler':
                 return RelationshipFilterHandler::class;
             case 'options':
                 return RelatedOptionsHandler::class;

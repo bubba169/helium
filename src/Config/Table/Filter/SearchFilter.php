@@ -13,13 +13,11 @@ class SearchFilter extends Filter
     public function getDefault(string $key)
     {
         switch ($key) {
-            case 'value':
-                return '{request.search}';
             case 'columns':
                 return [];
             case 'slug':
                 return 'search';
-            case 'handler':
+            case 'filterHandler':
                 return SearchHandler::class;
             case 'label':
                 return null;
