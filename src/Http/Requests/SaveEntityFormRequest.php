@@ -3,14 +3,13 @@
 namespace Helium\Http\Requests;
 
 use Helium\Config\Entity;
-use Illuminate\Support\Arr;
 use Helium\Config\Form\Form;
 use Illuminate\Support\Facades\DB;
 use Helium\Config\Form\Field\Field;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class SaveEntityFormRequest extends FormRequest
 {
@@ -68,15 +67,23 @@ class SaveEntityFormRequest extends FormRequest
     /**
      * {@inheritDoc}
      */
+    public function attributes()
+    {
+        return $this->form->validationAttributes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function prepareForValidation()
     {
         foreach ($this->form->allFields() as $field) {
             if (!empty($field->prepareHandler)) {
                 app()->call($field->prepareHandler, [
                     'entity' => $this->entity,
-                    'form' => $this->form,
                     'field' => $field,
                     'request' => $this,
+                    'path' => []
                 ]);
             }
         }
@@ -134,45 +141,25 @@ class SaveEntityFormRequest extends FormRequest
             app()->call($field->saveHandler, [
                 'field' => $field,
                 'entry' => $entry,
-                'entity' => $this->entity,
-                'form' => $this->form,
                 'request' => $this,
+                'path' => []
             ]);
         }
-        /*switch ($field['type']) {
-            case 'belongsToMany':
-                $entry->{$field['relationship']}()->sync($this->input($field['name'], []));
-                break;
-            case 'multicheck':
-                $entry->{$field['column']} = json_encode($this->input($field['name'], []));
-                break;
-            case 'checkbox':
-                $entry->{$field['column']} = $this->input($field['name'], false) ? 1 : 0;
-                break;
-            case 'datetime':
-                $entry->{$field['column']} = trim(
-                    $this->input($field['name'] . '_date') . ' ' .
-                    $this->input($field['name'] . '_time')
-                ) ?: null;
-                break;
-            case 'password':
-                // Passwords should only be set if present.
-                if (!empty($this->input($field['name']))) {
-                    $entry->{$field['column']} = Hash::make($this->input($field['name']));
-                }
-                break;
-            default:
-                $entry->{$field['column']} = $this->input($field['name']) ?? null;
-        }*/
     }
 
-    public function failedValidation($validator)
+    /**
+     * {@inheritDoc}
+     *
+     * Add a validation message
+     */
+    public function failedValidation(Validator $validator): void
     {
         session()->flash('message', [
             'type' => 'error',
             'message' => 'There was a problem saving the entry.',
             'errorList' => $validator->errors()->messages(),
         ]);
-        return parent::failedValidation($validator);
+
+        parent::failedValidation($validator);
     }
 }

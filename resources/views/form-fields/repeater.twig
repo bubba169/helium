@@ -1,0 +1,36 @@
+{% extends "helium::form-fields.input" %}
+
+{% block container %}
+    <div class="helium-repeater-field {{ field.sequenceColumn ? 'orderable' }}"
+        data-add-request="{{ {
+            form: form ? form.slug,
+            path: formPath|merge([field.name]),
+            field: field.fieldPath,
+            entity: config.slug,
+            _token: csrf_token()
+        }|json_encode|escape }}"
+    >
+        <div class="helium-repeater-forms-container">
+            {% set old_keys = input_old(field_data_key, [])|keys %}
+            {% set existing = field.getExistingValue(entry) %}
+            {% set count = max(old_keys|length, existing|length) %}
+
+            {% if count > 0 %}
+                {% for i in range(0, count - 1) %}
+                    {% set path = formPath|merge([field.name, old_keys[loop.index0] ?? now|date('U-u')]) %}
+                    {% include field.nestedView with {
+                        entry: existing[i] ?? null,
+                        formPath: path,
+                        field: field,
+                        index: loop.index0
+                    } %}
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="mt-4 mb-8 helium-repeater-actions">
+            {% include field.addButton.view with {action: field.addButton} %}
+        </div>
+    </div>
+{% endblock %}
+

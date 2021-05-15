@@ -1,15 +1,16 @@
 <?php
 
-namespace Helium\Config\Form\Field;
+namespace Helium\Config\Table\Filter;
 
 use Exception;
 use Helium\Config\Entity;
-use Helium\Config\Form\Field\SelectField;
+use Helium\Config\Table\Filter\Filter;
 use Helium\Handler\Options\RelatedOptionsHandler;
+use Helium\Handler\Filter\RelationshipFilterHandler;
 
-class BelongsToField extends SelectField
+class BelongsToFilter extends Filter
 {
-    /**
+     /**
      * Constructor
      */
     public function __construct(array $field, Entity $entity)
@@ -27,16 +28,16 @@ class BelongsToField extends SelectField
 
     /**
      * {@inheritDoc}
-     *
-     * Use text area view
      */
     public function getDefault(string $key)
     {
         switch ($key) {
-            case 'column':
-                return $this->slug . '_id';
+            case 'filterHandler':
+                return RelationshipFilterHandler::class;
             case 'options':
                 return RelatedOptionsHandler::class;
+            case 'view':
+                return 'helium::form-fields.select';
             case 'relationship':
                 return $this->slug;
         }

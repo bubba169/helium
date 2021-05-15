@@ -3,6 +3,7 @@
 namespace Helium\Config\Table\Filter;
 
 use Helium\Config\Form\Field\Field;
+use Helium\Handler\Value\RequestValueHandler;
 use Helium\Handler\Filter\DefaultFilterHandler;
 
 class Filter extends Field
@@ -13,8 +14,10 @@ class Filter extends Field
     public function getDefault(string $key)
     {
         switch ($key) {
-            case 'handler':
+            case 'filterHandler':
                 return DefaultFilterHandler::class;
+            case 'valueHandler':
+                return RequestValueHandler::class;
             case 'placeholder':
                 return 'Filter By ' . $this->label;
             case 'value':

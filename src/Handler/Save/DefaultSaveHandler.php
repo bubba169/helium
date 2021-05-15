@@ -11,8 +11,8 @@ class DefaultSaveHandler
     /**
      * Saves the request data for the field to an entry
      */
-    public function __invoke(Field $field, Request $request, Model $entry)
+    public function __invoke(Field $field, Request $request, Model $entry, array $path)
     {
-        $entry->{$field->column} = $request->input($field->name);
+        $entry->{$field->column} = $request->input($field->getDataPath($path));
     }
 }

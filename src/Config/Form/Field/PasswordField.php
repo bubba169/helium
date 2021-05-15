@@ -17,7 +17,7 @@ class PasswordField extends Field
         switch ($key) {
             case 'type':
                 return 'password';
-            case 'value':
+            case 'valueHandler':
                 return null;
             case 'saveHandler':
                 return PasswordSaveHandler::class;

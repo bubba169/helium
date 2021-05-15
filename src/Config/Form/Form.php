@@ -76,6 +76,22 @@ class Form
     }
 
     /**
+     * Gets a field by its slug. Can be dot notation to find nested fields
+     */
+    public function getField(array $path) : ?Field
+    {
+        $field = Arr::get($this->allFields(), array_shift($path), null);
+
+        // No more steps return this field
+        if (empty($path) || empty($field)) {
+            return $field;
+        }
+
+        // Otherwise return a sub-field
+        return $field->getField($path);
+    }
+
+    /**
      * Gets all field across all tabs in a single array
      */
     public function allFields(): array
@@ -85,25 +101,50 @@ class Form
     }
 
     /**
-     * Gets all field rules across all tabs in a single array
+     * Gets all field rules for validation
      */
-    public function validationRules(): array
+    public function validationRules(?string $tab = null): array
     {
-        // Get an array of validation rules
+        $fields = $tab ? Arr::get($this->fields, $tab, []) : $this->allFields();
+
         return array_filter(
-            array_map(fn ($field) => $field->rules, $this->allFields())
+            call_user_func_array(
+                'array_merge',
+                array_map(fn ($field) => $field->getValidationRules(), $fields)
+            )
         );
     }
 
     /**
      * Gets all field messages across all tabs in a single array
      */
-    public function validationMessages(): array
+    public function validationMessages(?string $tab = null): array
     {
-        // Get an array of validation messages
+        $fields = $tab ? Arr::get($this->fields, $tab, []) : $this->allFields();
+
         return Arr::dot(
             array_filter(
-                array_map(fn ($field) => $field->messages, $this->allFields())
+                call_user_func_array(
+                    'array_merge',
+                    array_map(fn ($field) => $field->getValidationMessages(), $fields)
+                )
+            )
+        );
+    }
+
+    /**
+     * Gets all field messages across all tabs in a single array
+     */
+    public function validationAttributes(?string $tab = null): array
+    {
+        $fields = $tab ? Arr::get($this->fields, $tab, []) : $this->allFields();
+
+        return Arr::dot(
+            array_filter(
+                call_user_func_array(
+                    'array_merge',
+                    array_map(fn ($field) => $field->getValidationAttributes(), $fields)
+                )
             )
         );
     }

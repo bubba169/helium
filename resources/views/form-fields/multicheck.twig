@@ -6,12 +6,12 @@
             <div class="flex items-start w-full mb-3 md:w-1/2 lg:w-1/3 xl:w-1/4">
                 <input type="checkbox"
                     class="p-2 mt-1 cursor-pointer {{ field.classes }}"
-                    name="{{ field.name }}[]"
-                    id="{{ field.id }}_{{ loop.index }}"
+                    name="{{ field_name }}[]"
+                    id="{{ field_id }}_{{ loop.index }}"
                     value="{{ value }}"
-                    {{ (value in (input_old(field.name, field.value|values(entry, field.relatedId)) ?: [])) ? 'checked' }}
+                    {{ (value in (input_old(field_data_key, field.getExistingValue(entry)) ?: [])) ? 'checked' }}
                 >
-                <label class="flex-1 ml-3 mr-5 cursor-pointer" for="{{ field.id }}_{{ loop.index  }}">{{ name }}</label>
+                <label class="flex-1 ml-3 mr-5 cursor-pointer" for="{{ field_id }}_{{ loop.index  }}">{{ name }}</label>
             </div>
         {% endfor %}
     </div>

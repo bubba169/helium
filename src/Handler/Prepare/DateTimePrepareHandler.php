@@ -2,18 +2,24 @@
 
 namespace Helium\Handler\Prepare;
 
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Helium\Config\Form\Field\Field;
 
 class DateTimePrepareHandler
 {
-    public function __invoke(Field $field, Request $request)
+    public function __invoke(Field $field, Request $request, array $path)
     {
-        $request->merge([
-            $field->name => trim(
-                $request->input($field->name . '_date') . ' ' .
-                $request->input($field->name . '_time')
+        $dataPath = $field->getDataPath($path);
+        $data = $request->input();
+        Arr::set(
+            $data,
+            $dataPath,
+            trim(
+                $request->input($dataPath . '_date') . ' ' .
+                $request->input($dataPath . '_time')
             ) ?: null
-        ]);
+        );
+        $request->merge($data);
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Helium\Http\Controllers;
 
+use DateTime;
 use Helium\Config\Entity;
 use Illuminate\View\View;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use Helium\Support\EntityConfig;
+use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntitiesController extends HeliumController
@@ -20,14 +20,14 @@ class EntitiesController extends HeliumController
         $query = app()->call($entity->table->query, ['entity' => $entity]);
 
         if ($search = $entity->table->search) {
-            $query = app()->call($search->handler, [
+            $query = app()->call($search->filterHandler, [
                 'query' => $query,
                 'filter' => $search
             ]);
         }
 
         foreach ($entity->table->filters as $filter) {
-            $query = app()->call($filter->handler, [
+            $query = app()->call($filter->filterHandler, [
                 'query' => $query,
                 'filter' => $filter
             ]);
@@ -70,6 +70,35 @@ class EntitiesController extends HeliumController
             'config' => $config,
             'form' => $form,
             'entry' => $entry,
+        ]);
+    }
+
+    /**
+     * Renders a form section for a repeater
+     */
+    public function section(Request $request) : View
+    {
+        $config = new Entity($request->input('entity'));
+        $form = $config->forms[$request->input('form')];
+
+        // If the form config is not found then 404
+        if (!$form) {
+            throw new NotFoundHttpException();
+        }
+
+        $field = $form->getField($request->input('field'));
+
+        // If the form config is not found then 404
+        if (!$field) {
+            throw new NotFoundHttpException();
+        }
+
+        return view($field->nestedView, [
+            'config' => $config,
+            'form' => $form,
+            'field' => $field,
+            'entry' => null,
+            'formPath' => [...$request->input('path'), (new DateTime())->format('U-u')],
         ]);
     }
 

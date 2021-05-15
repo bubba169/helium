@@ -8,17 +8,17 @@
         {# Show the description inside the container instead #}
         {% include "helium::form-fields.common.description" %}
         <div class="flex">
-            <input type="hidden" name="{{ field.name }}" id="{{ field.id }}_empty" value="0">
+            <input type="hidden" name="{{ field_name }}" id="{{ field_id }}_empty" value="0">
             <input class="cursor-pointer"
                 type="checkbox"
-                name="{{ field.name }}"
-                id="{{ field.id }}"
-                {{ input_old(field.name, field.value|resolve(entry)) ? 'checked' }}
+                name="{{ field_name }}"
+                id="{{ field_id }}"
+                {{ input_old(field_data_key, field.getExistingValue(entry)) ? 'checked' }}
                 {% for attribute in field.attributes %}
                     {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
                 {% endfor %}
             >
-            <label class="flex-1 pl-4 font-bold cursor-pointer {{ field.labelClasses }}" for="{{ field.id }}">
+            <label class="flex-1 pl-4 font-bold cursor-pointer {{ field.labelClasses }}" for="{{ field_id }}">
                 {{ field.label }}
                 {% if field.required %}
                     <span class="text-red-700">*</span>

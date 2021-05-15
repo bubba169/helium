@@ -12,10 +12,10 @@ class PasswordSaveHandler
     /**
      * Passwords should only be set if not empty
      */
-    public function __invoke(Field $field, Request $request, Model $entry)
+    public function __invoke(Field $field, Request $request, Model $entry, array $path)
     {
-        if (!empty($request->input($field->name))) {
-            $entry->{$field->column} = Hash::make($request->input($field->name));
+        if (!empty($password = $request->input($field->getDataPath($path)))) {
+            $entry->{$field->column} = Hash::make($password);
         }
     }
 }

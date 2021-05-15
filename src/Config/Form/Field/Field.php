@@ -3,13 +3,24 @@
 namespace Helium\Config\Form\Field;
 
 use Helium\Config\Entity;
-use Helium\Handler\Save\DefaultSaveHandler;
-use Helium\Traits\HasConfig;
 use Illuminate\Support\Str;
+use Helium\Traits\HasConfig;
+use Helium\Handler\Value\EntryValueHandler;
+use Helium\Handler\Save\DefaultSaveHandler;
 
 class Field
 {
     use HasConfig;
+
+    /**
+     * The path to validate using the rules for this field
+     */
+    public string $validationPath;
+
+    /**
+     * The path to the field in the entity config
+     */
+    public array $fieldPath;
 
     /**
      * The current entity config
@@ -23,6 +34,8 @@ class Field
     {
         $this->mergeConfig($field);
         $this->entity = $entity;
+        $this->validationPath = $this->name;
+        $this->fieldPath = [$this->slug];
         $this->attributes = array_normalise_keys($this->attributes);
     }
 
@@ -52,10 +65,66 @@ class Field
                 return [];
             case 'prepareHandler':
                 return null;
+            case 'valueHandler':
+                return EntryValueHandler::class;
             case 'saveHandler':
                 return DefaultSaveHandler::class;
+            case 'validationName':
+                return Str::lower($this->label);
         }
 
         return null;
+    }
+
+    /**
+     * Gets the current value for the field
+     *
+     * @param mixed The data source to check
+     * @return mixed
+     */
+    public function getExistingValue($source)
+    {
+        if ($this->valueHandler) {
+            return app()->call($this->valueHandler, [
+                'source' => $source,
+                'field' => $this,
+            ]);
+        }
+
+        return null;
+    }
+
+    /**
+     * Builds the path to the field data in the request
+     * using the current path as a prefix
+     */
+    public function getDataPath(array $path): string
+    {
+        $path[] = $this->name;
+        return implode('.', $path);
+    }
+
+    /**
+     * Gets all of the validation rules with prefixed paths
+     */
+    public function getValidationRules(): array
+    {
+        return [$this->validationPath => $this->rules];
+    }
+
+    /**
+     * Gets all of the validation messages with prefixed paths
+     */
+    public function getValidationMessages(): array
+    {
+        return [$this->validationPath => $this->messages];
+    }
+
+    /**
+     * Gets all of the validation messages with prefixed paths
+     */
+    public function getValidationAttributes(): array
+    {
+        return [$this->validationPath => $this->validationName];
     }
 }

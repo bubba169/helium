@@ -105,17 +105,25 @@ function str_humanise(string $str) : string
  * Resolves a string using the given data.
  * {entry.XXX} will be replaced with the path from $entry using dot notation
  * {request.XXX} will be replaced by the value from the request data
+ *
+ * @return mixed If the string is entirely an entry reference then the object at the path will be returned else
+ *               it will be the original string with the tags replaced
  */
-function str_resolve(string $str, ?ArrayAccess $entry = null): string
+function str_resolve(string $str, $entry = null)
 {
+    $matches = [];
+    if (preg_match('/^\{entry.([^\}]*)\}$/', $str, $matches)) {
+        return Arr::get($entry, $matches[1]);
+    }
+
     // Replace any entity references with values from the entity
-    $str = preg_replace_callback('/\{entry\.(.*)\}/', function ($match) use ($entry) {
+    $str = preg_replace_callback('/\{entry.([^\}]*)\}/', function ($match) use ($entry) {
         return Arr::get($entry, $match[1], '');
     }, $str);
 
     // Replace any values from the query
     $request = request();
-    $str = preg_replace_callback('/\{request\.(.*)\}/', function ($match) use ($request) {
+    $str = preg_replace_callback('/\{request.([^\}]*)\}/', function ($match) use ($request) {
         $val = $request->input($match[1]);
         if (is_array($val)) {
             $val = json_encode($val);
