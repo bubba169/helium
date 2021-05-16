@@ -15,7 +15,13 @@ const init = () => {
             // Hook up the remove buttons
             repeater.querySelectorAll('.helium-repeater-remove:not([data-helium-init])')
                 .forEach(removeButton => {
-                    removeButton.addEventListener('click', onRemoveClicked);
+                    removeButton.addEventListener('click', event => {
+                        event.preventDefault();
+                        const field = repeater;
+                        const form = removeButton.closest('.helium-repeater-form');
+                        animateDestroy(form);
+                        reindex(field);
+                    });
                     removeButton.setAttribute('data-helium-init', true);
                 });
 
@@ -30,6 +36,12 @@ const init = () => {
                             previous.before(form);
                         }
                         reindex(field);
+
+                        let top = form.getBoundingClientRect().height;
+                        animateFrom(form, top);
+
+                        top = -previous.getBoundingClientRect().height;
+                        animateFrom(previous, top);
                     });
 
                     upButton.setAttribute('data-helium-init', true);
@@ -46,6 +58,12 @@ const init = () => {
                             next.after(form);
                         }
                         reindex(field)
+
+                        let top = next.getBoundingClientRect().height;
+                        animateFrom(next, top);
+
+                        top = -form.getBoundingClientRect().height;
+                        animateFrom(form, top);
                     });
 
                     downButton.setAttribute('data-helium-init', true);
@@ -54,12 +72,6 @@ const init = () => {
             reindex(repeater);
         });
     }
-}
-
-function onRemoveClicked(event)
-{
-    event.preventDefault();
-    event.target.closest('.helium-repeater-form').remove();
 }
 
 function addNewForm(repeater)
@@ -84,6 +96,7 @@ function addNewForm(repeater)
         repeater.querySelector('.helium-repeater-forms-container')
             .insertAdjacentElement('beforeend', form);
 
+        animateAppear(form);
         reindex(repeater);
 
         window.dispatchEvent(new Event('helium-init-forms'));
@@ -108,7 +121,7 @@ function reindex(repeater)
 function nextFormSibling(form)
 {
     let next = form.nextElementSibling;
-    while(next && !next.matches('.helium-repeater-form')) {
+    while(next && !next.matches('.helium-repeater-form:not(.removed)')) {
         next = next.nextElementSibling;
     }
     return next;
@@ -117,10 +130,56 @@ function nextFormSibling(form)
 function previousFormSibling(form)
 {
     let previous = form.previousElementSibling;
-    while(previous && !previous.matches('.helium-repeater-form')) {
+    while(previous && !previous.matches('.helium-repeater-form:not(.removed)')) {
         previous = previous.previousElementSibling;
     }
     return previous;
+}
+
+function animateFrom(item, top)
+{
+    item.style.setProperty('--animStart', top + 'px');
+    item.style.animation = 'move-to 0.3s';
+    item.addEventListener(
+        'animationend',
+        () => {
+            item.style.animation = null;
+        },
+        {
+            once: true
+        }
+    );
+}
+
+function animateDestroy(item)
+{
+    item.classList.add('removed');
+    item.style.setProperty('--animStart', item.getBoundingClientRect().height + 'px');
+    item.style.animation = 'shrink-out 0.3s';
+    item.addEventListener(
+        'animationend',
+        () => {
+            item.remove();
+        },
+        {
+            once: true
+        }
+    );
+}
+
+function animateAppear(item)
+{
+    item.style.setProperty('--animEnd', item.getBoundingClientRect().height + 'px');
+    item.style.animation = 'grow-in 0.3s';
+    item.addEventListener(
+        'animationend',
+        () => {
+            item.style.animation = null;
+        },
+        {
+            once: true
+        }
+    );
 }
 
 window.addEventListener('helium-init-forms', init);

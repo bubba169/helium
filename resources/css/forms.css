@@ -19,3 +19,42 @@
         }
     }
 }
+
+@layer utilities {
+    @keyframes move-to {
+        from {
+            transform: translateY( var(--animStart) );
+        }
+        to {
+            transform: translateY(0px);
+        }
+    }
+    @keyframes shrink-out {
+        from {
+            transform: scale(1);
+            transform-origin: top center;
+            max-height: var(--animStart);
+            opacity: 1;
+        }
+        to {
+            transform: Scale(0);
+            transform-origin: top center;
+            max-height: 0;
+            opacity: 0;
+        }
+    }
+    @keyframes grow-in {
+        from {
+            transform: scale(0);
+            transform-origin: top center;
+            max-height: 0;
+            opacity: 0;
+        }
+        to {
+            transform: Scale(1);
+            transform-origin: top center;
+            max-height: var(--animEnd);
+            opacity: 1
+        }
+    }
+}

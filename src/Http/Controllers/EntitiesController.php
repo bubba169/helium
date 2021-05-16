@@ -6,7 +6,6 @@ use DateTime;
 use Helium\Config\Entity;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntitiesController extends HeliumController
