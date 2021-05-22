@@ -1,5 +1,9 @@
+// Store the currently dragged form element
+var draggedForm = null;
+
 const init = () => {
     const repeaters = document.querySelectorAll('.helium-repeater-field');
+
     if (repeaters.length) {
         repeaters.forEach((repeater) => {
             // Hook up the add buttons
@@ -12,15 +16,71 @@ const init = () => {
                     addButton.setAttribute('data-helium-init', true);
                 });
 
+            // Hook up the drag button
+            repeater.querySelectorAll('.helium-repeater-form:not([data-helium-init])')
+                .forEach(form => {
+                    const field = repeater;
+                    const handle = form.querySelector('.helium-repeater-drag');
+                    handle.addEventListener('mousedown', event => {
+                        form.firstElementChild.setAttribute('draggable', true);
+                    });
+                    form.firstElementChild.addEventListener('dragstart', event => {
+                        draggedForm = form;
+                        form.style.zIndex = 1;
+                        form.firstElementChild.style.border = '1px dashed black';
+                        form.firstElementChild.style.backgroundColor = '#EFF6FF';
+                        form.firstElementChild.addEventListener('dragend', event => {
+                            form.style.zIndex = null;
+                            form.firstElementChild.style.border = null;
+                            form.firstElementChild.style.backgroundColor = null;
+                            form.firstElementChild.setAttribute('draggable', false);
+                            field.querySelectorAll('.helium-repeater-form-drop-above, .helium-repeater-form-drop-below')
+                                .forEach(el => {
+                                    // Disable all of the drop zones
+                                    el.style.pointerEvents = null;
+                                });
+                        }, {
+                            once: true
+                        });
+
+                        // Activate all of the drop zones
+                        field.querySelectorAll('.helium-repeater-form-drop-above, .helium-repeater-form-drop-below')
+                            .forEach(el => {
+                                el.style.pointerEvents = 'auto';
+                            });
+                    });
+                    const dropAbove = form.querySelector('.helium-repeater-form-drop-above');
+                    dropAbove.addEventListener('dragenter', event => {
+                        if (draggedForm != form && nextFormSibling(draggedForm) != form) {
+                            if (form.offsetTop > draggedForm.offsetTop) {
+                                moveDownToBelow(draggedForm, previousFormSibling(form));
+                            } else {
+                                moveUpToAbove(draggedForm, form);
+                            }
+                        };
+                    });
+                    const dropBelow = form.querySelector('.helium-repeater-form-drop-below');
+                    dropBelow.addEventListener('dragenter', event => {
+                        if (draggedForm != form && previousFormSibling(draggedForm) != form) {
+                            if (form.offsetTop > draggedForm.offsetTop) {
+                                moveDownToBelow(draggedForm, form);
+                            } else {
+                                moveUpToAbove(draggedForm, nextFormSibling(form));
+                            }
+                        };
+                    });
+                    form.setAttribute('data-helium-init', true);
+                });
+
+
             // Hook up the remove buttons
             repeater.querySelectorAll('.helium-repeater-remove:not([data-helium-init])')
                 .forEach(removeButton => {
                     removeButton.addEventListener('click', event => {
                         event.preventDefault();
-                        const field = repeater;
                         const form = removeButton.closest('.helium-repeater-form');
                         animateDestroy(form);
-                        reindex(field);
+                        reindex(repeater);
                     });
                     removeButton.setAttribute('data-helium-init', true);
                 });
@@ -29,19 +89,11 @@ const init = () => {
             repeater.querySelectorAll('.helium-repeater-move-up:not([data-helium-init])')
                 .forEach(upButton => {
                     upButton.addEventListener('click', function () {
-                        const field = repeater;
                         const form = upButton.closest('.helium-repeater-form');
                         const previous = previousFormSibling(form);
                         if (previous) {
-                            previous.before(form);
+                            moveUpToAbove(form, previous);
                         }
-                        reindex(field);
-
-                        let top = form.getBoundingClientRect().height;
-                        animateFrom(form, top);
-
-                        top = -previous.getBoundingClientRect().height;
-                        animateFrom(previous, top);
                     });
 
                     upButton.setAttribute('data-helium-init', true);
@@ -51,19 +103,11 @@ const init = () => {
             repeater.querySelectorAll('.helium-repeater-move-down:not([data-helium-init])')
                 .forEach(downButton => {
                     downButton.addEventListener('click', function () {
-                        const field = repeater;
                         const form = downButton.closest('.helium-repeater-form');
                         const next = nextFormSibling(form);
                         if (next) {
-                            next.after(form);
+                            moveDownToBelow(form, next);
                         }
-                        reindex(field)
-
-                        let top = next.getBoundingClientRect().height;
-                        animateFrom(next, top);
-
-                        top = -form.getBoundingClientRect().height;
-                        animateFrom(form, top);
                     });
 
                     downButton.setAttribute('data-helium-init', true);
@@ -134,6 +178,40 @@ function previousFormSibling(form)
         previous = previous.previousElementSibling;
     }
     return previous;
+}
+
+function moveUpToAbove(item, above) {
+    let totalOffset = 0;
+    let top = item.getBoundingClientRect().height;
+    let previous = previousFormSibling(item);
+    let stopAt = previousFormSibling(above);
+
+    while (previous && previous != stopAt) {
+        totalOffset += previous.getBoundingClientRect().height;
+        animateFrom(previous, -top);
+        previous = previousFormSibling(previous);
+    }
+
+    above.before(item);
+    animateFrom(item, totalOffset);
+    reindex(item.closest('.helium-repeater-field'));
+}
+
+function moveDownToBelow(item, below) {
+    let totalOffset = 0;
+    let top = item.getBoundingClientRect().height;
+    let next = nextFormSibling(item);
+    let stopAt = nextFormSibling(below);
+
+    while (next && next != stopAt) {
+        totalOffset += next.getBoundingClientRect().height;
+        animateFrom(next, top);
+        next = nextFormSibling(next);
+    }
+
+    below.after(item);
+    animateFrom(item, -totalOffset);
+    reindex(item.closest('.helium-repeater-field'));
 }
 
 function animateFrom(item, top)

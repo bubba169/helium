@@ -1,38 +1,48 @@
-<div class="helium-repeater-form relative w-full {{ field.containerClasses }} flex flex-wrap">
-    <div class="w-full px-5 py-4 mt-2 bg-white border border-gray-300 rounded-lg">
-        <div class="absolute flex top-4 right-2">
-            <div class="mr-2 helium-repeater-move-up">
-                <i class="text-lg cursor-pointer fas fa-arrow-circle-up hover:text-blue-800"></i>
-            </div>
-            <div class="mr-2 helium-repeater-move-down">
-                <i class="text-lg cursor-pointer fas fa-arrow-circle-down hover:text-blue-800"></i>
-            </div>
-            <div class="helium-repeater-remove">
-                <i class="text-lg cursor-pointer fas fa-times-circle hover:text-red-800"></i>
-            </div>
+{% set idPath = formPath|slice(0, -1) %}
+{% set idIndex = formPath|last %}
+<div class="helium-repeater-form relative w-full {{ field.containerClasses }} flex flex-wrap" id="{{ idIndex|field_id(idPath) }}">
+    <div class="flex w-full px-5 py-4 mt-2 bg-white border border-gray-300 rounded-lg helium-repeater-form-inner">
+        <div class="mr-2 mt-0.5 -ml-2 cursor-move helium-repeater-drag">
+            <i class="relative z-10 fas fa-grip-vertical"></i>
         </div>
-
-        {% for repeater_field in field.fields %}
-            <div class="mb-4">
-                {% include repeater_field.view with {
-                    field: repeater_field,
-                    entry: entry,
-                    formPath: formPath
-                } %}
+        <div class="relative flex-1">
+            <div class="absolute top-0 right-0 flex">
+                <div class="mr-2 helium-repeater-move-up">
+                    <i class="text-lg cursor-pointer fas fa-arrow-circle-up hover:text-blue-800"></i>
+                </div>
+                <div class="mr-2 helium-repeater-move-down">
+                    <i class="text-lg cursor-pointer fas fa-arrow-circle-down hover:text-blue-800"></i>
+                </div>
+                <div class="helium-repeater-remove">
+                    <i class="text-lg cursor-pointer fas fa-times-circle hover:text-red-800"></i>
+                </div>
             </div>
-        {% endfor %}
-        <input type="hidden"
-            name="{{ 'helium_id'|field_name(formPath) }}"
-            id="{{ 'helium_id'|field_id(formPath) }}"
-            value="{{ entry.getKey() }}"
-        >
-        {% if field.sequenceColumn %}
+
+            {% for repeater_field in field.fields %}
+                <div class="mb-4">
+                    {% include repeater_field.view with {
+                        field: repeater_field,
+                        entry: entry,
+                        formPath: formPath
+                    } %}
+                </div>
+            {% endfor %}
             <input type="hidden"
-                name="{{ 'helium_sequence'|field_name(formPath) }}"
-                id="{{ 'helium_sequence'|field_id(formPath) }}"
-                value="{{ index }}"
-                class="helium-sequence-field"
+                name="{{ 'helium_id'|field_name(formPath) }}"
+                id="{{ 'helium_id'|field_id(formPath) }}"
+                value="{{ entry.getKey() }}"
             >
-        {% endif %}
+            {% if field.sequenceColumn %}
+                <input type="hidden"
+                    name="{{ 'helium_sequence'|field_name(formPath) }}"
+                    id="{{ 'helium_sequence'|field_id(formPath) }}"
+                    value="{{ index }}"
+                    class="helium-sequence-field"
+                >
+            {% endif %}
+
+        </div>
+        <div class="absolute inset-x-0 top-0 pointer-events-none bottom-1/2 helium-repeater-form-drop-above"></div>
+        <div class="absolute inset-x-0 bottom-0 pointer-events-none top-1/2 helium-repeater-form-drop-below"></div>
     </div>
 </div>
