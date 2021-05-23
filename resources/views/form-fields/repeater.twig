@@ -1,7 +1,14 @@
 {% extends "helium::form-fields.input" %}
 
 {% block container %}
-    <div class="helium-repeater-field {{ field.sequenceColumn ? 'orderable' }}"
+    {% set old_keys = input_old(field_data_key, [])|keys %}
+    {% set existing = field.getExistingValue(entry) %}
+    {% set count = max(old_keys|length, existing|length, field.minEntries) %}
+
+    <div class="helium-repeater-field
+        {{ field.sequenceColumn ? 'orderable' }}
+        {{ count <= field.minEntries ? 'helium-repeater-min' }}
+        {{ field.maxEntries and (count >= field.maxEntries) ? 'helium-repeater-full' }}"
         data-add-request="{{ {
             form: form ? form.slug,
             path: formPath|merge([field.name]),
@@ -9,12 +16,10 @@
             entity: config.slug,
             _token: csrf_token()
         }|json_encode|escape }}"
+        data-min-entries="{{ field.minEntries }}"
+        data-max-entries="{{ field.maxEntries }}"
     >
         <div class="-mt-2 helium-repeater-forms-container">
-            {% set old_keys = input_old(field_data_key, [])|keys %}
-            {% set existing = field.getExistingValue(entry) %}
-            {% set count = max(old_keys|length, existing|length) %}
-
             {% if count > 0 %}
                 {% for i in range(0, count - 1) %}
                     {% set path = formPath|merge([field.name, old_keys[loop.index0] ?? now|date('U-u')]) %}

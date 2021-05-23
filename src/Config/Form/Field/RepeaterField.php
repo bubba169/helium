@@ -75,6 +75,10 @@ class RepeaterField extends Field
                 return 'helium::partials.repeater-form';
             case 'value':
                 return '{entry.' . $this->relationship . '}';
+            case 'minEntries':
+                return 0;
+            case 'maxEntries':
+                return 0;
         }
 
         return parent::getDefault($key);

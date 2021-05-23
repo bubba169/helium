@@ -9,15 +9,18 @@ const init = () => {
 
     if (repeaters.length) {
         repeaters.forEach((repeater) => {
-            // Hook up the add buttons
-            repeater.querySelectorAll('.helium-repeater-actions [data-action=add]:not([data-helium-init])')
-                .forEach(addButton => {
-                    addButton.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        addNewForm(addButton.closest('.helium-repeater-field'));
-                    });
-                    addButton.setAttribute('data-helium-init', true);
+            const addButton = repeater.querySelector('.helium-repeater-actions [data-action=add]');
+            const minEntries = repeater.getAttribute('data-min-entries');
+            const maxEntries = repeater.getAttribute('data-max-entries');
+
+            // Hook up the add button
+            if (!addButton.hasAttribute('data-helium-init')) {
+                addButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    addNewForm(addButton.closest('.helium-repeater-field'));
                 });
+                addButton.setAttribute('data-helium-init', true);
+            }
 
             // Hook up the drag button
             repeater.querySelectorAll('.helium-repeater-form:not([data-helium-init])')
@@ -125,7 +128,7 @@ const init = () => {
 
 function addNewForm(repeater)
 {
-    fetch('/admin/entities/form-section', {
+    return fetch('/admin/entities/form-section', {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
@@ -147,6 +150,17 @@ function addNewForm(repeater)
 
         animateAppear(form);
         reindex(repeater);
+
+        const formCount = repeater.querySelectorAll('.helium-repeater-form:not(.removed)').length;
+        const maxEntries = repeater.getAttribute('data-max-entries');
+        const minEntries = repeater.getAttribute('data-min-entries');
+        if (maxEntries > 0 && formCount >= maxEntries) {
+            repeater.classList.add('helium-repeater-full');
+        }
+
+        if (formCount > minEntries) {
+            repeater.classList.remove('helium-repeater-min');
+        }
 
         window.dispatchEvent(new Event('helium-init-forms'));
     })
@@ -239,6 +253,19 @@ function animateDestroy(item)
     item.classList.add('removed');
     item.style.setProperty('--animStart', item.getBoundingClientRect().height + 'px');
     item.style.animation = 'shrink-out 0.3s';
+
+    const repeater = item.closest('.helium-repeater-field');
+    const formCount = repeater.querySelectorAll('.helium-repeater-form:not(.removed)').length;
+    const maxEntries = repeater.getAttribute('data-max-entries');
+    const minEntries = repeater.getAttribute('data-min-entries');
+    if (maxEntries > 0 && formCount < maxEntries) {
+        repeater.classList.remove('helium-repeater-full');
+    }
+
+    if (formCount <= minEntries) {
+        repeater.classList.add('helium-repeater-min');
+    }
+
     item.addEventListener(
         'animationend',
         () => {

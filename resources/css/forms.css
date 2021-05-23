@@ -18,6 +18,14 @@
             }
         }
     }
+
+    .helium-repeater-field.helium-repeater-full .helium-repeater-actions [data-action=add] {
+        display: none;
+    }
+
+    .helium-repeater-field.helium-repeater-min .helium-repeater-remove {
+        display: none;
+    }
 }
 
 @layer utilities {
