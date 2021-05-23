@@ -3,6 +3,9 @@ var draggedForm = null;
 
 const init = () => {
     const repeaters = document.querySelectorAll('.helium-repeater-field');
+    // A simple event listener setup on drag start that prevents the ghost
+    // image snapping back to the original position
+    const bodyDrag = e => e.preventDefault();
 
     if (repeaters.length) {
         repeaters.forEach((repeater) => {
@@ -25,11 +28,13 @@ const init = () => {
                         form.firstElementChild.setAttribute('draggable', true);
                     });
                     form.firstElementChild.addEventListener('dragstart', event => {
+                        document.body.addEventListener('dragover', bodyDrag);
                         draggedForm = form;
                         form.style.zIndex = 1;
                         form.firstElementChild.style.border = '1px dashed black';
                         form.firstElementChild.style.backgroundColor = '#EFF6FF';
                         form.firstElementChild.addEventListener('dragend', event => {
+                            document.body.removeEventListener('dragover', bodyDrag);
                             form.style.zIndex = null;
                             form.firstElementChild.style.border = null;
                             form.firstElementChild.style.backgroundColor = null;

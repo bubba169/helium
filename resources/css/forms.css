@@ -31,30 +31,30 @@
     }
     @keyframes shrink-out {
         from {
-            transform: scale(1);
             transform-origin: top center;
             max-height: var(--animStart);
             opacity: 1;
+            overflow: hidden;
         }
         to {
-            transform: Scale(0);
             transform-origin: top center;
             max-height: 0;
             opacity: 0;
+            overflow: hidden;
         }
     }
     @keyframes grow-in {
         from {
-            transform: scale(0);
             transform-origin: top center;
             max-height: 0;
             opacity: 0;
+            overflow: hidden;
         }
         to {
-            transform: Scale(1);
             transform-origin: top center;
             max-height: var(--animEnd);
-            opacity: 1
+            opacity: 1;
+            overflow: hidden;
         }
     }
 }
