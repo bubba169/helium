@@ -19,12 +19,35 @@
         }
     }
 
-    .helium-repeater-field.helium-repeater-full .helium-repeater-actions [data-action=add] {
-        display: none;
-    }
+    .helium-repeater-field {
+        /* hide the add button when the repeater is at capacity */
+        &.helium-repeater-full > .helium-repeater-actions [data-action=add] {
+            @apply hidden;
+        }
 
-    .helium-repeater-field.helium-repeater-min .helium-repeater-remove {
-        display: none;
+        /* hide the remove buttons when the repeater is at min capacity */
+        &.helium-repeater-min > div > .helium-repeater-form > div > div > .helium-form-actions .helium-repeater-remove {
+            @apply hidden;
+        }
+
+        &.helium-repeater-dragging > div > .helium-repeater-form {
+            /* Activate the drop zones when dragging */
+            &:not(.helium-form-dragging) {
+                & > div > .helium-repeater-form-drop-above,
+                & > div > .helium-repeater-form-drop-below {
+                    @apply pointer-events-auto;
+                }
+            }
+
+            /* Style the dragged form */
+            &.helium-form-dragging {
+                @apply z-10;
+
+                & > .helium-repeater-form-inner {
+                    @apply border border-black border-dashed bg-blue-50;
+                }
+            }
+        }
     }
 }
 

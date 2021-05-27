@@ -631,6 +631,19 @@ video {
 .helium-tab.error .error-icon {
 	display: inline-block;
 }
+.helium-repeater-field.helium-repeater-full .helium-repeater-actions [data-action=add] {
+            display: none;
+        }
+.helium-repeater-field.helium-repeater-min .helium-repeater-remove {
+            display: none;
+        }
+.helium-repeater-field {
+
+        .helium-repeater-form.helium-form-dragged {
+		--tw-bg-opacity: 1;
+		background-color: rgba(147, 197, 253, var(--tw-bg-opacity));
+	}
+    }
 .collapsed {
 	max-height: 0px;
 }
@@ -1187,58 +1200,58 @@ video {
     }
 @-webkit-keyframes shrink-out {
         from {
-            transform: scale(1);
             transform-origin: top center;
             max-height: var(--animStart);
             opacity: 1;
+            overflow: hidden;
         }
         to {
-            transform: Scale(0);
             transform-origin: top center;
             max-height: 0;
             opacity: 0;
+            overflow: hidden;
         }
     }
 @keyframes shrink-out {
         from {
-            transform: scale(1);
             transform-origin: top center;
             max-height: var(--animStart);
             opacity: 1;
+            overflow: hidden;
         }
         to {
-            transform: Scale(0);
             transform-origin: top center;
             max-height: 0;
             opacity: 0;
+            overflow: hidden;
         }
     }
 @-webkit-keyframes grow-in {
         from {
-            transform: scale(0);
             transform-origin: top center;
             max-height: 0;
             opacity: 0;
+            overflow: hidden;
         }
         to {
-            transform: Scale(1);
             transform-origin: top center;
             max-height: var(--animEnd);
-            opacity: 1
+            opacity: 1;
+            overflow: hidden;
         }
     }
 @keyframes grow-in {
         from {
-            transform: scale(0);
             transform-origin: top center;
             max-height: 0;
             opacity: 0;
+            overflow: hidden;
         }
         to {
-            transform: Scale(1);
             transform-origin: top center;
             max-height: var(--animEnd);
-            opacity: 1
+            opacity: 1;
+            overflow: hidden;
         }
     }
 .focus-within\:border-blue-700:focus-within {
