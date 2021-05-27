@@ -36,7 +36,8 @@ var init = function init() {
 
   if (repeaters.length) {
     repeaters.forEach(function (repeater) {
-      var addButton = repeater.querySelector('.helium-repeater-actions [data-action=add]'); // Hook up the add button
+      // Hook up the add button
+      var addButton = repeater.querySelector(':scope > .helium-repeater-actions [data-action=add]');
 
       if (!addButton.hasAttribute('data-helium-init')) {
         addButton.addEventListener('click', function (event) {
@@ -44,40 +45,32 @@ var init = function init() {
           addNewForm(addButton.closest('.helium-repeater-field'));
         });
         addButton.setAttribute('data-helium-init', true);
-      } // Hook up the drag button
-
-
-      repeater.querySelectorAll('.helium-repeater-form:not([data-helium-init])').forEach(function (form) {
-        var field = repeater;
-        var handle = form.querySelector('.helium-repeater-drag');
+      } 
+      
+      // Hook up the drag and drop functionality
+      repeater.querySelectorAll(':scope > div > .helium-repeater-form:not([data-helium-init])').forEach(function (form) {
+        //const field = repeater;
+        var draggable = form.firstElementChild;
+        var handle = form.querySelector(':scope > div > .helium-repeater-drag');
         handle.addEventListener('mousedown', function (event) {
-          form.firstElementChild.setAttribute('draggable', true);
+          draggable.setAttribute('draggable', true);
         });
-        form.firstElementChild.addEventListener('dragstart', function (event) {
-          document.body.addEventListener('dragover', bodyDrag);
+        draggable.addEventListener('dragstart', function (event) {
           draggedForm = form;
-          form.style.zIndex = 1;
-          form.firstElementChild.style.border = '1px dashed black';
-          form.firstElementChild.style.backgroundColor = '#EFF6FF';
-          form.firstElementChild.addEventListener('dragend', function (event) {
+          form.classList.add('helium-form-dragging');
+          repeater.classList.add('helium-repeater-dragging'); // Add a listener on the body to prevent the ghost snapping back
+
+          document.body.addEventListener('dragover', bodyDrag);
+          draggable.addEventListener('dragend', function (event) {
             document.body.removeEventListener('dragover', bodyDrag);
-            form.style.zIndex = null;
-            form.firstElementChild.style.border = null;
-            form.firstElementChild.style.backgroundColor = null;
-            form.firstElementChild.setAttribute('draggable', false);
-            field.querySelectorAll('.helium-repeater-form-drop-above, .helium-repeater-form-drop-below').forEach(function (el) {
-              // Disable all of the drop zones
-              el.style.pointerEvents = null;
-            });
+            form.classList.remove('helium-form-dragging');
+            repeater.classList.remove('helium-repeater-dragging');
+            draggable.setAttribute('draggable', false);
           }, {
             once: true
-          }); // Activate all of the drop zones
-
-          field.querySelectorAll('.helium-repeater-form-drop-above, .helium-repeater-form-drop-below').forEach(function (el) {
-            el.style.pointerEvents = 'auto';
           });
         });
-        var dropAbove = form.querySelector('.helium-repeater-form-drop-above');
+        var dropAbove = form.querySelector(':scope > div >.helium-repeater-form-drop-above');
         dropAbove.addEventListener('dragenter', function (event) {
           if (draggedForm != form && nextFormSibling(draggedForm) != form) {
             if (form.offsetTop > draggedForm.offsetTop) {
@@ -89,7 +82,7 @@ var init = function init() {
 
           ;
         });
-        var dropBelow = form.querySelector('.helium-repeater-form-drop-below');
+        var dropBelow = form.querySelector(':scope > div > .helium-repeater-form-drop-below');
         dropBelow.addEventListener('dragenter', function (event) {
           if (draggedForm != form && previousFormSibling(draggedForm) != form) {
             if (form.offsetTop > draggedForm.offsetTop) {
@@ -100,42 +93,35 @@ var init = function init() {
           }
 
           ;
-        });
-        form.setAttribute('data-helium-init', true);
-      }); // Hook up the remove buttons
+        }); // Hook up the remove buttons
 
-      repeater.querySelectorAll('.helium-repeater-remove:not([data-helium-init])').forEach(function (removeButton) {
+        var removeButton = form.querySelector(':scope > div > div > .helium-form-actions .helium-repeater-remove');
         removeButton.addEventListener('click', function (event) {
           event.preventDefault();
-          var form = removeButton.closest('.helium-repeater-form');
           animateDestroy(form);
           reindex(repeater);
-        });
-        removeButton.setAttribute('data-helium-init', true);
-      }); // Hook up the move up buttons
+        }); // Hook up the move up buttons
 
-      repeater.querySelectorAll('.helium-repeater-move-up:not([data-helium-init])').forEach(function (upButton) {
-        upButton.addEventListener('click', function () {
-          var form = upButton.closest('.helium-repeater-form');
+        var upButton = form.querySelector(':scope > div > div > .helium-form-actions .helium-repeater-move-up');
+        upButton.addEventListener('click', function (event) {
+          event.preventDefault();
           var previous = previousFormSibling(form);
 
           if (previous) {
             moveUpToAbove(form, previous);
           }
-        });
-        upButton.setAttribute('data-helium-init', true);
-      }); // Hook up the move down buttons
+        }); // Hook up the move down buttons
 
-      repeater.querySelectorAll('.helium-repeater-move-down:not([data-helium-init])').forEach(function (downButton) {
-        downButton.addEventListener('click', function () {
-          var form = downButton.closest('.helium-repeater-form');
+        var downButton = form.querySelector(':scope > div > div > .helium-form-actions .helium-repeater-move-down');
+        downButton.addEventListener('click', function (event) {
+          event.preventDefault();
           var next = nextFormSibling(form);
 
           if (next) {
             moveDownToBelow(form, next);
           }
         });
-        downButton.setAttribute('data-helium-init', true);
+        form.setAttribute('data-helium-init', true);
       });
       reindex(repeater);
     });
@@ -157,11 +143,12 @@ function addNewForm(repeater) {
     var div = document.createElement('div');
     div.insertAdjacentHTML('beforeend', data); // Extract the form
 
-    var form = div.querySelector('.helium-repeater-form');
-    repeater.querySelector('.helium-repeater-forms-container').insertAdjacentElement('beforeend', form);
+    var form = div.querySelector(':scope > .helium-repeater-form');
+    var container = repeater.querySelector(':scope > .helium-repeater-forms-container');
+    container.insertAdjacentElement('beforeend', form);
     animateAppear(form);
     reindex(repeater);
-    var formCount = repeater.querySelectorAll('.helium-repeater-form:not(.removed)').length;
+    var formCount = container.querySelectorAll(':scope > .helium-repeater-form:not(.removed)').length;
     var maxEntries = repeater.getAttribute('data-max-entries');
     var minEntries = repeater.getAttribute('data-min-entries');
 
@@ -181,13 +168,13 @@ function addNewForm(repeater) {
 
 function reindex(repeater) {
   var orderable = repeater.classList.contains('orderable');
-  repeater.querySelectorAll('.helium-repeater-form').forEach(function (form, index) {
+  repeater.querySelectorAll(':scope > div > .helium-repeater-form').forEach(function (form, index) {
     if (orderable) {
-      form.querySelector('.helium-sequence-field').value = index++;
+      form.querySelector(':scope > div > div > .helium-sequence-field').value = index++;
     }
 
-    form.querySelector('.helium-repeater-move-down').classList.toggle('hidden', !orderable || !nextFormSibling(form));
-    form.querySelector('.helium-repeater-move-up').classList.toggle('hidden', !orderable || !previousFormSibling(form));
+    form.querySelector(':scope > div > div > .helium-form-actions .helium-repeater-move-down').classList.toggle('hidden', !orderable || !nextFormSibling(form));
+    form.querySelector(':scope > div > div >.helium-form-actions .helium-repeater-move-up').classList.toggle('hidden', !orderable || !previousFormSibling(form));
   });
 }
 
@@ -260,7 +247,7 @@ function animateDestroy(item) {
   item.style.setProperty('--animStart', item.getBoundingClientRect().height + 'px');
   item.style.animation = 'shrink-out 0.3s';
   var repeater = item.closest('.helium-repeater-field');
-  var formCount = repeater.querySelectorAll('.helium-repeater-form:not(.removed)').length;
+  var formCount = repeater.querySelectorAll(':scope > div > .helium-repeater-form:not(.removed)').length;
   var maxEntries = repeater.getAttribute('data-max-entries');
   var minEntries = repeater.getAttribute('data-min-entries');
 

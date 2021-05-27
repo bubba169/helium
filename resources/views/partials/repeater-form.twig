@@ -1,23 +1,23 @@
 {% set idPath = formPath|slice(0, -1) %}
 {% set idIndex = formPath|last %}
 <div class="helium-repeater-form relative w-full {{ field.containerClasses }} flex flex-wrap" id="{{ idIndex|field_id(idPath) }}">
-    <div class="flex w-full px-5 py-4 mt-2 bg-white border border-gray-300 rounded-lg helium-repeater-form-inner">
-        <div class="mr-2 mt-0.5 -ml-2 cursor-move helium-repeater-drag">
-            <i class="relative z-10 fas fa-grip-vertical"></i>
-        </div>
-        <div class="relative flex-1">
-            <div class="absolute top-0 right-0 flex helium-form-actions">
+    <div class="flex flex-col w-full px-5 pb-4 mt-2 bg-white border border-gray-300 rounded-lg helium-repeater-form-inner">
+        <div class="relative flex items-center py-1 pl-5 mb-2 -mx-5 text-white bg-gray-700 border-b border-gray-400 rounded-t-lg cursor-move helium-repeater-drag">
+            <i class="relative z-10 mr-2 fas fa-grip-vertical"></i>
+            <div class="flex-1">{{ field.entryLabel }}</div>
+            <div class="flex helium-form-actions">
                 <div class="mr-2 helium-repeater-move-up">
-                    <i class="text-lg cursor-pointer fas fa-arrow-circle-up hover:text-blue-800"></i>
+                    <i class="text-lg cursor-pointer fas fa-arrow-circle-up hover:text-gray-300"></i>
                 </div>
                 <div class="mr-2 helium-repeater-move-down">
-                    <i class="text-lg cursor-pointer fas fa-arrow-circle-down hover:text-blue-800"></i>
+                    <i class="text-lg cursor-pointer fas fa-arrow-circle-down hover:text-gray-300"></i>
                 </div>
-                <div class="helium-repeater-remove">
-                    <i class="text-lg cursor-pointer fas fa-times-circle hover:text-red-800"></i>
+                <div class="mr-2 helium-repeater-remove">
+                    <i class="text-lg cursor-pointer fas fa-times-circle hover:text-red-200"></i>
                 </div>
             </div>
-
+        </div>
+        <div class="relative flex-1">
             {% for repeater_field in field.fields %}
                 <div class="mb-4">
                     {% include repeater_field.view with {

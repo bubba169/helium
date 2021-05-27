@@ -79,6 +79,8 @@ class RepeaterField extends Field
                 return 0;
             case 'maxEntries':
                 return 0;
+            case 'entryLabel':
+                return Str::title(Str::singular(str_humanise($this->slug)));
         }
 
         return parent::getDefault($key);
