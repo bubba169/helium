@@ -22,7 +22,6 @@ const init = () => {
             // Hook up the drag and drop functionality
             repeater.querySelectorAll(':scope > div > .helium-repeater-form:not([data-helium-init])')
                 .forEach(form => {
-                    //const field = repeater;
                     const draggable = form.firstElementChild;
                     const handle = form.querySelector(':scope > div > .helium-repeater-drag');
 
@@ -31,6 +30,11 @@ const init = () => {
                     });
 
                     draggable.addEventListener('dragstart', event => {
+                        if (event.target != draggable) {
+                            // Ignore child items being dragged
+                            return;
+                        }
+
                         draggedForm = form;
                         form.classList.add('helium-form-dragging');
                         repeater.classList.add('helium-repeater-dragging');
@@ -73,7 +77,6 @@ const init = () => {
                     removeButton.addEventListener('click', event => {
                         event.preventDefault();
                         animateDestroy(form);
-                        reindex(repeater);
                     });
 
                     // Hook up the move up buttons
@@ -153,9 +156,10 @@ function reindex(repeater)
         if (orderable) {
             form.querySelector(':scope > div > div > .helium-sequence-field').value = index++;
         }
+
         form.querySelector(':scope > div > div > .helium-form-actions .helium-repeater-move-down')
             .classList.toggle('hidden', !orderable || !nextFormSibling(form));
-        form.querySelector(':scope > div > div >.helium-form-actions .helium-repeater-move-up')
+        form.querySelector(':scope > div > div > .helium-form-actions .helium-repeater-move-up')
             .classList.toggle('hidden', !orderable || !previousFormSibling(form));
     });
 }
@@ -249,6 +253,7 @@ function animateDestroy(item)
         'animationend',
         () => {
             item.remove();
+            reindex(repeater);
         },
         {
             once: true

@@ -30,14 +30,15 @@ class RepeaterSaveHandler
                 $relatedKey => $data['helium_id']
             ]);
 
+            $deferred = [];
+
             // Loop through each of the fields in the config and save them using their save handler
             foreach ($field->fields as $relatedField) {
-                app()->call($relatedField->saveHandler, [
-                    'field' => $relatedField,
-                    'entry' => $related,
-                    'request' => $request,
-                    'path' => [...$path, $field->name, $i]
-                ]);
+                if (!empty($relatedField->saveHandler::$deferred)) {
+                    $deferred[] = $relatedField;
+                } else {
+                    $this->handleField($relatedField, $related, $request, [...$path, $field->name, $i]);
+                }
             }
 
             if ($field->sequenceColumn && $entry->{$field->relationship}() instanceof HasMany) {
@@ -45,6 +46,11 @@ class RepeaterSaveHandler
             }
 
             $related->save();
+
+            foreach ($deferred as $relatedField) {
+                $this->handleField($relatedField, $related, $request, [...$path, $field->name, $i]);
+            }
+
             $ids[] = $related->id;
 
             // For belongs to many we need to attach a pivot record
@@ -67,5 +73,15 @@ class RepeaterSaveHandler
 
         // Remove any related items no longer in the list
         $entry->{$field->relationship}()->whereNotIn($relatedKey, $ids)->delete();
+    }
+
+    protected function handleField(Field $field, Model $entry, Request $request, array $path) : void
+    {
+        app()->call($field->saveHandler, [
+            'field' => $field,
+            'entry' => $entry,
+            'request' => $request,
+            'path' => $path,
+        ]);
     }
 }
