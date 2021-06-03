@@ -1,0 +1,18 @@
+{% extends "helium::form-fields.input" %}
+
+{% block container %}
+    <div class="helium-field-container w-full border rounded-lg
+            focus-within:border-blue-700
+            {{ hasErrors ? 'border-red-700' : 'border-gray-400' }}
+            {{ field.containerClasses }}"
+        >
+        <textarea class="w-full helium-tinymce focus:outline-none {{ field.classes ? ' ' ~ field.classes }}"
+            name="{{ field_name }}"
+            id="{{ field_id }}"
+            data-config="{{ field.inputConfig|json_encode }}"
+            {% for attribute in field.attributes|default([]) %}
+                {{ attribute.name }}{{ (attribute.value is defined ? '="' ~ attribute.value|escape ~ '"')|raw }}
+            {% endfor %}
+        >{{ entry ? input_old(field_data_key, field.getExistingValue(entry)) }}</textarea>
+    </div>
+{% endblock %}
