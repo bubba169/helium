@@ -21,6 +21,14 @@ class TinyField extends Field
                 return 'standard';
             case 'saveHandler':
                 return HtmlSaveHandler::class;
+            case 'apikey':
+                return config('helium.tiny.apikey');
+            case 'scripts':
+                return [
+                    'https://cdn.tiny.cloud/1/' . $this->apikey . '/tinymce/5/tinymce.min.js' => [
+                        'referrerpolicy' => 'origin'
+                    ]
+                ];
         }
 
         return parent::getDefault($key);

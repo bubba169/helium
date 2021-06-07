@@ -37,6 +37,8 @@ class Field
         $this->validationPath = $this->name;
         $this->fieldPath = [$this->slug];
         $this->attributes = array_normalise_keys($this->attributes);
+        $this->scripts = array_normalise_keys($this->scripts, 'src');
+        $this->styles = array_normalise_keys($this->styles, 'href');
     }
 
     /**
@@ -71,6 +73,10 @@ class Field
                 return DefaultSaveHandler::class;
             case 'validationName':
                 return Str::lower($this->label);
+            case 'scripts':
+                return [];
+            case 'styles':
+                return [];
         }
 
         return null;
@@ -126,5 +132,21 @@ class Field
     public function getValidationAttributes(): array
     {
         return [$this->validationPath => $this->validationName];
+    }
+
+    /**
+     * Gets all scripts required by the field
+     */
+    public function getScripts() : array
+    {
+        return $this->scripts;
+    }
+
+    /**
+     * Gets all styles required by the field
+     */
+    public function getStyles() : array
+    {
+        return $this->styles;
     }
 }

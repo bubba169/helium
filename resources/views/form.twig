@@ -58,3 +58,20 @@
         </div>
     </form>
 {% endblock %}
+
+{% block templateMetaBlock %}
+    {% for script in form.scripts %}
+        <script
+            {% for attribute,value in script|default([]) %}
+                {{ attribute }}="{{ value }}"
+            {% endfor %}
+        ></script>
+    {% endfor %}
+    {% for style in form.styles %}
+        <link rel="stylesheet"
+            {% for attribute,value in style|default([]) %}
+                {{ attribute }}="{{ value }}"
+            {% endfor %}
+        ></script>
+    {% endfor %}
+{% endblock %}
