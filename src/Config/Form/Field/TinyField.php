@@ -3,8 +3,9 @@
 namespace Helium\Config\Form\Field;
 
 use Helium\Config\Form\Field\Field;
+use Helium\Handler\Save\HtmlSaveHandler;
 
-class TinyMCEField extends Field
+class TinyField extends Field
 {
     /**
      * {@inheritDoc}
@@ -18,13 +19,16 @@ class TinyMCEField extends Field
                 return 'helium::form-fields.tinymce';
             case 'profile':
                 return 'standard';
+            case 'saveHandler':
+                return HtmlSaveHandler::class;
         }
 
         return parent::getDefault($key);
     }
 
     /**
-     *
+     * If the current config is an array use that otherwise read the
+     * profile from config
      */
     public function getInputConfig() : array
     {
@@ -32,16 +36,9 @@ class TinyMCEField extends Field
             return $this->profile;
         }
 
-        switch ($this->profile) {
-            case 'standard':
-                return [
-                    'menubar' => false,
-                    'toolbar' => 'code',
-                    'branding' => false,
-                    'plugins' => 'code',
-                ];
-        }
-
-        return [];
+        return array_merge(
+            config('helium.tiny.profiles.common', []),
+            config('helium.tiny.profiles.' . $this->profile, [])
+        );
     }
 }
