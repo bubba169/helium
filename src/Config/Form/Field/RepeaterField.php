@@ -147,4 +147,30 @@ class RepeaterField extends Field
 
         return $attributes;
     }
+
+    /**
+     * Gets all scripts required by the field
+     */
+    public function getScripts() : array
+    {
+        return array_filter(
+            call_user_func_array(
+                'array_merge',
+                array_map(fn ($field) => $field->getScripts(), $this->fields)
+            )
+        );
+    }
+
+    /**
+     * Gets all styles required by the field
+     */
+    public function getStyles() : array
+    {
+        return array_filter(
+            call_user_func_array(
+                'array_merge',
+                array_map(fn ($field) => $field->getStyles(), $this->fields)
+            )
+        );
+    }
 }

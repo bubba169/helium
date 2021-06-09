@@ -4,6 +4,10 @@
         <link rel="stylesheet" href="{{ asset('vendor/helium/css/helium.css') }}">
         <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" data-mutate-approach="sync"></script>
         <script src="{{  asset('vendor/helium/js/helium.js') }}" defer></script>
+
+        <!-- Start Template Meta -->
+        {% block templateMetaBlock %}{% endblock %}
+        <!-- End Template Meta -->
     </head>
     <body>
         <div class="flex min-h-screen">

@@ -148,4 +148,30 @@ class Form
             )
         );
     }
+
+    /**
+     * Gets the scripts from all fields in the form
+     */
+    public function getScripts() : array
+    {
+        return array_filter(
+            call_user_func_array(
+                'array_merge',
+                array_map(fn ($field) => $field->getScripts(), $this->allFields())
+            )
+        );
+    }
+
+    /**
+     * Gets the styles for all fields in the form
+     */
+    public function getStyles() : array
+    {
+        return array_filter(
+            call_user_func_array(
+                'array_merge',
+                array_map(fn ($field) => $field->getStyles(), $this->allFields())
+            )
+        );
+    }
 }

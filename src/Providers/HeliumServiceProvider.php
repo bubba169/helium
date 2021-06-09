@@ -17,6 +17,14 @@ class HeliumServiceProvider extends ServiceProvider
             __DIR__.'/../../config/helium.php',
             'helium'
         );
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/helium/tiny.php',
+            'helium.tiny'
+        );
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/helium/purifier.php',
+            'helium.purifier'
+        );
     }
 
     /**
@@ -28,6 +36,8 @@ class HeliumServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../../config/helium.php' => config_path('helium.php'),
+            __DIR__.'/../../config/helium/tiny.php' => config_path('helium/tiny.php'),
+            __DIR__.'/../../config/helium/purifier.php' => config_path('helium/purifier.php'),
             __DIR__.'/../../resources/lang' => resource_path('lang/vendor/helium'),
         ], 'helium-config');
 
