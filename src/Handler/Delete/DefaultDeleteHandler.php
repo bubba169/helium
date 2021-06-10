@@ -19,7 +19,7 @@ class DefaultDeleteHandler
             // int key with relationship as string value
             $relationship = is_array($value) ? $key : $value;
             $cascade = is_array($value) ? $value : [];
-            $toDelete = $entry->{$relationship}->all();
+            $toDelete = $entry->{$relationship}()->get();
 
             // If there are nested relationships to remove deal with
             // those first
@@ -30,7 +30,7 @@ class DefaultDeleteHandler
             }
 
             // Remove all related records
-            $entry->{$relationship}->delete();
+            $entry->{$relationship}()->delete();
         }
     }
 }

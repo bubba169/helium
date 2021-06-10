@@ -72,7 +72,13 @@ class RepeaterSaveHandler
         }
 
         // Remove any related items no longer in the list
-        $entry->{$field->relationship}()->whereNotIn($relatedKey, $ids)->delete();
+        $toRemove = $entry->{$field->relationship}()->whereNotIn($relatedKey, $ids)->get();
+        foreach ($toRemove as $remove) {
+            app()->call(
+                $field->deleteHandler,
+                ['entry' => $remove, 'cascade' => $field->getDeleteCascade()]
+            );
+        }
     }
 
     protected function handleField(Field $field, Model $entry, Request $request, array $path) : void
