@@ -21,13 +21,11 @@ class TableAction extends Action
         switch ($key) {
             case 'view':
                 return 'helium::partials.link';
-            case 'route':
-                return 'helium.entity.form';
-            case 'routeParams':
-                return [
-                    'form' => $this->action,
+            case 'url':
+                return route('helium.entity.form', [
                     'type' => $this->entity->slug,
-                ];
+                    'form' => $this->action,
+                ]);
         }
 
         return parent::getDefault($key);

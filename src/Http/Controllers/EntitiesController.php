@@ -103,48 +103,6 @@ class EntitiesController extends HeliumController
     }
 
     /**
-     * Processes a form action using the assigned request type
-     */
-    /*public function formSubmit(string $type, string $form, ?int $id = null)
-    {
-        $config = new Entity($type);
-        $form = $config->forms[$form];
-
-        $actionName = request()->input('helium_action');
-        $requestType = $form->actions[$actionName]->request;
-
-        if ($requestType) {
-            $request = app($requestType, [
-                'entity' => $config,
-                'form' => $form,
-                'entryId' => $id
-            ]);
-            return $request->handle();
-        }
-    }*/
-
-    /**
-     * Processes an entity action using the assigned handler
-     */
-    /*public function listRowAction(string $type, string $action, ?int $id = null)
-    {
-        $config = new Entity($type);
-
-        $rowAction = $config->table->rowActions[$action];
-        $handler = $rowAction->handler;
-
-        if ($handler) {
-            return app()->call($handler, [
-                'entity' => $config,
-                'action' => $rowAction,
-                'entryId' => $id
-            ]);
-        }
-
-        return 404;
-    }*/
-
-    /**
      * Process an entity action
      */
     public function action(Request $request)

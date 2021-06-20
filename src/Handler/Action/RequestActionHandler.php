@@ -6,8 +6,12 @@ use Helium\Config\Entity;
 
 class RequestActionHandler
 {
-    public function __invoke(string $requestType, string $type, string $form, ?int $entryId = null)
-    {
+    public function __invoke(
+        string $requestType,
+        string $type,
+        string $form,
+        ?int $entryId = null
+    ) {
         $entity = new Entity($type);
         $form = $entity->forms[$form];
 

@@ -3,6 +3,7 @@
 namespace Helium\Handler\Action;
 
 use Helium\Config\Entity;
+use Symfony\Component\HttpFoundation\Response;
 
 class DeleteActionHandler
 {
@@ -10,9 +11,7 @@ class DeleteActionHandler
         string $type,
         string $deleteHandler,
         array $cascade,
-        int $entryId,
-        string $redirect,
-        array $redirectParams
+        int $entryId
     ) {
         $entity = new Entity($type);
 
@@ -24,7 +23,17 @@ class DeleteActionHandler
             ]
         );
 
-        return redirect(route($redirect, $redirectParams))->with('message', [
+        return $this->onSuccess($entity);
+    }
+
+    /**
+     * On successful delete
+     */
+    protected function onSuccess(Entity $entity): Response
+    {
+        return redirect(
+            route('helium.entity.list', ['type'. $entity->slug])
+        )->with('message', [
             'type' => 'success',
             'message' => $entity->name . ' deleted',
         ]);

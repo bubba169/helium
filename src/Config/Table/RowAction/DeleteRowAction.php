@@ -13,8 +13,8 @@ class DeleteRowAction extends RowAction
         switch ($key) {
             case 'method':
                 return 'post';
-            case 'route':
-                return 'helium.entity.action';
+            case 'url':
+                return route('helium.entity.action');
             case 'handlerParams':
                 return array_merge(
                     parent::getDefault('handlerParams'),
@@ -37,12 +37,6 @@ class DeleteRowAction extends RowAction
                 return 'helium::partials.button';
             case 'confirm':
                 return 'Are you sure you want to delete this entry?';
-            case 'redirect':
-                return 'helium.entity.list';
-            case 'redirectParams':
-                return [
-                    'type' => $this->entity->slug
-                ];
         }
 
         return parent::getDefault($key);

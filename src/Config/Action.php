@@ -3,7 +3,6 @@
 namespace Helium\Config;
 
 use Helium\Config\Entity;
-use Helium\Traits\HasUrl;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
 use Helium\Support\IconHelper;
@@ -12,7 +11,6 @@ use Illuminate\Support\Facades\Crypt;
 class Action
 {
     use HasConfig;
-    use HasUrl;
 
     public Entity $entity;
 
@@ -35,10 +33,8 @@ class Action
                 return IconHelper::iconFor($this->action);
             case 'confirm':
                 return false;
-            case 'route':
-                return 'helium.entity.action';
-            case 'routeParams':
-                return [];
+            case 'url':
+                return route('helium.entity.action');
             case 'handlerParams':
                 return [
                     'type' => $this->entity->slug,

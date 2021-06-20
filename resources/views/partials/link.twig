@@ -1,6 +1,6 @@
 {# Open button tag #}
 {% block tag %}
-    <a href="{{ action.getUrl({id: entry.id}) }}" data-action="{{ action.action }}"
+    <a href="{{ action.url|resolve(entry) }}" data-action="{{ action.action }}"
 {% endblock %}
 
     {# If this action needs user confirmation, show the message #}

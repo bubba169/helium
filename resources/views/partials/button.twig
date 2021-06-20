@@ -5,7 +5,7 @@
 {% block tag %}
     {% if withinForm %}
         {% block form %}
-            <form action="{{ action.getUrl({id: entry.id}) }}" method="{{ action.method }}">
+            <form action="{{ action.url|resolve(entry) }}" method="{{ action.method }}">
                 {{ csrf_field() }}
                 {% block formInputs %}{% endblock %}
         {% endblock %}
