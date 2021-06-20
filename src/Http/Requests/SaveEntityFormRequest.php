@@ -33,7 +33,7 @@ class SaveEntityFormRequest extends FormRequest
         ?Entity $entity = null,
         ?Form $form = null,
         ?string $entryId = null
-    ){
+    ) {
         $this->entity = $entity;
         $this->form = $form;
         $this->entryId = $entryId;

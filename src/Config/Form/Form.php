@@ -3,17 +3,18 @@
 namespace Helium\Config\Form;
 
 use Helium\Config\Entity;
+use Helium\Traits\HasUrl;
 use Helium\Config\Form\Tab;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
-use Helium\Config\Action;
-use Helium\Config\Button;
 use Helium\Config\Form\Field\Field;
+use Helium\Config\Form\Action\FormAction;
 
 class Form
 {
     use HasConfig;
+    use HasUrl;
 
     public $fields = [];
     public $tabs = [];
@@ -52,17 +53,16 @@ class Form
             $this->tabs[$tab['slug']] = new Tab($tab, $entity);
         }
 
-        $form['actions'] = array_normalise_keys(Arr::get($form, 'actions', []), 'slug', 'action');
+        $form['actions'] = array_normalise_keys(Arr::get($form, 'actions', []), 'slug', 'button');
         foreach ($form['actions'] as $action) {
-            $this->actions[$action['slug']] = new Action($action, $entity);
-        }
-
-        $form['buttons'] = array_normalise_keys(Arr::get($form, 'buttons', []), 'slug', 'url');
-        foreach ($form['buttons'] as $button) {
-            $this->buttons[$button['slug']] = new Button($button, $entity);
+            $class = Arr::get($action, 'button', FormAction::class);
+            $this->actions[$action['slug']] = new $class($action, $this, $entity);
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDefault(string $key)
     {
         switch ($key) {
@@ -71,6 +71,10 @@ class Form
             case 'view':
                 return 'helium::form';
             case 'messages':
+                return [];
+            case 'route':
+                return 'helium.entity.action';
+            case 'routeParams':
                 return [];
         }
     }

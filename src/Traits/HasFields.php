@@ -6,6 +6,8 @@ use Illuminate\Support\Arr;
 
 trait HasFields
 {
+    public array $fields = [];
+
     /**
      * Gets a field by its slug. Can be dot notation to find nested fields
      */

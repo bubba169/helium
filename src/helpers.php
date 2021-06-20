@@ -106,30 +106,46 @@ function str_humanise(string $str) : string
  * {entry.XXX} will be replaced with the path from $entry using dot notation
  * {request.XXX} will be replaced by the value from the request data
  *
+ * An alternative syntax using % as the deliminators is available for situations where the
+ * curly braces cannot be used (e.g. routes)
+ *
+ * E.g. %entry.id%
+ *
  * @return mixed If the string is entirely an entry reference then the object at the path will be returned else
- *               it will be the original string with the tags replaced
+ *               it will be the original string with the tags replaced by the string equivalent found on the
+ *               entry.
  */
 function str_resolve(string $str, $entry = null)
 {
-    $matches = [];
-    if (preg_match('/^\{entry.([^\}]*)\}$/', $str, $matches)) {
-        return Arr::get($entry, $matches[1]);
-    }
+    $deliminators = [
+        ['%', '%'],
+        ['{', '}']
+    ];
 
-    // Replace any entity references with values from the entity
-    $str = preg_replace_callback('/\{entry.([^\}]*)\}/', function ($match) use ($entry) {
-        return Arr::get($entry, $match[1], '');
-    }, $str);
+    foreach ($deliminators as $set) {
+        $start = preg_quote($set[0]);
+        $end = preg_quote($set[1]);
+        $matches = [];
 
-    // Replace any values from the query
-    $request = request();
-    $str = preg_replace_callback('/\{request.([^\}]*)\}/', function ($match) use ($request) {
-        $val = $request->input($match[1]);
-        if (is_array($val)) {
-            $val = json_encode($val);
+        if (preg_match("/^{$start}entry.([^{$end}]*)$end\$/", $str, $matches)) {
+            return Arr::get($entry, $matches[1]);
         }
-        return $val;
-    }, $str);
+
+        // Replace any entity references with values from the entity
+        $str = preg_replace_callback("/{$start}entry.([^{$end}]*){$end}/", function ($match) use ($entry) {
+            return Arr::get($entry, $match[1], '');
+        }, $str);
+
+        // Replace any values from the query
+        $request = request();
+        $str = preg_replace_callback("/{$start}request.([^{$end}]*){$end}/", function ($match) use ($request) {
+            $val = $request->input($match[1]);
+            if (is_array($val)) {
+                $val = json_encode($val);
+            }
+            return $val;
+        }, $str);
+    }
 
     return $str;
 }

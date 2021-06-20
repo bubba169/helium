@@ -1,0 +1,29 @@
+{# Open button tag #}
+{% block tag %}
+    <a href="{{ action.url|resolve(entry) }}" data-action="{{ action.action }}"
+{% endblock %}
+
+    {# If this action needs user confirmation, show the message #}
+    {% if action.confirm %}
+        onclick="return confirm('{{ action.confirm|e('js') }}');"
+    {% endif %}
+
+    {# Button classes #}
+    class="btn {{ action.type ? 'btn-' ~ action.type }} {{ action.classes }}"
+>
+
+{% if action.icon %}
+    {% block icon %}
+        <div class="w-5 mr-1">
+            <i class="{{ action.icon }}" aria-hidden="true"></i>
+        </div>
+    {% endblock %}
+{% endif %}
+
+{% block label %}
+    {{ action.label }}
+{% endblock %}
+
+{% block endTag %}
+    </a>
+{% endblock %}

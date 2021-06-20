@@ -6,6 +6,7 @@ use DateTime;
 use Helium\Config\Entity;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntitiesController extends HeliumController
@@ -102,23 +103,17 @@ class EntitiesController extends HeliumController
     }
 
     /**
-     * Processes a form action using the assigned request type
+     * Process an entity action
      */
-    public function store(string $type, string $form, ?int $id = null)
+    public function action(Request $request)
     {
-        $config = new Entity($type);
-        $form = $config->forms[$form];
+        $action = Crypt::decrypt($request->input('helium_action'));
+        $handler = $action['handler'];
 
-        $actionName = request()->input('helium_action');
-        $requestType = $form->actions[$actionName]->request;
-
-        if ($requestType) {
-            $request = app($requestType, [
-                'entity' => $config,
-                'form' => $form,
-                'entryId' => $id
-            ]);
-            return $request->handle();
+        if ($handler) {
+            return app()->call($handler, $action['handlerParams']);
         }
+
+        return 404;
     }
 }

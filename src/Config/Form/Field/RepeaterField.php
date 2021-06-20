@@ -8,6 +8,7 @@ use Helium\Config\Entity;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Helium\Config\Form\Field\Field;
+use Helium\Handler\Delete\DefaultDeleteHandler;
 use Helium\Handler\Prepare\RepeaterPrepareHandler;
 use Helium\Handler\Save\RepeaterSaveHandler;
 use Helium\Handler\Value\RelatedValueHandler;
@@ -16,8 +17,6 @@ use Helium\Traits\HasFields;
 class RepeaterField extends Field
 {
     use HasFields;
-
-    public array $fields = [];
 
     public Action $addButton;
 
@@ -69,6 +68,8 @@ class RepeaterField extends Field
                 return RepeaterPrepareHandler::class;
             case 'valueHandler':
                 return RelatedValueHandler::class;
+            case 'deleteHandler':
+                return DefaultDeleteHandler::class;
             case 'view':
                 return 'helium::form-fields.repeater';
             case 'nestedView':
@@ -81,6 +82,8 @@ class RepeaterField extends Field
                 return 0;
             case 'entryLabel':
                 return Str::title(Str::singular(str_humanise($this->slug)));
+            case 'cascades':
+                return true;
         }
 
         return parent::getDefault($key);
@@ -92,6 +95,7 @@ class RepeaterField extends Field
     public function addButtonDefaults(): array
     {
         return [
+            'view' => 'helium::partials.link',
             'slug' => 'add',
             'label' => 'Add ' . Str::title(Str::singular($this->name)),
         ];
@@ -172,5 +176,23 @@ class RepeaterField extends Field
                 array_map(fn ($field) => $field->getStyles(), $this->fields)
             )
         );
+    }
+
+    /**
+     * Gets all cascading children of this field
+     */
+    public function getDeleteCascade(): array
+    {
+        $result = [];
+        $fields = array_filter($this->fields, fn($field) => $field->relationship && $field->cascades);
+        foreach ($fields as $field) {
+            if (method_exists($field, 'getDeleteCascade')) {
+                // The field has children that may need cascading
+                $result[$field->relationship] = $field->getDeleteCascade();
+            } else {
+                $result[] = $field->relationship;
+            }
+        }
+        return $result;
     }
 }
