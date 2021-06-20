@@ -1,10 +1,21 @@
-<a href="{{ button.url|resolve(entry) }}"
-    class="inline-flex px-4 py-2 text-white bg-blue-900 rounded hover:bg-blue-800"
->
-    {% if button.icon %}
-        <div class="w-5 mr-1">
-            <i class="{{ button.icon }}" aria-hidden="true"></i>
-        </div>
+{% extends "helium::partials.link" %}
+
+{% set withinForm = action.method == 'post' and form is empty %}
+
+{% block tag %}
+    {% if withinForm %}
+        {% block form %}
+            <form action="{{ action.getUrl({id: entry.id}) }}" method="{{ action.method }}">
+                {{ csrf_field() }}
+                {% block formInputs %}{% endblock %}
+        {% endblock %}
     {% endif %}
-    {{ button.label }}
-</a>
+    <button type="submit" name="helium_action" value="{{ action.actionData({entryId: entry.id}) }}"
+{% endblock %}
+
+{% block endTag %}
+    </button>
+    {% if withinForm %}
+        </form>
+    {% endif %}
+{% endblock %}

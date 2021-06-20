@@ -3,16 +3,18 @@
 namespace Helium\Config;
 
 use Helium\Config\Entity;
-use Helium\Http\Requests\SaveEntityFormRequest;
-use Helium\Support\IconHelper;
+use Helium\Traits\HasUrl;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
+use Helium\Support\IconHelper;
+use Illuminate\Support\Facades\Crypt;
 
 class Action
 {
     use HasConfig;
+    use HasUrl;
 
-    protected Entity $entity;
+    public Entity $entity;
 
     public function __construct(array $action, Entity $entity)
     {
@@ -28,27 +30,36 @@ class Action
             case 'label':
                 return Str::title(str_humanise($this->slug));
             case 'view':
-                return 'helium::partials.action-button';
-            case 'url':
-                return str_replace(
-                    '%id%',
-                    '{entry.id}',
-                    route('helium.entity.form', [
-                        'form' => $this->action,
-                        'type' => $this->entity->slug,
-                        'id' => '%id%'
-                    ])
-                );
+                return 'helium::partials.button';
             case 'icon':
                 return IconHelper::iconFor($this->action);
-            case 'request':
-                switch ($this->action) {
-                    case 'save':
-                        return SaveEntityFormRequest::class;
-                }
-                break;
+            case 'confirm':
+                return false;
+            case 'route':
+                return 'helium.entity.action';
+            case 'routeParams':
+                return [];
+            case 'handlerParams':
+                return [
+                    'type' => $this->entity->slug,
+                    'action' => $this->action,
+                ];
         }
 
         return null;
+    }
+
+    /**
+     * Gets all of the action data
+     */
+    public function getActionData(array $extraParams = []): string
+    {
+        return Crypt::encrypt([
+            'handler' => $this->handler,
+            'handlerParams' => array_merge(
+                $this->handlerParams,
+                $extraParams
+            ),
+        ]);
     }
 }

@@ -95,6 +95,7 @@ class RepeaterField extends Field
     public function addButtonDefaults(): array
     {
         return [
+            'view' => 'helium::partials.link',
             'slug' => 'add',
             'label' => 'Add ' . Str::title(Str::singular($this->name)),
         ];

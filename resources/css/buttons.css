@@ -1,0 +1,9 @@
+@layer components {
+    .btn {
+        @apply px-4 py-2 text-white bg-blue-900 rounded hover:bg-blue-800;
+
+        &.btn-danger {
+            @apply bg-red-700 hover:bg-red-600 focus:bg-red-600;
+        }
+    }
+}

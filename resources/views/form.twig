@@ -1,7 +1,7 @@
 {% extends "helium::layouts/default" %}
 
 {% block content %}
-    <form id="helium-form" method="POST">
+    <form id="helium-form" method="POST" action="{{ form.getUrl({id: entity.id}) }}">
         {{ csrf_field() }}
 
         <h1 class="mb-4 h1">{{ form.title }}</h1>
@@ -45,12 +45,7 @@
                 <div class="flex justify-between">
                     <div>
                         {% for action in form.actions %}
-                            {% include action.view with {action: action, entry: entry} %}
-                        {% endfor %}
-                    </div>
-                    <div>
-                        {% for button in form.buttons %}
-                            {% include button.view with {button: button, entry: entry} %}
+                            {% include action.view with {action: action, entry: entry, form: form} %}
                         {% endfor %}
                     </div>
                 </div>

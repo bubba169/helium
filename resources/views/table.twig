@@ -4,12 +4,20 @@
     <div class="">
         <form method="GET">
             <h1 class="h1">{{ entity.table.title }}</h1>
+
+            {% if session_has('message') %}
+                <div class="mt-4">
+                    {% set message = session_get('message') %}
+                    {% include "helium::partials/alert" with message %}
+                </div>
+            {% endif %}
+            
             <div class="flex justify-between w-full mt-4">
                 <div class="flex items-center flex-1">
-                    {% if entity.table.buttons|length %}
-                        {% for button in entity.table.buttons %}
+                    {% if entity.table.actions|length %}
+                        {% for action in entity.table.actions %}
                             <div class="mr-2">
-                                {% include button.view with {button: button} %}
+                                {% include action.view with {action: action} %}
                             </div>
                         {% endfor %}
                     {% endif %}
@@ -72,8 +80,8 @@
                         {% for column in entity.table.columns %}
                             <td class="px-4 py-3">{% include column.view with {entry: entry, value: column.value} %}</td>
                         {% endfor %}
-                        <td class="px-4 py-3">
-                            {% for action in entity.table.actions %}
+                        <td class="flex px-4 py-3 space-x-2">
+                            {% for action in entity.table.rowActions %}
                                 {% include action.view with {action: action, entry: entry} %}
                             {% endfor %}
                         </td>
