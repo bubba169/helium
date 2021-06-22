@@ -17,23 +17,7 @@ class EntitiesController extends HeliumController
     public function list(Request $request, string $type) : View
     {
         $entity = new Entity($type);
-        $query = app()->call($entity->table->query, ['entity' => $entity]);
-
-        if ($search = $entity->table->search) {
-            $query = app()->call($search->filterHandler, [
-                'query' => $query,
-                'filter' => $search
-            ]);
-        }
-
-        foreach ($entity->table->filters as $filter) {
-            $query = app()->call($filter->filterHandler, [
-                'query' => $query,
-                'filter' => $filter
-            ]);
-        }
-
-        $entries = $query->paginate(50);
+        $entries = app()->call($entity->table->listingHandler, ['entity' => $entity]);
 
         return view($entity->table->view, [
             'entity' => $entity,

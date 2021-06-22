@@ -1,0 +1,5 @@
+site_name: Helium CMS Documentation
+site_url: https://example.com/
+theme: material
+docs_dir: src
+site_dir: html

@@ -1,2 +1,0 @@
-- [Introduction](README.md)
-- [Lists](lists.md)

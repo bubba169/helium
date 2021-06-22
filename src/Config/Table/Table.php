@@ -41,10 +41,15 @@ class Table
         $this->mergeConfig($table);
 
         if (!empty($table['search'])) {
-            $this->search = new SearchFilter($table['search'], $entity);
+            if (is_string($table['search'])) {
+                $this->search = new $table['search'](['slug' => 'search'], $entity);
+            } else {
+                $class = Arr::get($table['search'], 'field', SearchFilter::class);
+                $this->search = new $class($table['search'], $entity);
+            }
         }
 
-        $table['filters'] = array_normalise_keys(Arr::get($table, 'filters', []), 'slug', 'column');
+        $table['filters'] = array_normalise_keys(Arr::get($table, 'filters', []), 'slug', 'field');
         foreach ($table['filters'] as $filter) {
             $class = Arr::get($filter, 'field', Filter::class);
             $this->filters[$filter['slug']] = new $class($filter, $entity);
@@ -73,7 +78,7 @@ class Table
         switch ($key) {
             case 'title':
                 return Str::plural(str_humanise(Str::camel($this->entity->name)));
-            case 'query':
+            case 'listingHandler':
                 return DefaultListingHandler::class;
             case 'view':
                 return 'helium::table';
