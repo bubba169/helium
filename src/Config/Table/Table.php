@@ -44,31 +44,32 @@ class Table
             if (is_string($table['search'])) {
                 $this->search = new $table['search'](['slug' => 'search'], $entity);
             } else {
-                $class = Arr::get($table['search'], 'field', SearchFilter::class);
+                $class = Arr::get($table['search'], 'base', SearchFilter::class);
                 $this->search = new $class($table['search'], $entity);
             }
         }
 
-        $table['filters'] = array_normalise_keys(Arr::get($table, 'filters', []), 'slug', 'field');
+        $table['filters'] = array_normalise_keys(Arr::get($table, 'filters', []), 'slug', 'base');
         foreach ($table['filters'] as $filter) {
-            $class = Arr::get($filter, 'field', Filter::class);
+            $class = Arr::get($filter, 'base', Filter::class);
             $this->filters[$filter['slug']] = new $class($filter, $entity);
         }
 
-        $table['columns'] = array_normalise_keys(Arr::get($table, 'columns', []), 'slug', 'value');
+        $table['columns'] = array_normalise_keys(Arr::get($table, 'columns', []), 'slug', 'base');
         foreach ($table['columns'] as $column) {
-            $this->columns[$column['slug']] = new Column($column, $entity);
+            $class = Arr::get($column, 'base', Column::class);
+            $this->columns[$column['slug']] = new $class($column, $entity);
         }
 
-        $table['rowActions'] = array_normalise_keys(Arr::get($table, 'rowActions', []), 'slug', 'button');
+        $table['rowActions'] = array_normalise_keys(Arr::get($table, 'rowActions', []), 'slug', 'base');
         foreach ($table['rowActions'] as $action) {
-            $class = Arr::get($action, 'button', RowAction::class);
+            $class = Arr::get($action, 'base', RowAction::class);
             $this->rowActions[$action['slug']] = new $class($action, $this, $entity);
         }
 
-        $table['actions'] = array_normalise_keys(Arr::get($table, 'actions', []), 'slug', 'button');
+        $table['actions'] = array_normalise_keys(Arr::get($table, 'actions', []), 'slug', 'base');
         foreach ($table['actions'] as $action) {
-            $class = Arr::get($action, 'button', TableAction::class);
+            $class = Arr::get($action, 'base', TableAction::class);
             $this->actions[$action['slug']] = new $class($action, $this, $entity);
         }
     }

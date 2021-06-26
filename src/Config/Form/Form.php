@@ -40,10 +40,10 @@ class Form
         $this->mergeConfig($form);
 
         foreach (Arr::get($form, 'fields', []) as $tab => $fields) {
-            $fields = array_normalise_keys($fields, 'slug', 'field');
+            $fields = array_normalise_keys($fields, 'slug', 'base');
             foreach ($fields as $field) {
                 $field = array_merge($entity->fields[$field['slug']], $field);
-                $class = Arr::get($field, 'field', Field::class);
+                $class = Arr::get($field, 'base', Field::class);
                 $this->fields[$tab][$field['slug']] = new $class($field, $entity);
             }
         }
@@ -53,9 +53,9 @@ class Form
             $this->tabs[$tab['slug']] = new Tab($tab, $entity);
         }
 
-        $form['actions'] = array_normalise_keys(Arr::get($form, 'actions', []), 'slug', 'button');
+        $form['actions'] = array_normalise_keys(Arr::get($form, 'actions', []), 'slug', 'base');
         foreach ($form['actions'] as $action) {
-            $class = Arr::get($action, 'button', FormAction::class);
+            $class = Arr::get($action, 'base', FormAction::class);
             $this->actions[$action['slug']] = new $class($action, $this, $entity);
         }
     }

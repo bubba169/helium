@@ -41,20 +41,21 @@ class Entity
         $this->table = new Table($config['table'], $this);
 
         // Fields are not expanded - they are cached here to use as a base for
-        $this->fields = array_normalise_keys(Arr::get($config, 'fields', []), 'slug', 'field');
+        $this->fields = array_normalise_keys(Arr::get($config, 'fields', []), 'slug', 'base');
         $this->defaultForm = Arr::get($config, 'forms.*', []);
 
         // Merge the default delete config
-        $this->delete = array_merge($this->getDefaultDeleteConfig(), $this->delete);
+        //$this->delete = array_merge($this->getDefaultDeleteConfig(), $this->delete);
 
         $config['forms'] = array_normalise_keys(
             Arr::except(Arr::get($config, 'forms', []), ['*']),
             'slug',
-            null
+            'base'
         );
         foreach ($config['forms'] as $form) {
             $form = array_merge($this->defaultForm, $form);
-            $this->forms[$form['slug']] = new Form($form, $this);
+            $class = Arr::get($form, 'base', Form::class);
+            $this->forms[$form['slug']] = new $class($form, $this);
         }
     }
 
@@ -68,8 +69,8 @@ class Entity
         switch ($key) {
             case 'name':
                 return class_basename($this->model);
-            case 'delete':
-                return [];
+            /*case 'delete':
+                return [];*/
         }
 
         return null;
@@ -78,11 +79,11 @@ class Entity
     /**
      * Default config for delete to be merged with the given config
      */
-    protected function getDefaultDeleteConfig(): array
+    /*protected function getDefaultDeleteConfig(): array
     {
         return [
             'handler' => DefaultDeleteHandler::class,
             'cascade' => [],
         ];
-    }
+    }*/
 }
