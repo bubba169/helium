@@ -10,7 +10,7 @@ Using fields as an example, providing just the string "title" with no key will g
 ],
 ```
 
-Any of the configuration options can be set manually by providing an array of settings with the slug as the key. To override the label we can set it in the configuration array. All other configuration options will continue to be deduced as before and if a value is overridden that is used to deduce another, your overridden value will be used instead. For example, the name of the field in any validation messages is deduced from the field label; overriding the label will update both.
+Any of the configuration options can be set manually by providing an array as a value with the slug as the key. To override the label we can set it in the configuration array. All other configuration options will continue to be deduced as before and if a value is overridden that is used to deduce another, your overridden value will be used in that deduction. For example, the any validation messages use the field label to build a message; overriding the label will update both.
 
 ```php
 'fields' => [
@@ -22,13 +22,51 @@ Any of the configuration options can be set manually by providing an array of se
 
 ## Configurable Objects
 
-Instead of repeating configurations for common patterns, we can instead pass the class of a configurable object. All configurable elements have a base configurable object that can be overridden using the config arrays. To make use of these we can either set the value to just the configurable object class path or we can pass the object as the `config` field and supply any other options alongside.
+Instead of repeating common configurations, we can instead extend a configurable object. All configurable elements have a base class that takes a configuration array and provides sensible defaults. To make use of these we can either set the value to just the configurable object class name or we can pass the object as the `base` option and supply any other options alongside.
 
-All configuration is done through laravel's config system.
+```php
+'fields' => [
+    'published' => DateTimeField::class,
+    'type' => [
+        'base' => SelectField::class,
+        'options' => [
+            'a' => 'Model A',
+            'b' => 'Model B',
+        ],
+        'label' => 'Select a type',
+    ]
+],
+```
 
-# Handlers
+## Handlers
 
-Handlers usually take the form of invokable classes with a single purpose, although that purpose can sometimes involve calling other handlers. They are called through Laravel's service container allowing access to injected parameters. Often they will have access to special parameters and each of these will be detailed in the relavent section of the documentation.
+Handlers are passed to configs as a callable string. Any string that can be called through Laravels `app()->call()` can be given as a value. All of the handlers within Helium are invokable classes.
 
-An example of a handler is the 
+As an example, to provide options for a select field, instead of an array we can pass a handler. The handler is called through the service container so can use dependency injection and in this case must return an array of options. Whenever a handler is accepted, there will also be a handler parameters option to match. These can provide some arguments that are passed through the service container for dependency injection.
 
+The example below is a simplified use case that could be expanded to fetch from a model based on a condition.
+
+```php
+'fields' => [
+    'author_id' => [
+        'base' => SelectField::class,
+        'options' => ModelOptionsHandler::class,
+        'optionsHandlerParams' => [
+            'model' => User::class,
+            'displayField' => 'name',
+        ],
+    ]
+],
+```
+
+```php
+class ModelOptionsHandler
+{
+    public function invoke(string $model, string $displayField): array
+    {
+        return $model::pluck($displayField, 'id');
+    }
+}
+```
+
+Handlers are used throughout Helium to keep the core functionality as modular and replacable as possible. In most cases where a handler is expected, Helium will provide default handlers that can be extended.
