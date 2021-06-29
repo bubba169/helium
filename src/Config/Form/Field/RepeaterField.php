@@ -44,9 +44,9 @@ class RepeaterField extends Field
         );
 
         // Build the fields
-        $field['fields'] = array_normalise_keys($field['fields'], 'slug', 'field');
+        $field['fields'] = array_normalise_keys($field['fields'], 'slug', 'base');
         foreach ($field['fields'] as $fieldConfig) {
-            $fieldClass = Arr::get($fieldConfig, 'field', Field::class);
+            $fieldClass = Arr::get($fieldConfig, 'base', Field::class);
             $repeaterField = new $fieldClass($fieldConfig, $entity);
             $repeaterField->validationPath = $this->validationPath . '.*.' . $repeaterField->validationPath;
             $repeaterField->fieldPath = [...$this->fieldPath, ...$repeaterField->fieldPath];

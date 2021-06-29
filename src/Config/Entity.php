@@ -7,7 +7,6 @@ use Illuminate\Support\Arr;
 use Helium\Traits\HasConfig;
 use Helium\Config\Form\Form;
 use Helium\Config\Table\Table;
-use Helium\Handler\Delete\DefaultDeleteHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Entity
@@ -38,14 +37,17 @@ class Entity
 
         $this->slug = $type;
         $this->model = $config['model'];
-        $this->table = new Table($config['table'], $this);
+
+        if (is_string($config['table'])) {
+            $this->table = new $config['table']([], $this);
+        } else {
+            $tableClass = Arr::get($config['table'], 'base', Table::class);
+            $this->table = new $tableClass($config['table'], $this);
+        }
 
         // Fields are not expanded - they are cached here to use as a base for
         $this->fields = array_normalise_keys(Arr::get($config, 'fields', []), 'slug', 'base');
         $this->defaultForm = Arr::get($config, 'forms.*', []);
-
-        // Merge the default delete config
-        //$this->delete = array_merge($this->getDefaultDeleteConfig(), $this->delete);
 
         $config['forms'] = array_normalise_keys(
             Arr::except(Arr::get($config, 'forms', []), ['*']),
@@ -69,21 +71,8 @@ class Entity
         switch ($key) {
             case 'name':
                 return class_basename($this->model);
-            /*case 'delete':
-                return [];*/
         }
 
         return null;
     }
-
-    /**
-     * Default config for delete to be merged with the given config
-     */
-    /*protected function getDefaultDeleteConfig(): array
-    {
-        return [
-            'handler' => DefaultDeleteHandler::class,
-            'cascade' => [],
-        ];
-    }*/
 }
