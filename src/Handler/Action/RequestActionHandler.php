@@ -13,7 +13,7 @@ class RequestActionHandler
         ?int $entryId = null
     ) {
         $entity = new Entity($type);
-        $form = $entity->forms[$form];
+        $form = $entity->views[$form];
 
         $request = app($requestType, compact('entity', 'form', 'entryId'));
         return $request->handle();

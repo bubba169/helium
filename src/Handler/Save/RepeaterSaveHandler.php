@@ -5,7 +5,7 @@ namespace Helium\Handler\Save;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Helium\Config\Form\Field\Field;
+use Helium\Config\View\Form\Field\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

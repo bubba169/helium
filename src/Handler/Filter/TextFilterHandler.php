@@ -2,7 +2,7 @@
 
 namespace Helium\Handler\Filter;
 
-use Helium\Config\Table\Filter\Filter;
+use Helium\Config\View\Table\Filter\Filter;
 use Illuminate\Http\Request;
 
 class TextFilterHandler

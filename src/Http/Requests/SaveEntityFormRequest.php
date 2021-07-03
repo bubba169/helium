@@ -3,9 +3,9 @@
 namespace Helium\Http\Requests;
 
 use Helium\Config\Entity;
-use Helium\Config\Form\Form;
+use Helium\Config\View\Form\FormView;
 use Illuminate\Support\Facades\DB;
-use Helium\Config\Form\Field\Field;
+use Helium\Config\View\Form\Field\Field;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,7 +15,7 @@ class SaveEntityFormRequest extends FormRequest
 {
     protected Entity $entity;
 
-    protected Form $form;
+    protected FormView $form;
 
     protected ?string $entryId;
 
@@ -31,7 +31,7 @@ class SaveEntityFormRequest extends FormRequest
         array $server = [],
         $content = null,
         ?Entity $entity = null,
-        ?Form $form = null,
+        ?FormView $form = null,
         ?string $entryId = null
     ) {
         $this->entity = $entity;
@@ -128,7 +128,7 @@ class SaveEntityFormRequest extends FormRequest
 
         // Redirect back to the current url to avoid post on refresh
         return new RedirectResponse(
-            route('helium.entity.form', [$this->entity->slug, $this->form->slug, $entry])
+            route('helium.entity.view', [$this->entity->slug, $this->form->slug, $entry])
         );
     }
 

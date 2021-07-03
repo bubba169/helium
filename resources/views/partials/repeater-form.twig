@@ -20,7 +20,7 @@
         <div class="relative flex-1">
             {% for repeater_field in field.fields %}
                 <div class="mb-4">
-                    {% include repeater_field.view with {
+                    {% include repeater_field.template with {
                         field: repeater_field,
                         entry: entry,
                         formPath: formPath

@@ -6,7 +6,6 @@ Route::prefix('/admin')
     ->group(function () {
         Route::view('/', 'helium::dashboard')->name('helium.home');
         Route::post('/entities/form-section', 'EntitiesController@section')->name('helium.entity.form-section');
-        Route::get('/entities/{type}', 'EntitiesController@list')->name('helium.entity.list');
-        Route::get('/entities/{type}/form/{form}/{id?}', 'EntitiesController@form')->name('helium.entity.form');
+        Route::get('/entities/{type}/{view?}/{id?}', 'EntitiesController@view')->name('helium.entity.view');
         Route::post('/entities/action/{id?}', 'EntitiesController@action')->name('helium.entity.action');
     });

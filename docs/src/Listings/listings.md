@@ -46,7 +46,6 @@ The following example defines a Posts listing that uses the default view and lis
             'field' => BelongsToFilter::class,
             // List authors by name as options.
             'relatedName' => '{entry.name}',
-            'relatedModel' => User::class,
         ]
     ],
     // Allow searching by title or author name

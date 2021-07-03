@@ -12,49 +12,27 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class EntitiesController extends HeliumController
 {
     /**
-     * Renders the list
-     */
-    public function list(Request $request, string $type) : View
-    {
-        $entity = new Entity($type);
-        $entries = app()->call($entity->table->listingHandler, ['entity' => $entity]);
-
-        return view($entity->table->view, [
-            'entity' => $entity,
-            'entries' => $entries,
-            'filtersOpen' => count(array_filter($request->except(['search', 'sort', 'page']))),
-        ]);
-    }
-
-    /**
      * Renders a form using the config
      */
-    public function form(string $type, string $form, ?int $id = null) : View
+    public function view(string $type, string $view = '*', ?int $id = null) : View
     {
-        $config = new Entity($type);
-        $form = $config->forms[$form];
-        $entry = null;
+        $entity = new Entity($type);
+        $view = $entity->views[$view] ?? null;
 
         // If the form config is not found then 404
-        if (!$form) {
+        if (!$view || !$view->viewHandler) {
             throw new NotFoundHttpException();
         }
 
-        // If an id is given load the entry
-        if ($id) {
-            $entry = $config->model::find($id);
-
-            // If the entry can't be found then 404
-            if (!$entry) {
-                throw new NotFoundHttpException();
-            }
-        }
-
-        return view($form->view, [
-            'config' => $config,
-            'form' => $form,
-            'entry' => $entry,
-        ]);
+        // Pass over to the view handler
+        return app()->call($view->viewHandler, array_merge(
+            [
+                'id' => $id,
+                'entity' => $entity,
+                'view' => $view,
+            ],
+            $view->viewHandlerParams
+        ));
     }
 
     /**
@@ -62,8 +40,8 @@ class EntitiesController extends HeliumController
      */
     public function section(Request $request) : View
     {
-        $config = new Entity($request->input('entity'));
-        $form = $config->forms[$request->input('form')];
+        $entity = new Entity($request->input('entity'));
+        $form = $entity->views[$request->input('form')];
 
         // If the form config is not found then 404
         if (!$form) {
@@ -77,11 +55,11 @@ class EntitiesController extends HeliumController
             throw new NotFoundHttpException();
         }
 
-        return view($field->nestedView, [
-            'config' => $config,
-            'form' => $form,
+        return view($field->entryTemplate, [
+            'entity' => $entity,
+            'view' => $form,
             'field' => $field,
-            'entry' => null,
+            'entry' => new $entity->model(),
             'formPath' => [...$request->input('path'), (new DateTime())->format('U-u')],
         ]);
     }
@@ -92,12 +70,12 @@ class EntitiesController extends HeliumController
     public function action(Request $request)
     {
         $action = Crypt::decrypt($request->input('helium_action'));
-        $handler = $action['handler'];
+        $handler = $action['handler'] ?? null;
 
-        if ($handler) {
-            return app()->call($handler, $action['handlerParams']);
+        if (!$handler) {
+            throw new NotFoundHttpException();
         }
 
-        return 404;
+        return app()->call($handler, $action['handlerParams']);
     }
 }

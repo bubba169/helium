@@ -3,7 +3,7 @@
 namespace Helium\Handler\Value;
 
 use Illuminate\Http\Request;
-use Helium\Config\Form\Field\Field;
+use Helium\Config\View\Form\Field\Field;
 
 class RequestValueHandler
 {

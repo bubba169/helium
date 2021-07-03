@@ -10,10 +10,10 @@
         {{ count <= field.minEntries ? 'helium-repeater-min' }}
         {{ field.maxEntries and (count >= field.maxEntries) ? 'helium-repeater-full' }}"
         data-add-request="{{ {
-            form: form ? form.slug,
+            form: view ? view.slug,
             path: formPath|merge([field.name]),
             field: field.fieldPath,
-            entity: config.slug,
+            entity: entity.slug,
             _token: csrf_token()
         }|json_encode|escape }}"
         data-min-entries="{{ field.minEntries }}"
@@ -23,7 +23,7 @@
             {% if count > 0 %}
                 {% for i in range(0, count - 1) %}
                     {% set path = formPath|merge([field.name, old_keys[loop.index0] ?? now|date('U-u')]) %}
-                    {% include field.nestedView with {
+                    {% include field.entryTemplate with {
                         entry: existing[i] ?? null,
                         formPath: path,
                         field: field,
@@ -34,7 +34,7 @@
         </div>
 
         <div class="inline-block mt-4 mb-4 helium-repeater-actions">
-            {% include field.addButton.view with {action: field.addButton} %}
+            {% include field.addButton.template with {action: field.addButton} %}
         </div>
     </div>
 {% endblock %}

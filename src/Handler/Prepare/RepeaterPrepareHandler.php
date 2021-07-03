@@ -3,7 +3,7 @@
 namespace Helium\Handler\Prepare;
 
 use Illuminate\Http\Request;
-use Helium\Config\Form\Field\Field;
+use Helium\Config\View\Form\Field\Field;
 
 class RepeaterPrepareHandler
 {

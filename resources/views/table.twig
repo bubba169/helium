@@ -3,95 +3,123 @@
 {% block content %}
     <div class="">
         <form method="GET">
-            <h1 class="h1">{{ entity.table.title }}</h1>
+            {% block title %}
+                <h1 class="h1">{{ view.title }}</h1>
+            {% endblock %}
 
-            {% if session_has('message') %}
-                <div class="mt-4">
-                    {% set message = session_get('message') %}
-                    {% include "helium::partials/alert" with message %}
-                </div>
-            {% endif %}
-            
+            {% block alert %}
+                {% if session_has('message') %}
+                    <div class="mt-4">
+                        {% set message = session_get('message') %}
+                        {% include "helium::partials/alert" with message %}
+                    </div>
+                {% endif %}
+            {% endblock %}
+
             <div class="flex justify-between w-full mt-4">
-                <div class="flex items-center flex-1">
-                    {% if entity.table.actions|length %}
-                        {% for action in entity.table.actions %}
-                            <div class="mr-2">
-                                {% include action.view with {action: action} %}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    {% if entity.table.search %}
-                        <div class="w-1/2 mr-2">
-                            {% include entity.table.search.view with {field: entity.table.search} %}
-                        </div>
-                    {% endif %}
-                    {% if entity.table.filters|length %}
-                        <a class="px-3 py-1.5 text-white bg-blue-900 rounded cursor-pointer helium-toggle" data-target="#filter-container">
-                            <i class="fas fa-filter" aria-hidden="true" title="Show Filters"></i>
-                            <span class="sr-only">Show Filters</span>
-                        </a>
-                    {% endif %}
-                </div>
-                <div>
-                    {% if entity.table.sort|length %}
-                        <label for="sort">Sort By: </label>
-                        <select id="sort" name="sort" onchange="form.submit()"
-                            class="box-border inline-block px-2 py-2.5 bg-white border rounded-lg focus:outline-none focus:border-blue-700 border-gray-400"
-                        >
-                            {% for value,label in entity.table.sort %}
-                                <option value="{{ value }}" {{ app.request.input('sort') == value ? 'selected' }}>{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                    {% endif %}
-                </div>
+                {% block actionBar %}
+                    <div class="flex items-center flex-1">
+                        {% block actions %}
+                            {% if view.actions|length %}
+                                {% for action in view.actions %}
+                                    <div class="mr-2">
+                                        {% include action.template with {action: action} %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endblock %}
+                        {% block search %}
+                            {% if view.search %}
+                                <div class="w-1/2 mr-2">
+                                    {% include view.search.template with {field: view.search} %}
+                                </div>
+                            {% endif %}
+                        {% endblock %}
+                        {% block filterButton %}
+                            {% if view.filters|length %}
+                                <a class="px-3 py-1.5 text-white bg-blue-900 rounded cursor-pointer helium-toggle" data-target="#filter-container">
+                                    <i class="fas fa-filter" aria-hidden="true" aria-label="Show Filters"></i>
+                                </a>
+                            {% endif %}
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+                {% block sort %}
+                    <div>
+                        {% if view.sort|length %}
+                            <label for="sort">Sort By: </label>
+                            <select id="sort" name="sort" onchange="form.submit()"
+                                class="box-border inline-block px-2 py-2.5 bg-white border rounded-lg focus:outline-none focus:border-blue-700 border-gray-400"
+                            >
+                                {% for value,label in view.sort %}
+                                    <option value="{{ value }}" {{ app.request.input('sort') == value ? 'selected' }}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                    </div>
+                {% endblock %}
             </div>
 
-            {% if entity.table.filters|length %}
-                <div class="overflow-hidden transition-all duration-300 transition-max-h {{ not filtersOpen ? 'collapsed' }}" id="filter-container">
-                    <div class="flex flex-wrap items-center items-end justify-start p-4 mt-4 bg-gray-100 border-gray-400 rounded-xl">
-                        {% for filter_input in entity.table.filters %}
-                            <div class="flex-1 min-w-[25%] w-full px-1 mb-2">
-                                {% include filter_input.view with {field: filter_input} %}
+            {% block filters %}
+                {% if view.filters|length %}
+                    <div class="overflow-hidden transition-all duration-300 transition-max-h {{ not filtersOpen ? 'collapsed' }}" id="filter-container">
+                        <div class="flex flex-wrap items-center items-end justify-start p-4 mt-4 bg-gray-100 border-gray-400 rounded-xl">
+                            {% for filter_input in view.filters %}
+                                <div class="flex-1 min-w-[25%] w-full px-1 mb-2">
+                                    {% include filter_input.template with {field: filter_input} %}
+                                </div>
+                            {% endfor %}
+                            <div class="flex flex-1 px-1 mb-2 justify-end self-end {{ view.filters is empty ? 'hidden' }}">
+                                <button type="submit" class="block px-4 py-2 text-white bg-blue-900 rounded">Filter</button>
+                                <a href="{{ url().current }}" type="reset" class="block px-4 py-2 ml-2 text-white bg-gray-800 rounded">Reset</a>
                             </div>
-                        {% endfor %}
-                        <div class="flex flex-1 px-1 mb-2 justify-end self-end {{ entity.table.filters is empty ? 'hidden' }}">
-                            <button type="submit" class="block px-4 py-2 text-white bg-blue-900 rounded">Filter</button>
-                            <a href="{{ url().current }}" type="reset" class="block px-4 py-2 ml-2 text-white bg-gray-800 rounded">Reset</a>
                         </div>
                     </div>
-                </div>
-            {% endif %}
-
+                {% endif %}
+            {% endblock %}
         </form>
     </div>
 
-    <div class="w-full px-4 pb-4 mt-4 rounded-t-lg bg-gray-50">
-        <table class="w-full">
-            <thead class="text-left border-b border-gray-300">
-                {% for column in entity.table.columns %}
-                    <th class="px-4 py-3">{{ column.label }}</th>
-                {% endfor %}
-                <th class="px-4 py-3">Actions</th>
-            </thead>
-            <tbody>
-                {% for entry in entries %}
-                    <tr class="text-left border-b border-gray-300">
-                        {% for column in entity.table.columns %}
-                            <td class="px-4 py-3">{% include column.view with {entry: entry, value: column.value} %}</td>
+    {% block listing %}
+        <div class="w-full px-4 pb-4 mt-4 rounded-t-lg bg-gray-50">
+            <table class="w-full">
+                {% block headings %}
+                    <thead class="text-left border-b border-gray-300">
+                        {% for column in view.columns %}
+                            <th class="px-4 py-3">{{ column.label }}</th>
                         {% endfor %}
-                        <td class="flex px-4 py-3 space-x-2">
-                            {% for action in entity.table.rowActions %}
-                                {% include action.view with {action: action, entry: entry} %}
-                            {% endfor %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        <th class="px-4 py-3">Actions</th>
+                    </thead>
+                {% endblock %}
+                <tbody>
+                    {% block entries %}
+                        {% for entry in entries %}
+                            {% block entry %}
+                                <tr class="text-left border-b border-gray-300">
+                                    {% block entryColumns %}
+                                        {% for column in view.columns %}
+                                            <td class="px-4 py-3">{% include column.template with {entry: entry, value: column.value} %}</td>
+                                        {% endfor %}
+                                    {% endblock %}
+                                    {% block rowActions %}
+                                        <td class="flex px-4 py-3 space-x-2">
+                                            {% for action in view.rowActions %}
+                                                {% include action.template with {action: action, entry: entry} %}
+                                            {% endfor %}
+                                        </td>
+                                    {% endblock %}
+                                </tr>
+                            {% endblock %}
+                        {% endfor %}
+                    {% endblock %}
+                </tbody>
+            </table>
+        </div>
+    {% endblock %}
 
-    <div class="mt-4">
-        {{ entries.withQueryString.links('pagination::tailwind')|raw }}
-    </div>
+    {% block pagination %}
+        <div class="mt-4">
+            {{ entries.withQueryString.links('pagination::tailwind')|raw }}
+        </div>
+    {% endblock %}
 {% endblock %}

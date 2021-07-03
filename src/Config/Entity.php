@@ -5,20 +5,15 @@ namespace Helium\Config;
 use Exception;
 use Illuminate\Support\Arr;
 use Helium\Traits\HasConfig;
-use Helium\Config\Form\Form;
-use Helium\Config\Table\Table;
+use Helium\Config\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Entity
 {
     use HasConfig;
 
-    public string $slug;
-    public string $model;
-    public Table $table;
-    public array $defaultForm;
     public array $fields = [];
-    public array $forms = [];
+    public array $views = [];
 
     /**
      * An Entity config object
@@ -36,28 +31,19 @@ class Entity
         }
 
         $this->slug = $type;
-        $this->model = $config['model'];
-
-        if (is_string($config['table'])) {
-            $this->table = new $config['table']([], $this);
-        } else {
-            $tableClass = Arr::get($config['table'], 'base', Table::class);
-            $this->table = new $tableClass($config['table'], $this);
-        }
+        $this->mergeConfig($config);
 
         // Fields are not expanded - they are cached here to use as a base for
         $this->fields = array_normalise_keys(Arr::get($config, 'fields', []), 'slug', 'base');
-        $this->defaultForm = Arr::get($config, 'forms.*', []);
 
-        $config['forms'] = array_normalise_keys(
-            Arr::except(Arr::get($config, 'forms', []), ['*']),
-            'slug',
-            'base'
-        );
-        foreach ($config['forms'] as $form) {
-            $form = array_merge($this->defaultForm, $form);
-            $class = Arr::get($form, 'base', Form::class);
-            $this->forms[$form['slug']] = new $class($form, $this);
+        $config['views'] = array_normalise_keys(Arr::get($config, 'views', []), 'slug', 'base');
+        foreach ($config['views'] as $view) {
+            $base = Arr::get($view, 'base', View::class);
+            if (!empty($config['views'][$base])) {
+                $view = array_merge($config['views'][$base], $view);
+                $base = Arr::get($config['views'][$base], 'base', View::class);
+            }
+            $this->views[$view['slug']] = new $base($view, $this);
         }
     }
 

@@ -4,7 +4,7 @@ namespace Helium\Handler\Prepare;
 
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use Helium\Config\Form\Field\Field;
+use Helium\Config\View\Form\Field\Field;
 
 class DateTimePrepareHandler
 {

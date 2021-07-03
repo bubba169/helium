@@ -3,7 +3,7 @@
 namespace Helium\Handler\Value;
 
 use Illuminate\Support\Str;
-use Helium\Config\Form\Field\Field;
+use Helium\Config\View\Form\Field\Field;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 

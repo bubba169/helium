@@ -2,7 +2,7 @@
 
 namespace Helium\Extensions;
 
-use Helium\Config\Form\Field\Field;
+use Helium\Config\View\Form\Field\Field;
 use Twig\TwigFilter;
 use Twig\Extension\AbstractExtension;
 use Illuminate\Database\Eloquent\Model;
@@ -45,7 +45,13 @@ class EntityExtension extends AbstractExtension
              */
             new TwigFilter('options', function ($value, ?Model $entry, Field $field) {
                 if (is_string($value)) {
-                    return app()->call($value, ['entry' => $entry, 'field' => $field]);
+                    return app()->call(
+                        $value,
+                        array_merge(
+                            ['entry' => $entry, 'field' => $field],
+                            $field->optionsHandlerParams
+                        )
+                    );
                 }
                 return $value;
             }),

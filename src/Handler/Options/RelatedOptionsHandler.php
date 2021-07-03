@@ -2,13 +2,14 @@
 
 namespace Helium\Handler\Options;
 
-use Helium\Config\Form\Field\Field;
+use Helium\Config\View\Form\Field\Field;
+use Illuminate\Database\Eloquent\Model;
 
 class RelatedOptionsHandler
 {
-    public function __invoke(Field $field)
+    public function __invoke(Field $field, Model $entry)
     {
-        $results = $field->relatedModel::all();
+        $results = $entry->{$field->relationship}()->getModel()::all();
         $options = [];
 
         $options = $results->mapWithKeys(

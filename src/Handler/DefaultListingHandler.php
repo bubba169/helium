@@ -3,21 +3,22 @@
 namespace Helium\Handler;
 
 use Helium\Config\Entity;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
+use Helium\Config\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class DefaultListingHandler
 {
     /**
      * Invoke this class as a method
      */
-    public function __invoke(Entity $entity, Request $request): LengthAwarePaginator
+    public function __invoke(Entity $entity, View $view, Request $request, array $with = []): LengthAwarePaginator
     {
         $query = $entity->model::query();
-        $query = $this->applySort($entity, $request, $query);
-        $query = $this->applyFilters($entity, $query);
-        $query = $this->applyEagerLoading($entity, $query);
+        $query = $this->applySort($view, $request, $query);
+        $query = $this->applyFilters($view, $query);
+        $query = $this->applyEagerLoading($with, $query);
 
         return $this->fetchResults($query);
     }
@@ -25,9 +26,9 @@ class DefaultListingHandler
     /**
      * Applies the sort to the query
      */
-    protected function applySort(Entity $entity, Request $request, Builder $query): Builder
+    protected function applySort(View $view, Request $request, Builder $query): Builder
     {
-        $sortOptions = $entity->table->sort;
+        $sortOptions = $view->sort;
 
         if (!empty($sortOptions)) {
             if (count($sortOptions) === 1) {
@@ -46,16 +47,16 @@ class DefaultListingHandler
     /**
      * Applies the search and filters
      */
-    protected function applyFilters(Entity $entity, Builder $query): Builder
+    protected function applyFilters(View $view, Builder $query): Builder
     {
-        if ($search = $entity->table->search) {
+        if ($search = $view->search) {
             $query = app()->call($search->filterHandler, [
                 'query' => $query,
                 'filter' => $search
             ]);
         }
 
-        foreach ($entity->table->filters as $filter) {
+        foreach ($view->filters as $filter) {
             $query = app()->call($filter->filterHandler, [
                 'query' => $query,
                 'filter' => $filter
@@ -68,10 +69,10 @@ class DefaultListingHandler
     /**
      * Applies eager loading if defined in the listing config
      */
-    protected function applyEagerLoading(Entity $entity, Builder $query): Builder
+    protected function applyEagerLoading(array $with, Builder $query): Builder
     {
-        if (!empty($entity->table->with)) {
-            $query->with($entity->table->with);
+        if (!empty($with)) {
+            $query->with($with);
         }
 
         return $query;

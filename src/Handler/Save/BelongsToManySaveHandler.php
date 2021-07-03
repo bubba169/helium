@@ -3,7 +3,7 @@
 namespace Helium\Handler\Save;
 
 use Illuminate\Http\Request;
-use Helium\Config\Form\Field\Field;
+use Helium\Config\View\Form\Field\Field;
 use Illuminate\Database\Eloquent\Model;
 
 class BelongsToManySaveHandler

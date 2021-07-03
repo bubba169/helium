@@ -36,6 +36,5 @@ Additional options are:
 
 | Config Parameter | Description | Type | Default Value |
 | --- | --- | --- | --- |
-| relatedModel<br>(required) | The class path of the related model | string | - |
 | relatedName<br>(required) | The string representation of the related entry to show as an option. This is a resolved string so can use values from the related entry e.g. "{entry.name}" | string | - |
 | relationship | The name of the relationship on the listed entry model. | string | _slug_

@@ -11,7 +11,8 @@ class DeleteActionHandler
         string $type,
         string $deleteHandler,
         array $cascade,
-        int $entryId
+        int $entryId,
+        string $redirectUrl
     ) {
         $entity = new Entity($type);
 
@@ -23,16 +24,16 @@ class DeleteActionHandler
             ]
         );
 
-        return $this->onSuccess($entity);
+        return $this->onSuccess($entity, $redirectUrl);
     }
 
     /**
      * On successful delete
      */
-    protected function onSuccess(Entity $entity): Response
+    protected function onSuccess(Entity $entity, string $redirectUrl): Response
     {
         return redirect(
-            route('helium.entity.list', ['type'. $entity->slug])
+            $redirectUrl
         )->with('message', [
             'type' => 'success',
             'message' => $entity->name . ' deleted',
