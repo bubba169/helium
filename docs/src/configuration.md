@@ -1,6 +1,6 @@
 # Configuration
 
-Helium is based around the idea that everything is configurable and modular. Handlers do all of the heavy lifting, twig views handle the rendering and the configuration specifies which handlers and views should be used. Configuration can often be given in short form which is expanded automatically with sensible defaults.
+Helium is based around the idea that everything is configurable and modular. Handlers do all of the heavy lifting, twig templates handle the rendering and the configuration specifies which handlers and templates should be used. Configuration can often be given in short form which is expanded automatically with sensible defaults.
 
 Using fields as an example, providing just the string "title" with no key will generate a text input with it's slug, name and id set to the "title". It will also be given a label by transforming the slug to the more human friendly format "Title". Everything required for that simple text field can be deduced form the slug. 
 
@@ -9,6 +9,8 @@ Using fields as an example, providing just the string "title" with no key will g
     'title',
 ],
 ```
+
+![Title Field](img/title_field.png)
 
 Any of the configuration options can be set manually by providing an array as a value with the slug as the key. To override the label we can set it in the configuration array. All other configuration options will continue to be deduced as before and if a value is overridden that is used to deduce another, your overridden value will be used in that deduction. For example, the any validation messages use the field label to build a message; overriding the label will update both.
 
@@ -19,6 +21,8 @@ Any of the configuration options can be set manually by providing an array as a 
     ],
 ],
 ```
+
+![Title field with customised label](img/title_field_label.png)
 
 ## Configurable Objects
 
@@ -38,13 +42,15 @@ Instead of repeating common configurations, we can instead extend a configurable
 ],
 ```
 
+![A date time field and a select field](img/field_types.png)
+
 ## Handlers
 
 Handlers are passed to configs as a callable string. Any string that can be called through Laravels `app()->call()` can be given as a value. All of the handlers within Helium are invokable classes.
 
 As an example, to provide options for a select field, instead of an array we can pass a handler. The handler is called through the service container so can use dependency injection and in this case must return an array of options. Whenever a handler is accepted, there will also be a handler parameters option to match. These can provide some arguments that are passed through the service container for dependency injection.
 
-The example below is a simplified use case that could be expanded to fetch from a model based on a condition.
+The example below is a simplified use case to give the option of all enabled entries from a model
 
 ```php
 'fields' => [
@@ -64,7 +70,7 @@ class ModelOptionsHandler
 {
     public function invoke(string $model, string $displayField): array
     {
-        return $model::pluck($displayField, 'id');
+        return $model::where('enabled', true)->pluck($displayField, 'id');
     }
 }
 ```
