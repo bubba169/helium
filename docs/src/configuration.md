@@ -44,6 +44,37 @@ Instead of repeating common configurations, we can instead extend a configurable
 
 ![A date time field and a select field](img/field_types.png)
 
+Any of the base config classes can be extended to provide extra or more dynamic configuration and some extended configurations are provided by default e.g. the Select field above. Anything provided by the extended options could be recreated using the base type by setting the handlers and templates. The extended options are there for convenience. 
+
+When it comes to setting up something like forms or tables that have many configuration options, some may prefer to manage the configuration by providing new base classes for each view. This can help keep the config files tidy. As an example you might have:
+
+```php
+// In the Entity config
+'views' => [
+    'edit' => EditPostsForm::class,
+],
+```
+
+```php
+class EditPostsForm extends View
+{
+    public function __construct(array $config, Entity $entity)
+    {
+        $config = array_merge(
+            [
+                'fields' => [
+                    'title',
+                ]
+            ],
+            $config
+        );
+
+        parent::__construct($config, $entity);
+
+        // Any further customisation.
+    }
+}
+```
 ## Handlers
 
 Handlers are passed to configs as a callable string. Any string that can be called through Laravels `app()->call()` can be given as a value. All of the handlers within Helium are invokable classes.
@@ -75,4 +106,4 @@ class ModelOptionsHandler
 }
 ```
 
-Handlers are used throughout Helium to keep the core functionality as modular and replacable as possible. In most cases where a handler is expected, Helium will provide default handlers that can be extended.
+Handlers are used throughout Helium to keep the core functionality as modular and replacable as possible and to allow dynamic configuration. In most cases where a handler is expected, Helium will provide default handlers that can be extended.
