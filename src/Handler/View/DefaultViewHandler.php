@@ -3,7 +3,7 @@
 namespace Helium\Handler\View;
 
 use Helium\Config\Entity;
-use \Helium\Config\View\View;
+use Helium\Config\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultViewHandler

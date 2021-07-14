@@ -1,8 +1,9 @@
 # Configuration
 
-Helium is based around the idea that everything is configurable and modular. Handlers do all of the heavy lifting, twig templates handle the rendering and the configuration specifies which handlers and templates should be used. Configuration can often be given in short form which is expanded automatically with sensible defaults.
+## The Basics
+Helium is based around the idea that everything is configurable and modular. Handlers contain all of the logic, twig templates handle the rendering and the configuration specifies which handlers and templates should be used. Configuration can often be given in short form which is expanded automatically with sensible defaults.
 
-Using fields as an example, providing just the string "title" with no key will generate a text input with it's slug, name and id set to the "title". It will also be given a label by transforming the slug to the more human friendly format "Title". Everything required for that simple text field can be deduced form the slug. 
+Using fields as an example, providing just the string "title" with no key will generate a text input with it's slug, name and id set to the "title". It will be assigned default handlers to read the value from and save the value to the title attribute on the entitie's model. It will also be given a label by transforming the slug to the more human friendly format "Title". Everything required for that simple text field can be deduced from the slug. 
 
 ```php
 'fields' => [
@@ -12,6 +13,7 @@ Using fields as an example, providing just the string "title" with no key will g
 
 ![Title Field](img/title_field.png)
 
+## Go Your Own Way
 Any of the configuration options can be set manually by providing an array as a value with the slug as the key. To override the label we can set it in the configuration array. All other configuration options will continue to be deduced as before and if a value is overridden that is used to deduce another, your overridden value will be used in that deduction. For example, the any validation messages use the field label to build a message; overriding the label will update both.
 
 ```php
@@ -24,9 +26,8 @@ Any of the configuration options can be set manually by providing an array as a 
 
 ![Title field with customised label](img/title_field_label.png)
 
-## Configurable Objects
-
-Instead of repeating common configurations, we can instead extend a configurable object. All configurable elements have a base class that takes a configuration array and provides sensible defaults. To make use of these we can either set the value to just the configurable object class name or we can pass the object as the `base` option and supply any other options alongside.
+## Base Classes
+All configurable elements within Helium have a base class that takes a configuration array and provides sensible defaults. Helium provides a few of these for example with field types. To set the base class to something other than the default, we can either set config value to the base class name or we can pass the class name as the `base` option and supply any other options alongside.
 
 ```php
 'fields' => [
@@ -43,10 +44,29 @@ Instead of repeating common configurations, we can instead extend a configurable
 ```
 
 ![A date time field and a select field](img/field_types.png)
+ 
+## Roll Your Own
+Instead of repeating common configurations, we can extend the base class to set new defaults while still maintaining the ability to configure the parts we want for individual uses. Base classes can take any number of configuration options and expose them as attributes using PHP magic. Dynamic values are provided from the configured options and if a value is not set then the base class defaults are used. If neither are set then null is returned.
 
-Any of the base config classes can be extended to provide extra or more dynamic configuration and some extended configurations are provided by default e.g. the Select field above. Anything provided by the extended options could be recreated using the base type by setting the handlers and templates. The extended options are there for convenience. 
+As a simplified example we can make a input type that uses a different template to render the field. The below will use the new template if no other template option is set in the config.
 
-When it comes to setting up something like forms or tables that have many configuration options, some may prefer to manage the configuration by providing new base classes for each view. This can help keep the config files tidy. As an example you might have:
+```php
+class MyBaseField extends Field
+{
+    public function getDefault($key)
+    {
+        switch ($key) {
+            case 'template':
+                return 'path.to.mytemplate';
+        }
+
+        return parent::getDefault($key);
+    }
+}
+```
+
+## Keeping Things Tidy
+When it comes to setting up something like forms or tables that have many configuration options, configuration files can be more readable if options are moved into custom base classes. You can either override defaults as above or merge your configuration options with any provided in the config. As an example you might have:
 
 ```php
 // In the Entity config
@@ -60,15 +80,14 @@ class EditPostsForm extends View
 {
     public function __construct(array $config, Entity $entity)
     {
-        $config = array_merge(
-            [
-                'fields' => [
-                    'title',
-                ]
+        // Set your default configuration
+        $this->mergeConfig([
+            'fields' => [
+                'title',
             ],
-            $config
-        );
+        ]);
 
+        // Initialise the base class with the options set in the config
         parent::__construct($config, $entity);
 
         // Any further customisation.
