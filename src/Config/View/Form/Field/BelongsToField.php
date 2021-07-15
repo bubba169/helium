@@ -31,7 +31,7 @@ class BelongsToField extends SelectField
         switch ($key) {
             case 'column':
                 return $this->slug . '_id';
-            case 'options':
+            case 'optionsHandler':
                 return RelatedOptionsHandler::class;
             case 'relationship':
                 return $this->slug;

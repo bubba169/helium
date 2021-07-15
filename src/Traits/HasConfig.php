@@ -7,7 +7,7 @@ trait HasConfig
     /**
      * @var array
      */
-    protected $config = [];
+    protected array $config = [];
 
     /**
      * Allows getting attributes from the config array

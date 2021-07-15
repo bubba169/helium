@@ -24,9 +24,9 @@ class FormView extends View
         // Set the current config
         parent::__construct($config, $entity);
 
-        $this->fields = $this->buildFields($config);
-        $this->tabs = $this->buildTabs($config);
-        $this->actions = $this->buildActions($config);
+        $this->fields = $this->buildFields();
+        $this->tabs = $this->buildTabs();
+        $this->actions = $this->buildActions();
     }
 
     /**
@@ -157,9 +157,9 @@ class FormView extends View
     /**
      * Build the fields from the config
      */
-    protected function buildFields(array $config): array
+    protected function buildFields(): array
     {
-        $fieldConfig = Arr::get($config, 'fields', []);
+        $fieldConfig = Arr::get($this->config, 'fields', []);
         $fieldConfig = $this->configHandler(
             $this->fieldsHandler,
             $fieldConfig,
@@ -182,9 +182,9 @@ class FormView extends View
     /**
      * Build tabs from the config
      */
-    protected function buildTabs(array $config): array
+    protected function buildTabs(): array
     {
-        $tabsConfig = Arr::get($config, 'tabs', ['main' => 'Content']);
+        $tabsConfig = Arr::get($this->config, 'tabs', ['main']);
         $tabsConfig = $this->configHandler(
             $this->tabsHandler,
             $tabsConfig,
@@ -193,6 +193,7 @@ class FormView extends View
 
         $tabs = [];
         $tabsConfig = array_normalise_keys($tabsConfig, 'slug', 'base');
+
         foreach ($tabsConfig as $tab) {
             $class = Arr::get($tab, 'base', Tab::class);
             $tabs[$tab['slug']] = new $class($tab, $this->entity);
@@ -204,9 +205,9 @@ class FormView extends View
     /**
      * Build actions from the config
      */
-    protected function buildActions(array $config): array
+    protected function buildActions(): array
     {
-        $actionsConfig = Arr::get($config, 'actions', []);
+        $actionsConfig = Arr::get($this->config, 'actions', []);
         $actionsConfig = $this->configHandler(
             $this->actionsHandler,
             $actionsConfig,

@@ -29,7 +29,7 @@ class BelongsToManyField extends MulticheckField
     public function getDefault(string $key)
     {
         switch ($key) {
-            case 'options':
+            case 'optionsHandler':
                 return RelatedOptionsHandler::class;
             case 'relationship':
                 return $this->slug;

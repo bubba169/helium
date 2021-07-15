@@ -13,7 +13,7 @@ Using fields as an example, providing just the string "title" with no key will g
 
 ![Title Field](img/title_field.png)
 
-## Go Your Own Way
+## Setting options
 Any of the configuration options can be set manually by providing an array as a value with the slug as the key. To override the label we can set it in the configuration array. All other configuration options will continue to be deduced as before and if a value is overridden that is used to deduce another, your overridden value will be used in that deduction. For example, the any validation messages use the field label to build a message; overriding the label will update both.
 
 ```php
@@ -45,7 +45,7 @@ All configurable elements within Helium have a base class that takes a configura
 
 ![A date time field and a select field](img/field_types.png)
  
-## Roll Your Own
+## Extending Base Classes
 Instead of repeating common configurations, we can extend the base class to set new defaults while still maintaining the ability to configure the parts we want for individual uses. Base classes can take any number of configuration options and expose them as attributes using PHP magic. Dynamic values are provided from the configured options and if a value is not set then the base class defaults are used. If neither are set then null is returned.
 
 As a simplified example we can make a input type that uses a different template to render the field. The below will use the new template if no other template option is set in the config.
@@ -66,7 +66,9 @@ class MyBaseField extends Field
 ```
 
 ## Keeping Things Tidy
-When it comes to setting up something like forms or tables that have many configuration options, configuration files can be more readable if options are moved into custom base classes. You can either override defaults as above or merge your configuration options with any provided in the config. As an example you might have:
+Custom base classes can also be used as a way to keep the configuration files tidy and organised. By moving the default options for an element to their own class it reduces clutter while keeping things easy to find and easy to manage.
+
+As an example, you might define a form view as a new class. You can either override `getDefault()` or just add your config directly. The main benefit of using `getDefault()` is that config values can reference other config values without worrying about whether they have been defined yet.
 
 ```php
 // In the Entity config
@@ -76,24 +78,26 @@ When it comes to setting up something like forms or tables that have many config
 ```
 
 ```php
-class EditPostsForm extends View
+class EditPostsForm extends FormView
 {
-    public function __construct(array $config, Entity $entity)
-    {
-        // Set your default configuration
-        $this->mergeConfig([
-            'fields' => [
+    protected $config = [
+        'tabs' => [
+            'main' => 'Content',
+        ],
+        'fields' => [
+            'main' => [
                 'title',
+                'published' => DateTimeField::class,
             ],
-        ]);
-
-        // Initialise the base class with the options set in the config
-        parent::__construct($config, $entity);
-
-        // Any further customisation.
-    }
+        ],
+        'actions' => [
+            'save' => SaveFormAction::class
+        ]
+    ];
 }
 ```
+
+
 ## Handlers
 
 Handlers are passed to configs as a callable string. Any string that can be called through Laravels `app()->call()` can be given as a value. All of the handlers within Helium are invokable classes.
@@ -106,7 +110,7 @@ The example below is a simplified use case to give the option of all enabled ent
 'fields' => [
     'author_id' => [
         'base' => SelectField::class,
-        'options' => ModelOptionsHandler::class,
+        'optionsHandler' => ModelOptionsHandler::class,
         'optionsHandlerParams' => [
             'model' => User::class,
             'displayField' => 'name',

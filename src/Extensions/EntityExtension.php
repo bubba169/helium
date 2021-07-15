@@ -44,11 +44,11 @@ class EntityExtension extends AbstractExtension
              * Generates options from a callable
              */
             new TwigFilter('options', function ($value, ?Model $entry, Field $field) {
-                if (is_string($value)) {
+                if ($field->optionsHandler) {
                     return app()->call(
-                        $value,
+                        $field->optionsHandler,
                         array_merge(
-                            ['entry' => $entry, 'field' => $field],
+                            ['entry' => $entry, 'field' => $field, 'options' => $value],
                             $field->optionsHandlerParams
                         )
                     );
