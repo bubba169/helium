@@ -5,3 +5,8 @@ docs_dir: src
 site_dir: html
 markdown_extensions:
   - admonition
+nav:
+  - index.md
+  - configuration.md
+  - handlers.md
+  - entities.md

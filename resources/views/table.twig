@@ -88,7 +88,9 @@
                         {% for column in view.columns %}
                             <th class="px-4 py-3">{{ column.label }}</th>
                         {% endfor %}
-                        <th class="px-4 py-3">Actions</th>
+                        {% if view.rowActions|length %}
+                            <th class="px-4 py-3">Actions</th>
+                        {% endif %}
                     </thead>
                 {% endblock %}
                 <tbody>
@@ -102,11 +104,13 @@
                                         {% endfor %}
                                     {% endblock %}
                                     {% block rowActions %}
-                                        <td class="flex px-4 py-3 space-x-2">
-                                            {% for action in view.rowActions %}
-                                                {% include action.template with {action: action, entry: entry} %}
-                                            {% endfor %}
-                                        </td>
+                                        {% if view.rowActions|length %}
+                                            <td class="flex px-4 py-3 space-x-2">
+                                                {% for action in view.rowActions %}
+                                                    {% include action.template with {action: action, entry: entry} %}
+                                                {% endfor %}
+                                            </td>
+                                        {% endif %}
                                     {% endblock %}
                                 </tr>
                             {% endblock %}

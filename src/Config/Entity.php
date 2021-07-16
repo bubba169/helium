@@ -30,6 +30,10 @@ class Entity
             throw new Exception($this->slug . ' entity configuration does not specify a model');
         }
 
+        if (empty($config['displayColumn'])) {
+            throw new Exception($this->slug . ' entity configuration does not specify a display column');
+        }
+
         $this->slug = $type;
         $this->mergeConfig($config);
 
@@ -57,6 +61,8 @@ class Entity
         switch ($key) {
             case 'name':
                 return class_basename($this->model);
+            case 'keyColumn':
+                return 'id';
         }
 
         return null;
