@@ -2,7 +2,6 @@
 
 namespace Helium\Handler;
 
-use Helium\Config\Entity;
 use Helium\Config\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,9 +12,9 @@ class DefaultListingHandler
     /**
      * Invoke this class as a method
      */
-    public function __invoke(Entity $entity, View $view, Request $request, array $with = []): LengthAwarePaginator
+    public function __invoke(View $view, Request $request, array $with = []): LengthAwarePaginator
     {
-        $query = $entity->model::query();
+        $query = $view->entity->model::query();
         $query = $this->applySort($view, $request, $query);
         $query = $this->applyFilters($view, $query);
         $query = $this->applyEagerLoading($with, $query);

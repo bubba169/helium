@@ -25,14 +25,10 @@ class EntitiesController extends HeliumController
         }
 
         // Pass over to the view handler
-        return app()->call($view->viewHandler, array_merge(
-            [
-                'id' => $id,
-                'entity' => $entity,
-                'view' => $view,
-            ],
-            $view->viewHandlerParams
-        ));
+        return app()->call($view->viewHandler, [
+            'id' => $id,
+            'view' => $view,
+        ]);
     }
 
     /**
