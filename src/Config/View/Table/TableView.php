@@ -46,8 +46,8 @@ class TableView extends View
         switch ($key) {
             case 'columns':
                 return [
-                    $this->entity->keyColumn,
-                    $this->entity->displayColumn
+                    $this->entity->keyAttribute,
+                    $this->entity->displayAttribute
                 ];
             case 'actions':
             case 'rowActions':

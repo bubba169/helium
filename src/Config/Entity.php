@@ -30,14 +30,14 @@ class Entity
             throw new Exception($this->slug . ' entity configuration does not specify a model');
         }
 
-        if (empty($config['displayColumn'])) {
-            throw new Exception($this->slug . ' entity configuration does not specify a display column');
+        if (empty($config['displayAttribute'])) {
+            throw new Exception($this->slug . ' entity configuration does not specify a display attribute');
         }
 
         $this->slug = $type;
         $this->mergeConfig($config);
 
-        // Fields are not expanded - they are cached here to use as a base for
+        // Fields are not expanded - they are cached here to use as a base for forms
         $this->fields = array_normalise_keys(Arr::get($config, 'fields', []), 'slug', 'base');
 
         $config['views'] = array_normalise_keys(Arr::get($config, 'views', []), 'slug', 'base');
@@ -61,7 +61,7 @@ class Entity
         switch ($key) {
             case 'name':
                 return class_basename($this->model);
-            case 'keyColumn':
+            case 'keyAttribute':
                 return 'id';
         }
 

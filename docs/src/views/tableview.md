@@ -1,4 +1,4 @@
-# Listings
+# The Table View
 
 Listings are the starting point for a user interacting with your entities. The list view is a filterable table of entries. A list has built in functionality to filter and search and paginate. Actions can be added to the table and to each individual row.
 

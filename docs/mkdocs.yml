@@ -10,3 +10,6 @@ nav:
   - configuration.md
   - handlers.md
   - entities.md
+  - Views:
+    - views/views.md
+    - views/tableview.md
