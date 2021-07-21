@@ -45,10 +45,11 @@ class FormView extends View
                 return route('helium.entity.action');
             case 'method':
                 return 'post';
-            case 'fieldsHandlerParams':
-            case 'tabsHandlerParams':
-            case 'actionsHandlerParams':
+            case 'fields':
+            case 'actions':
                 return [];
+            case 'tabs':
+                return ['main'];
         }
 
         return parent::getDefault($key);
@@ -159,15 +160,14 @@ class FormView extends View
      */
     protected function buildFields(): array
     {
-        $fieldConfig = Arr::get($this->config, 'fields', []);
-        $fieldConfig = $this->configHandler(
-            $this->fieldsHandler,
-            $fieldConfig,
-            array_merge($this->fieldsHandlerParams, ['entity' => $this->entity, 'form' => $this])
-        );
+        $config = $this->getConfig('fields');
+
+        if ($this->fieldsHandler) {
+            $config = app()->call($this->fieldsHandler, ['view' => $this, 'config' => $config]);
+        }
 
         $fields = [];
-        foreach ($fieldConfig as $tab => $tabFields) {
+        foreach ($config as $tab => $tabFields) {
             $tabFields = array_normalise_keys($tabFields, 'slug', 'base');
             foreach ($tabFields as $field) {
                 $field = array_merge(Arr::get($this->entity->fields, $field['slug'], []), $field);
@@ -184,17 +184,16 @@ class FormView extends View
      */
     protected function buildTabs(): array
     {
-        $tabsConfig = Arr::get($this->config, 'tabs', ['main']);
-        $tabsConfig = $this->configHandler(
-            $this->tabsHandler,
-            $tabsConfig,
-            array_merge($this->tabsHandlerParams, ['entity' => $this->entity, 'form' => $this])
-        );
+        $config = $this->getConfig('tabs');
+
+        if ($this->tabsHandler) {
+            $config = app()->call($this->tabsHandler, ['view' => $this, 'config' => $config]);
+        }
 
         $tabs = [];
-        $tabsConfig = array_normalise_keys($tabsConfig, 'slug', 'base');
+        $config = array_normalise_keys($config, 'slug', 'base');
 
-        foreach ($tabsConfig as $tab) {
+        foreach ($config as $tab) {
             $class = Arr::get($tab, 'base', Tab::class);
             $tabs[$tab['slug']] = new $class($tab, $this->entity);
         }
@@ -207,16 +206,15 @@ class FormView extends View
      */
     protected function buildActions(): array
     {
-        $actionsConfig = Arr::get($this->config, 'actions', []);
-        $actionsConfig = $this->configHandler(
-            $this->actionsHandler,
-            $actionsConfig,
-            array_merge($this->actionsHandlerParams, ['entity' => $this->entity, 'form' => $this])
-        );
+        $config = $this->getConfig('actions');
+
+        if ($this->actionsHandler) {
+            $config = app()->call($this->actionsHandler, ['view' => $this, 'config' => $config]);
+        }
 
         $actions = [];
-        $actionsConfig = array_normalise_keys($actionsConfig, 'slug', 'base');
-        foreach ($actionsConfig as $action) {
+        $config = array_normalise_keys($config, 'slug', 'base');
+        foreach ($config as $action) {
             $class = Arr::get($action, 'base', FormAction::class);
             $actions[$action['slug']] = new $class($action, $this, $this->entity);
         }

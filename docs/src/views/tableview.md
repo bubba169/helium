@@ -1,20 +1,25 @@
 # The Table View
 
-Listings are the starting point for a user interacting with your entities. The list view is a filterable table of entries. A list has built in functionality to filter and search and paginate. Actions can be added to the table and to each individual row.
+Table views are usually the starting point for a user interacting with your entities. Helium provides a configurable table view with provisions for filtering, search, sorting and row actions. 
 
 ## Configuration Options
 
 | Config Parameter | Description | Type | Default Value |
 | --- | --- | --- | -- |
-| view | The template used to render the table | string | "helium::table" |
+| template | The template used to render the table | string | "helium::table" |
 | title | The title for the table page | string | The plural, humanised entity name |
-| listingHandler | The handler used to build the initial listing query | string | "Helium\Handler\DefaultListingHandler" |
-| filters | An array of filter configs. | array | - |
-| search | A search filter configuration. This field is shown separate to the rest of the filters at the top of the table. If a string is given it will be used as a class name for a filter configuration. | array\|string | - |
-| columns | An array of column configs. | array | - |
-| actions | An array of action configs. These appear as buttons on the table not specifically tied to any one row. | array | - |
-| rowActions | An array of action configs. These appear on each row on the table and should be actions applied to a specific entry. | array | - |
-| sort | An array of sorting options. The keys must be formatted as "attribute:direction" and the value is the name of the option as shown to the user. An example would be `["name:asc" => "Name (A-Z)"]`. | array | - |
+| listingHandler | The handler used to build the listing query. | string | "Helium\Handler\DefaultListingHandler" |
+| filters | An array of filter configurations. | array | [] |
+| filtersHandler | A handler for providing filter configuration. | string | - |
+| search | A search filter configuration. This field is shown separate to the rest of the filters at the top of the table. If a string is given it will be used as a base class name for a filter configuration. | array\|string | - |
+| searchHandler | A handler for providing search configuration. | string | - |
+| columns | An array of column configurations. | array | [entity key attribute, entity display attribute] |
+| columnsHandler | A handler for providing column configuration. | string | - |
+| actions | An array of action configurations. These appear as buttons on the table not specifically tied to any one row. | array | [] |
+| actionsHandler | A handler for providing actions configuration. | string | - |
+| rowActions | An array of action configs. These appear on each row on the table and should be actions applied to a specific entry. | array | [] |
+| rowActionsHandler | A handler for providing row actions. This handler is also provided the entry so can be used to make conditional adjustments to the row actions. | string | - |
+| sort | An array of sorting options. The keys must be formatted as "attribute:direction" and the value is the name of the option as shown to the user. An example would be `["name:asc" => "Name (A-Z)"]`. | array | [] |
 | with | An array of relationships to load alongside the listing. This uses the usual Laravel conventions. This configuration option is used by the DefualtListingHandler and may be ignored if using a custom handler. | array | - |
 
 ## Listing Handlers

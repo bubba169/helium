@@ -12,7 +12,8 @@ class DefaultListingHandler
     /**
      * Invoke this class as a method
      */
-    public function __invoke(View $view, Request $request, array $with = []): LengthAwarePaginator
+    public function __invoke(View $view, Request $request, array $with =
+    []): LengthAwarePaginator
     {
         $query = $view->entity->model::query();
         $query = $this->applySort($view, $request, $query);

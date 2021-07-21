@@ -104,9 +104,10 @@
                                         {% endfor %}
                                     {% endblock %}
                                     {% block rowActions %}
-                                        {% if view.rowActions|length %}
+                                        {% set rowActions = view.getRowActions(entry) %}
+                                        {% if rowActions|length %}
                                             <td class="flex px-4 py-3 space-x-2">
-                                                {% for action in view.rowActions %}
+                                                {% for action in rowActions %}
                                                     {% include action.template with {action: action, entry: entry} %}
                                                 {% endfor %}
                                             </td>

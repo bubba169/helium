@@ -12,6 +12,7 @@ use Helium\Handler\DefaultListingHandler;
 use Helium\Config\View\Table\Filter\Filter;
 use Helium\Handler\View\ListingViewHandler;
 use Helium\Config\View\Table\Filter\SearchFilter;
+use Illuminate\Database\Eloquent\Model;
 
 class TableView extends View
 {
@@ -19,7 +20,6 @@ class TableView extends View
     public array $columns = [];
     public array $filters = [];
     public array $actions = [];
-    public array $rowActions = [];
 
     /**
      * Builds a table config
@@ -34,7 +34,6 @@ class TableView extends View
         $this->search = $this->buildSearch();
         $this->filters = $this->buildFilters();
         $this->columns = $this->buildColumns();
-        $this->rowActions = $this->buildRowActions();
         $this->actions = $this->buildActions();
     }
 
@@ -52,13 +51,12 @@ class TableView extends View
             case 'actions':
             case 'rowActions':
             case 'filters':
+            case 'with':
                 return [];
             case 'title':
                 return Str::plural(str_humanise(Str::camel($this->entity->name)));
             case 'listingHandler':
                 return DefaultListingHandler::class;
-            case 'listingHandlerParams':
-                return [];
             case 'template':
                 return 'helium::table';
             case 'viewHandler':
@@ -69,11 +67,39 @@ class TableView extends View
     }
 
     /**
+     * Builds actions to be shown on each row
+     */
+    public function getRowActions(Model $entry): array
+    {
+        $actions = [];
+        $config = $this->getConfig('rowActions');
+
+        if ($this->rowActionsHandler) {
+            $config = app()->call(
+                $this->rowActionsHandler,
+                ['view' => $this, 'config' => $config, 'entry' => $entry]
+            );
+        }
+
+        $config = array_normalise_keys($config, 'slug', 'base');
+        foreach ($config as $action) {
+            $class = Arr::get($action, 'base', ViewLinkAction::class);
+            $actions[$action['slug']] = new $class($action, $this->entity);
+        }
+
+        return $actions;
+    }
+
+    /**
      * Builds the search filter to show above the table
      */
     protected function buildSearch(): ?SearchFilter
     {
         $config = $this->getConfig('search');
+
+        if ($this->searchHandler) {
+            $config = app()->call($this->searchHandler, ['view' => $this, 'config' => $config]);
+        }
 
         if (empty($config)) {
             return null;
@@ -94,6 +120,11 @@ class TableView extends View
     {
         $filters = [];
         $config = array_normalise_keys($this->getConfig('filters'), 'slug', 'base');
+
+        if ($this->filtersHandler) {
+            $config = app()->call($this->filtersHandler, ['view' => $this, 'config' => $config]);
+        }
+
         foreach ($config as $filter) {
             $class = Arr::get($filter, 'base', Filter::class);
             $filters[$filter['slug']] = new $class($filter, $this->entity);
@@ -110,6 +141,10 @@ class TableView extends View
         $columns = [];
         $config = array_normalise_keys($this->getConfig('columns'), 'slug', 'base');
 
+        if ($this->columnsHandler) {
+            $config = app()->call($this->columnsHandler, ['view' => $this, 'config' => $config]);
+        }
+
         foreach ($config as $column) {
             $class = Arr::get($column, 'base', Column::class);
             $columns[$column['slug']] = new $class($column, $this->entity);
@@ -119,27 +154,17 @@ class TableView extends View
     }
 
     /**
-     * Builds actions to be shown on each row
-     */
-    protected function buildRowActions(): array
-    {
-        $actions = [];
-        $config = array_normalise_keys($this->getConfig('rowActions'), 'slug', 'base');
-        foreach ($config as $action) {
-            $class = Arr::get($action, 'base', ViewLinkAction::class);
-            $actions[$action['slug']] = new $class($action, $this->entity);
-        }
-
-        return $actions;
-    }
-
-    /**
      * Builds actions to show at the top of the table
      */
     protected function buildActions(): array
     {
         $actions = [];
         $config = array_normalise_keys($this->getConfig('actions'), 'slug', 'base');
+
+        if ($this->actionsHandler) {
+            $config = app()->call($this->actionsHandler, ['view' => $this, 'config' => $config]);
+        }
+
         foreach ($config as $action) {
             $class = Arr::get($action, 'base', ViewLinkAction::class);
             $actions[$action['slug']] = new $class($action, $this->entity);

@@ -90,16 +90,4 @@ trait HasConfig
         $this->config = array_merge_deep($this->config, $config);
         return $this;
     }
-
-    /**
-     * Runs a handler to transform the config
-     */
-    public function configHandler($handler, array $config, array $params)
-    {
-        if ($handler) {
-            return app()->call($handler, array_merge($params, ['config' => $config]));
-        }
-
-        return $config;
-    }
 }
