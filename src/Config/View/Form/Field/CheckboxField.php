@@ -3,7 +3,7 @@
 namespace Helium\Config\View\Form\Field;
 
 use Helium\Config\View\Form\Field\Field;
-use Helium\Handler\Save\BooleanSaveHandler;
+use Helium\Handler\Field\Save\BooleanSaveHandler;
 
 class CheckboxField extends Field
 {

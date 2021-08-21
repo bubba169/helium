@@ -11,7 +11,7 @@ Table views are usually the starting point for a user interacting with your enti
 | listingHandler | The handler used to build the listing query. | string | "Helium\Handler\DefaultListingHandler" |
 | filters | An array of filter configurations. | array | [] |
 | filtersHandler | A handler for providing filter configuration. | string | - |
-| search | A search filter configuration. This field is shown separate to the rest of the filters at the top of the table. If a string is given it will be used as a base class name for a filter configuration. | array\|string | - |
+| search | A search filter configuration or a path to a base class that extends `Helium\Config\View\Table\Filters\SearchFilter`. | array\|string | - |
 | searchHandler | A handler for providing search configuration. | string | - |
 | columns | An array of column configurations. | array | [entity key attribute, entity display attribute] |
 | columnsHandler | A handler for providing column configuration. | string | - |
@@ -20,21 +20,33 @@ Table views are usually the starting point for a user interacting with your enti
 | rowActions | An array of action configs. These appear on each row on the table and should be actions applied to a specific entry. | array | [] |
 | rowActionsHandler | A handler for providing row actions. This handler is also provided the entry so can be used to make conditional adjustments to the row actions. | string | - |
 | sort | An array of sorting options. The keys must be formatted as "attribute:direction" and the value is the name of the option as shown to the user. An example would be `["name:asc" => "Name (A-Z)"]`. | array | [] |
-| with | An array of relationships to load alongside the listing. This uses the usual Laravel conventions. This configuration option is used by the DefualtListingHandler and may be ignored if using a custom handler. | array | - |
+| with | An array of relationships to load alongside the listing. This uses the usual Laravel syntax. | array | - |
 
 ## Listing Handlers
 
 Helium provides a default listing handler that will fetch all entries from the entity model. It will apply the search, filtering, sorting and eager loading to the query. An alternative listing handler can be specified by setting the `listingHandler` option to a callable string.
 
-To keep the default functionality it is recommended to extend `Helium\Handler\DefaultListingHandler`, and override the methods of the handler as required. Otherwise, some functionality will cease to work unless re-implemented in your custom handler.
+!!!note
+    To avoid having to recreate the default functionality, it is recommended to extend `Helium\Handler\DefaultListingHandler` and override individual methods as required.
 
 Parameters available for dependency injection are:
 
 | Name | Type | Description |
 | -----| ---- | ----------- |
-| entity | Helium\Config\Entity | The entity configuration to show the listing for |
+| view | Helium\Config\View\View | The view configuration |
 
-The handler is expected to return a LengthAwarePaginator that will be used to show the results in the view. 
+The handler is expected to return a `LengthAwarePaginator` that will be used to show the results in the view. 
+
+# Columns
+
+Columns are used to preview and identify entries as rows in the list. If the configuration given is a string then this will be used as the base class. Column classes should extend `Helium\Config\View\Table\Column`
+
+| Config Parameter | Description | Type | Default Value |
+| --- | --- | --- | -- |
+| slug<br>(required) | The slug is the identifier for this column in the table data. Most other option defaults are based on this value | string | - |
+| label | The heading text that appears at the top of the column | string | The slug, humanised and in title case. |
+| template | The view used to render a column cell | string | "helium::table-cell.text" |
+| value | The value to show in each table cell. This is a resolved string using the entry for each row. | string | "{entry._slug_}" |
 
 ## An Example
 

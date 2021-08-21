@@ -44,7 +44,11 @@ class Action
             case 'method':
                 return 'post';
             case 'redirectUrl':
-                return route('helium.entity.view', ['type' => $this->entity->slug]);
+                return route($this->redirectRoute, $this->redirectRouteParams);
+            case 'redirectRoute':
+                return 'helium.entity.view';
+            case 'redirectRouteParams':
+                return ['type' => $this->entity->slug];
         }
 
         return null;

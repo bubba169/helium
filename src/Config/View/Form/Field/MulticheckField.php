@@ -3,8 +3,8 @@
 namespace Helium\Config\View\Form\Field;
 
 use Helium\Config\View\Form\Field\Field;
-use Helium\Handler\Save\ArraySaveHandler;
-use Helium\Handler\Value\EntryArrayValueHandler;
+use Helium\Handler\Field\Save\ArraySaveHandler;
+use Helium\Handler\Field\Value\EntryArrayValueHandler;
 
 class MulticheckField extends Field
 {

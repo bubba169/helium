@@ -6,8 +6,8 @@ use Exception;
 use Helium\Config\Entity;
 use Helium\Config\View\Form\Field\MulticheckField;
 use Helium\Handler\Options\RelatedOptionsHandler;
-use Helium\Handler\Save\BelongsToManySaveHandler;
-use Helium\Handler\Value\RelatedKeysValueHandler;
+use Helium\Handler\Field\Save\BelongsToManySaveHandler;
+use Helium\Handler\Field\Value\RelatedKeysValueHandler;
 
 class BelongsToManyField extends MulticheckField
 {

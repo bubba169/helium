@@ -6,15 +6,24 @@ Filters limit the entries shown in the list to those matching a set of criteria.
 
 ## Base Filter
 
-The base filter class provides a simple free-form text field that filters one attribute on an entry. If only a slug is provided it will filter by that one attribute. THe table below shows the additional options and defaults provided by the base filter.
+The base filter class provides a simple free-form text field that filters one attribute on an entry. If only a slug is provided it will filter by that one attribute. THe table below shows the additional options provided by the base Filter class and where defaults differ to those provided by the base Field class.
 
 | Config Parameter | Description | Type | Default Value |
 | --- | --- | --- | -- |
-| slug<br>(required) | The filter slug used to identify the filter in the table config | string | - |
 | filterHandler | The handler to use to apply this filter to the listing query. | string | "Helium\Handlers\Filter\DefaultFilterHandler" |
-| valueHandler | The handler used to set the current value of the input | string | "Helium\Handler\Value\RequestValueHandler" |
+| valueHandler | The handler used to set the current value of the input | string | "Helium\Handler\Field\Value\RequestValueHandler" |
 | placeholder | The input placeholder | string | "Filter by XYZ" where XYZ is the filter slug, humanised and title cased. |
-| value | The value to fill the input | string | "{request._slug_}" |
+
+## The Filter Handler
+
+Filter handlers are provided an Eloquent query builder and are expected to apply the effects of the filter and return the query.
+
+Parameters available for dependency injection are:
+
+| Name | Type | Description |
+| -----| ---- | ----------- |
+| query | Illuminate\Database\Eloquent\Builder | The current listing query |
+| filter | Helium\Config\View\Table\Filter\Filter | The filter configuration |
 
 ## Specialised Filters
 

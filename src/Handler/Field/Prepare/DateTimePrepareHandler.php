@@ -1,6 +1,6 @@
 <?php
 
-namespace Helium\Handler\Prepare;
+namespace Helium\Handler\Field\Prepare;
 
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;

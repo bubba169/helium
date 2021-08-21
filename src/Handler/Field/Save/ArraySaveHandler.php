@@ -1,18 +1,18 @@
 <?php
 
-namespace Helium\Handler\Save;
+namespace Helium\Handler\Field\Save;
 
 use Illuminate\Http\Request;
 use Helium\Config\View\Form\Field\Field;
 use Illuminate\Database\Eloquent\Model;
 
-class DefaultSaveHandler
+class ArraySaveHandler
 {
     /**
-     * Saves the request data for the field to an entry
+     * Arrays should be json encoded
      */
     public function __invoke(Field $field, Request $request, Model $entry, array $path)
     {
-        $entry->{$field->column} = $request->input($field->getDataPath($path));
+        $entry->{$field->column} = json_encode($request->input($field->getDataPath($path), []));
     }
 }

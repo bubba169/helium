@@ -2,13 +2,14 @@
 
 namespace Helium\Handler\Filter;
 
-use Helium\Config\View\Table\Filter\Filter;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Helium\Config\View\Table\Filter\Filter;
 
 class SearchHandler
 {
-    public function __invoke($query, Filter $filter, Request $request)
+    public function __invoke(Builder $query, Filter $filter, Request $request)
     {
         $value = $request->query($filter->name);
 

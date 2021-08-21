@@ -3,7 +3,7 @@
 ## The Basics
 Helium is based around the idea that everything is configurable and modular. Handlers contain all of the logic, twig templates handle the rendering and the configuration specifies which handlers and templates should be used. Configuration can often be given in short form which is expanded automatically with sensible defaults.
 
-Using fields as an example, providing just the string "title" with no key will generate a text input with it's slug, name and id set to the "title". It will be assigned default handlers to read the value from and save the value to the title attribute on the entitie's model. It will also be given a label by transforming the slug to the more human friendly format "Title". Everything required for that simple text field can be deduced from the slug. 
+Using fields as an example, providing just the string "title" with no key will generate a text input with it's slug, name and id set to the "title". It will be assigned default handlers to read the value from and save the value to the title attribute on the entity's model. It will also be given a label by transforming the slug to the more human friendly format "Title". Everything required for that simple text field can be deduced from the slug. 
 
 ```php
 'fields' => [
@@ -27,7 +27,7 @@ Any of the configuration options can be set manually by providing an array as a 
 ![Title field with customised label](img/title_field_label.png)
 
 ## Base Classes
-All configurable elements within Helium have a base class that takes a configuration array and provides sensible defaults. Helium provides a few of these for example with field types. To set the base class to something other than the default, we can either set config value to the base class name or we can pass the class name as the `base` option and supply any other options alongside.
+All configurable elements within Helium have a base class that takes a configuration array and provides sensible defaults. To set the base class to something other than the default, we can either set config value to the base class name or we can pass the class name as the `base` option and supply any other options alongside. Helium provides some specialised base classes for things like field types - all of which extend the default Field class.
 
 ```php
 'fields' => [
@@ -96,37 +96,3 @@ class EditPostsForm extends FormView
     ];
 }
 ```
-
-
-## Handlers
-
-Handlers are passed to configs as a callable string. Any string that can be called through Laravels `app()->call()` can be given as a value. All of the handlers within Helium are invokable classes.
-
-As an example, to provide options for a select field, instead of an array we can pass a handler. The handler is called through the service container so can use dependency injection and in this case must return an array of options. Whenever a handler is accepted, there will also be a handler parameters option to match. These can provide some arguments that are passed through the service container for dependency injection.
-
-The example below is a simplified use case to give the option of all enabled entries from a model
-
-```php
-'fields' => [
-    'author_id' => [
-        'base' => SelectField::class,
-        'optionsHandler' => ModelOptionsHandler::class,
-        'optionsHandlerParams' => [
-            'model' => User::class,
-            'displayField' => 'name',
-        ],
-    ]
-],
-```
-
-```php
-class ModelOptionsHandler
-{
-    public function invoke(string $model, string $displayField): array
-    {
-        return $model::where('enabled', true)->pluck($displayField, 'id');
-    }
-}
-```
-
-Handlers are used throughout Helium to keep the core functionality as modular and replacable as possible and to allow dynamic configuration. In most cases where a handler is expected, Helium will provide default handlers that can be extended.

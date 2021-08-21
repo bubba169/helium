@@ -1,6 +1,6 @@
 <?php
 
-namespace Helium\Handler\Value;
+namespace Helium\Handler\Field\Value;
 
 use Illuminate\Http\Request;
 use Helium\Config\View\Form\Field\Field;

@@ -3,7 +3,7 @@
 namespace Helium\Config\View\Form\Field;
 
 use Helium\Config\View\Form\Field\Field;
-use Helium\Handler\Save\PasswordSaveHandler;
+use Helium\Handler\Field\Save\PasswordSaveHandler;
 
 class PasswordField extends Field
 {

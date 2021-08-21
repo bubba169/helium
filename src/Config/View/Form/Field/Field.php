@@ -5,8 +5,8 @@ namespace Helium\Config\View\Form\Field;
 use Helium\Config\Entity;
 use Illuminate\Support\Str;
 use Helium\Traits\HasConfig;
-use Helium\Handler\Value\EntryValueHandler;
-use Helium\Handler\Save\DefaultSaveHandler;
+use Helium\Handler\Field\Value\EntryValueHandler;
+use Helium\Handler\Field\Save\DefaultSaveHandler;
 
 class Field
 {

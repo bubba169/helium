@@ -119,12 +119,13 @@ class TableView extends View
     protected function buildFilters(): array
     {
         $filters = [];
-        $config = array_normalise_keys($this->getConfig('filters'), 'slug', 'base');
+        $config = $this->getConfig('filters');
 
         if ($this->filtersHandler) {
             $config = app()->call($this->filtersHandler, ['view' => $this, 'config' => $config]);
         }
 
+        $config = array_normalise_keys($config, 'slug', 'base');
         foreach ($config as $filter) {
             $class = Arr::get($filter, 'base', Filter::class);
             $filters[$filter['slug']] = new $class($filter, $this->entity);
@@ -139,12 +140,13 @@ class TableView extends View
     protected function buildColumns(): array
     {
         $columns = [];
-        $config = array_normalise_keys($this->getConfig('columns'), 'slug', 'base');
+        $config = $this->getConfig('columns');
 
         if ($this->columnsHandler) {
             $config = app()->call($this->columnsHandler, ['view' => $this, 'config' => $config]);
         }
 
+        $config = array_normalise_keys($config, 'slug', 'base');
         foreach ($config as $column) {
             $class = Arr::get($column, 'base', Column::class);
             $columns[$column['slug']] = new $class($column, $this->entity);
@@ -159,12 +161,13 @@ class TableView extends View
     protected function buildActions(): array
     {
         $actions = [];
-        $config = array_normalise_keys($this->getConfig('actions'), 'slug', 'base');
+        $config = $this->getConfig('actions');
 
         if ($this->actionsHandler) {
             $config = app()->call($this->actionsHandler, ['view' => $this, 'config' => $config]);
         }
 
+        $config = array_normalise_keys($config, 'slug', 'base');
         foreach ($config as $action) {
             $class = Arr::get($action, 'base', ViewLinkAction::class);
             $actions[$action['slug']] = new $class($action, $this->entity);

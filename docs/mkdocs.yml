@@ -1,6 +1,9 @@
 site_name: Helium CMS Documentation
 site_url: https://example.com/
-theme: material
+theme:
+  name: material
+  features:
+    - navigation.sections
 docs_dir: src
 site_dir: html
 markdown_extensions:
@@ -9,7 +12,9 @@ nav:
   - index.md
   - configuration.md
   - handlers.md
-  - entities.md
-  - Views:
-    - views/views.md
-    - views/tableview.md
+  - Entites:
+    - entities/index.md
+    - entities/views.md
+    - Tables:
+      - entities/tables/index.md
+      - entities/tables/filters.md

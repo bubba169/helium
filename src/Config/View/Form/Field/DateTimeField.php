@@ -5,7 +5,7 @@ namespace Helium\Config\View\Form\Field;
 use Helium\Config\Entity;
 use Illuminate\Support\Arr;
 use Helium\Config\View\Form\Field\Field;
-use Helium\Handler\Prepare\DateTimePrepareHandler;
+use Helium\Handler\Field\Prepare\DateTimePrepareHandler;
 
 class DateTimeField extends Field
 {

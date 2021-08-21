@@ -19,6 +19,8 @@ class SaveEntityFormRequest extends FormRequest
 
     protected ?string $entryId;
 
+    protected ?string $redirectUrl;
+
     /**
      * {@inheritDoc}
      */
@@ -32,11 +34,13 @@ class SaveEntityFormRequest extends FormRequest
         $content = null,
         ?Entity $entity = null,
         ?FormView $form = null,
-        ?string $entryId = null
+        ?string $entryId = null,
+        ?string $redirectUrl = null
     ) {
         $this->entity = $entity;
         $this->form = $form;
         $this->entryId = $entryId;
+        $this->redirectUrl = $redirectUrl;
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
     }
 
@@ -128,7 +132,8 @@ class SaveEntityFormRequest extends FormRequest
 
         // Redirect back to the current url to avoid post on refresh
         return new RedirectResponse(
-            route('helium.entity.view', [$this->entity->slug, $this->form->slug, $entry])
+            //route('helium.entity.view', [$this->entity->slug, $this->form->slug, $entry])
+            str_resolve($this->redirectUrl, $entry)
         );
     }
 

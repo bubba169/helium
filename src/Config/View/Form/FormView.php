@@ -77,7 +77,7 @@ class FormView extends View
     public function allFields(): array
     {
         // Merge all of the tabs
-        return call_user_func_array('array_merge', $this->fields);
+        return call_user_func_array('array_merge', array_values($this->fields));
     }
 
     /**
@@ -90,7 +90,9 @@ class FormView extends View
         return array_filter(
             call_user_func_array(
                 'array_merge',
-                array_map(fn ($field) => $field->getValidationRules(), $fields)
+                array_values(
+                    array_map(fn ($field) => $field->getValidationRules(), $fields)
+                )
             )
         );
     }
@@ -106,7 +108,9 @@ class FormView extends View
             array_filter(
                 call_user_func_array(
                     'array_merge',
-                    array_map(fn ($field) => $field->getValidationMessages(), $fields)
+                    array_values(
+                        array_map(fn ($field) => $field->getValidationMessages(), $fields)
+                    )
                 )
             )
         );
@@ -123,7 +127,9 @@ class FormView extends View
             array_filter(
                 call_user_func_array(
                     'array_merge',
-                    array_map(fn ($field) => $field->getValidationAttributes(), $fields)
+                    array_values(
+                        array_map(fn ($field) => $field->getValidationAttributes(), $fields)
+                    )
                 )
             )
         );
@@ -137,7 +143,9 @@ class FormView extends View
         return array_filter(
             call_user_func_array(
                 'array_merge',
-                array_map(fn ($field) => $field->getScripts(), $this->allFields())
+                array_values(
+                    array_map(fn ($field) => $field->getScripts(), $this->allFields())
+                )
             )
         );
     }
@@ -150,7 +158,9 @@ class FormView extends View
         return array_filter(
             call_user_func_array(
                 'array_merge',
-                array_map(fn ($field) => $field->getStyles(), $this->allFields())
+                array_values(
+                    array_map(fn ($field) => $field->getStyles(), $this->allFields())
+                )
             )
         );
     }
